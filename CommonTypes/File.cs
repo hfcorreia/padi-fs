@@ -5,21 +5,13 @@ using System.Text;
 
 namespace CommonTypes
 {
-    class File
+    public class File
     {
-        private string name;
-        private string id;
-        private byte[] content;
+        private string Name { get; set; }
+        private string Id { get; set; }
+        private byte[] Content { get; set; }
 
         public File() { }
-
-        public string Name 
-        { 
-            get { return  name; } 
-            set { this.name = value; }
-        }
-
-
 
     }
 }

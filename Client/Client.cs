@@ -9,40 +9,60 @@ using CommonTypes;
 
 namespace Client
 {
-    class Client : MarshalByRefObject, IClient
+    public class Client : MarshalByRefObject, IClient
     {
-        private int port;
-        private string name;
-        private string url;
+        private int Port { get; set; }
+        private string Name { get; set; }
+        private string Url { get; set; }
 
-        public Client(int port, string name)
+        static void Main(string[] args)
         {
-            this.port = port;
-            this.name = name;
-            this.url = "tcp://localhost:" + this.port + "/" + this.name;
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Usage: port clientName");
+                Console.ReadLine();
+            }
+            else
+            {
+                Client client = new Client();
+                client.initialize(Int32.Parse(args[0]), args[1]);
+                client.startConnection();
+
+                Console.WriteLine("port: " + client.Port + " name: " + client.Name + " url: " + client.Url);
+                Console.WriteLine("connection started");
+                Console.ReadLine();
+            }
+
+        }
+
+        public void initialize(int port, string name)
+        {
+            Port = port;
+            Name = name;
+            Url = "tcp://localhost:" + Port + "/" + Name;
         }
 
         void startConnection()
         {
-            TcpChannel channel = new TcpChannel(this.port);
+            TcpChannel channel = new TcpChannel(Port);
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(Client),
-                "Client-" + name,
+                Name,
                 WellKnownObjectMode.Singleton);
         }
-        static void Main(string[] args)
-        {
-            if (args.Length < 3)
-            {
-                Console.WriteLine("Usage: port clientName");
-            }
-            else
-            {
-                Client client = new Client(Int32.Parse(args[0]), args[1]);
-            }
 
-        }
+        public void write(string filename) { Console.WriteLine(filename); }
+
+        public void read(string filename) { Console.WriteLine(filename); }
+
+        public void open(string filename) { Console.WriteLine(filename); }
+
+        public void close(string filename) { Console.WriteLine(filename); }
+
+        public void delete(string filename) { Console.WriteLine(filename); }
+
+        public void create(string filename) { Console.WriteLine(filename); }
     }
 }

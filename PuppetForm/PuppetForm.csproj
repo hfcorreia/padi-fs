@@ -34,6 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Client">
+      <HintPath>..\Client\bin\Debug\Client.exe</HintPath>
+    </Reference>
+    <Reference Include="DataServer">
+      <HintPath>..\DataServer\bin\Debug\DataServer.exe</HintPath>
+    </Reference>
+    <Reference Include="MetaDataServer">
+      <HintPath>..\MetaDataServer\bin\Debug\MetaDataServer.exe</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
@@ -55,6 +64,9 @@
     </Compile>
     <Compile Include="PuppetMaster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ControlBoard.resx">
+      <DependentUpon>ControlBoard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
