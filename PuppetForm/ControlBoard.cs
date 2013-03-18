@@ -26,13 +26,15 @@ namespace PuppetForm
             {
                 puppetMaster.createClient(clientPortTextBox.Text, clientNameTextBox.Text);
             }
+
+            puppetMaster.test();
         }
 
         private void startMetadataServersButton_Click(object sender, EventArgs e)
         {
             puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
 
-            puppetMaster.test();
+  
 
         }
 

@@ -27,6 +27,11 @@ namespace Client
                 Client client = new Client();
                 client.initialize(Int32.Parse(args[0]), args[1]);
                 client.startConnection();
+                 
+                /*
+                string dataserverURL = "tcp://localhost:" + port + "/" + id;
+                client.getDataServer(dataserverURL);
+                 * */
 
                 Console.WriteLine("port: " + client.Port + " name: " + client.Name + " url: " + client.Url);
                 Console.WriteLine("connection started");
@@ -47,17 +52,25 @@ namespace Client
             TcpChannel channel = new TcpChannel(Port);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingConfiguration.RegisterWellKnownServiceType(
-                typeof(Client),
-                Name,
-                WellKnownObjectMode.Singleton);
+            RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Name,WellKnownObjectMode.Singleton);
         }
+
+        /*
+        private void getDataServer(string url)
+        {
+            IDataServer dataServer = (IDataServer)Activator.GetObject(typeof(IDataServer), dataserverURL);
+        }
+         * */
 
         public void write(string filename) { Console.WriteLine(filename); }
 
         public void read(string filename) { Console.WriteLine(filename); }
 
-        public void open(string filename) { Console.WriteLine(filename); }
+        public void open(string filename) 
+        { 
+            Console.WriteLine(filename); 
+            
+        }
 
         public void close(string filename) { Console.WriteLine(filename); }
 

@@ -32,7 +32,7 @@ namespace PuppetForm
 
         private Dictionary<String, IClient> clients = new Dictionary<string, IClient>();
         private Dictionary<int, IMetaDataServer> metadataServers = new Dictionary<int, IMetaDataServer>();
-        private Dictionary<int, IDataServer> dataServers = new Dictionary<int, IDataServer>();
+        private Dictionary<int, string> dataServers = new Dictionary<int, string>();
 
         public void createClient(String clientPort, String clientName)
         {
@@ -45,20 +45,19 @@ namespace PuppetForm
 
         public void startMetaDataServers(int numServers)
         {
-            int startingPort = 10000;
-            for (int i = 0; i < numServers; ++i) 
+            MetaInformationReader.initMetaData();
+
+            foreach (KeyValuePair<int, RemoteObjectWrapper> metadaServerEntry in MetaInformationReader.MetaDataServers)
             {
-                createMetaDataServer(startingPort + i, i);
+                createMetaDataServer(metadaServerEntry.Value);
             }
         }
 
-        public void createMetaDataServer(int port, int id)
+        public void createMetaDataServer(RemoteObjectWrapper metadataObject)
         {
-            Process.Start("MetaDataServer.exe", port + " " + id);
-
-            string clientURL = "tcp://localhost:" + port + "/" + id;
-            IMetaDataServer metadataServer = (IMetaDataServer)Activator.GetObject(typeof(IMetaDataServer), clientURL);
-            metadataServers.Add(id, metadataServer);
+            Process.Start("MetaDataServer.exe", metadataObject.Port + " " + metadataObject.Id);
+            IMetaDataServer metadataServer = (IMetaDataServer)Activator.GetObject(typeof(IMetaDataServer), metadataObject.URL);
+            metadataServers.Add(metadataObject.Id, metadataServer);
         }
 
         public void createDataServer(int port, int id)
@@ -67,7 +66,7 @@ namespace PuppetForm
 
             string dataserverURL = "tcp://localhost:" + port + "/" + id;
             IDataServer dataServer = (IDataServer)Activator.GetObject(typeof(IDataServer), dataserverURL);
-            dataServers.Add(id, dataServer);
+            dataServers.Add(id, dataserverURL);
         }
 
         public void fail(string process) { }
@@ -101,7 +100,11 @@ namespace PuppetForm
         {
             for(int md=0; md<3; ++md)
             {
+                for(int ds=0; ds < 1; ++ds) 
+                {
+                metadataServers[md].registDataServer(ds, dataServers[ds]);
                 metadataServers[md].open("HELLO WORLD");
+                }
             }
         }
     }

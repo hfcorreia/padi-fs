@@ -7,8 +7,12 @@ namespace CommonTypes
 {
     public interface IMetaDataServer
     {
-        void open(String filename);
-        void close(String filename);
+        void create(string filename);
+        void open(string filename);
+        void close(string filename);
         void delete(string filename);
+
+        void registDataServer(int id, string url);
+
     }
 }

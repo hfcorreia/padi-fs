@@ -13,7 +13,8 @@ namespace MetaDataServer
     {
         public  int Port { get; set; }
         public  int Id { get; set; }
-        public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } } 
+        public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
+        private Dictionary<int, string> dataServers = new Dictionary<int, string>(); // <serverID, url>
 
         static void Main(string[] args)
         {
@@ -48,6 +49,12 @@ namespace MetaDataServer
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(MetaDataServer), "" + Id, WellKnownObjectMode.Singleton);
         }
 
+        public void registDataServer(int id, string url)
+        {
+            dataServers.Add(id, url);
+            Console.WriteLine("DS registed " + id + " w/ url: " + url);
+        }
+
         public void open(string filename)
         {
             Console.WriteLine(filename);
@@ -59,6 +66,11 @@ namespace MetaDataServer
         }
 
         public void delete(string filename)
+        {
+            Console.WriteLine(filename);
+        }
+
+        public void create(string filename)
         {
             Console.WriteLine(filename);
         }
