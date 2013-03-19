@@ -57,22 +57,26 @@ namespace MetaDataServer
 
         public void open(string filename)
         {
-            Console.WriteLine(filename);
+            Console.WriteLine("#MDS " + Id + " open " + filename);
         }
 
         public void close(string filename)
         {
-            Console.WriteLine(filename);
+            Console.WriteLine("#MDS " + Id + " close " + filename);
         }
 
         public void delete(string filename)
         {
-            Console.WriteLine(filename);
+            Console.WriteLine("#MDS " + Id + " delete " + filename);
         }
 
         public void create(string filename)
         {
-            Console.WriteLine(filename);
+            Console.WriteLine("#MDS " + Id + " create " + filename);
+        }
+        public void exit() 
+        {
+            System.Environment.Exit(0);
         }
     }
 

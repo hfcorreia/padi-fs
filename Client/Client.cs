@@ -12,8 +12,8 @@ namespace Client
     public class Client : MarshalByRefObject, IClient
     {
         private int Port { get; set; }
-        private string Name { get; set; }
-        private string Url { get; set; }
+        private string Id { get; set; }
+        private string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
 
         static void Main(string[] args)
         {
@@ -28,23 +28,17 @@ namespace Client
                 client.initialize(Int32.Parse(args[0]), args[1]);
                 client.startConnection();
                  
-                /*
-                string dataserverURL = "tcp://localhost:" + port + "/" + id;
-                client.getDataServer(dataserverURL);
-                 * */
-
-                Console.WriteLine("port: " + client.Port + " name: " + client.Name + " url: " + client.Url);
+                Console.WriteLine("port: " + client.Port + " name: " + client.Id + " url: " + client.Url);
                 Console.WriteLine("connection started");
                 Console.ReadLine();
             }
 
         }
 
-        public void initialize(int port, string name)
+        public void initialize(int port, string id)
         {
             Port = port;
-            Name = name;
-            Url = "tcp://localhost:" + Port + "/" + Name;
+            Id = id;
         }
 
         void startConnection()
@@ -52,30 +46,33 @@ namespace Client
             TcpChannel channel = new TcpChannel(Port);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Name,WellKnownObjectMode.Singleton);
+            RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Id, WellKnownObjectMode.Singleton);
         }
 
-        /*
-        private void getDataServer(string url)
+        public void write(string filename) { Console.WriteLine("#CLIENT " + Id + " write " + filename); }
+
+        public void read(string filename) { Console.WriteLine("#CLIENT " + Id + " read " + filename); }
+
+        public void open(string filename) { Console.WriteLine("#CLIENT " + Id + " open " + filename); }
+
+        public void close(string filename) { Console.WriteLine("#CLIENT " + Id + " close " + filename); }
+
+        public void delete(string filename) { Console.WriteLine("#CLIENT " + Id + " delete " + filename); }
+
+        public void create(string filename) { Console.WriteLine("#CLIENT " + Id + " create " + filename); }
+
+        public void sendToMetadataServer(string message) 
         {
-            IDataServer dataServer = (IDataServer)Activator.GetObject(typeof(IDataServer), dataserverURL);
-        }
-         * */
-
-        public void write(string filename) { Console.WriteLine(filename); }
-
-        public void read(string filename) { Console.WriteLine(filename); }
-
-        public void open(string filename) 
-        { 
-            Console.WriteLine(filename); 
-            
+            //we need to test this!
+            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                metadataServerWrapper.getObject<IMetaDataServer>().open("Client");
+            }
         }
 
-        public void close(string filename) { Console.WriteLine(filename); }
-
-        public void delete(string filename) { Console.WriteLine(filename); }
-
-        public void create(string filename) { Console.WriteLine(filename); }
+        public void exit()
+        {
+            System.Environment.Exit(0);
+        }
     }
 }

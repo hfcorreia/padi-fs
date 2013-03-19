@@ -7,15 +7,30 @@ namespace CommonTypes
 {
     public class RemoteObjectWrapper
     {
+        
         public int Port { get; set; }
-        public int Id {get; set; }
-        public string URL {get; set; }
+        public int Id { get; set; }
+        public string Host { get; set; }
+        public string URL { get { return "tcp://" + Host + ":" + Port + "/" + Id; } }
 
-        public RemoteObjectWrapper(int port, int id, string url) 
+        private Object wrappedObject = null;
+
+        public RemoteObjectWrapper( int port, int id, string host ) 
         {
             Port = port;
             Id = id;
-            URL = url;
+            Host = host;
+        }
+
+        public T getObject<T>() 
+        {
+            if ( wrappedObject == null )
+            {
+                wrappedObject = Activator.GetObject( typeof(T), URL );
+            }
+
+            //return (T) ( wrappedObject.GetType() == typeof(T) ? wrappedObject : null );
+            return (T)wrappedObject;
         }
     }
 }

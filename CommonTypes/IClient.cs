@@ -18,5 +18,7 @@ namespace CommonTypes
          void delete(string filename);
 
          void create(string filename);
+
+         void exit();
     }
 }

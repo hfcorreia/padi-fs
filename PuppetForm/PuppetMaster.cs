@@ -14,59 +14,31 @@ namespace PuppetForm
 {
     class PuppetMaster 
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+
+        private Dictionary<int, RemoteObjectWrapper> clients = new Dictionary<int, RemoteObjectWrapper>();      //<clientId, clientWrapper>
+        private Dictionary<int, RemoteObjectWrapper> dataServers = new Dictionary<int, RemoteObjectWrapper>();  //<dataServerId, dataServerWrapper>
+
+        public void createClient(int clientPort, int clientId)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            
-            TcpChannel channel = new TcpChannel();
-            ChannelServices.RegisterChannel(channel, true);
-
-            Application.Run(new ControlBoard());
-
+            Process.Start( "Client.exe", clientPort + " " + clientId );
+            RemoteObjectWrapper clientWrapper = new RemoteObjectWrapper( clientPort, clientId, "localhost" );
+            clients.Add( clientId, clientWrapper );
         }
 
-        private Dictionary<String, IClient> clients = new Dictionary<string, IClient>();
-        private Dictionary<int, IMetaDataServer> metadataServers = new Dictionary<int, IMetaDataServer>();
-        private Dictionary<int, string> dataServers = new Dictionary<int, string>();
-
-        public void createClient(String clientPort, String clientName)
+        public void createDataServer( int port, int id )
         {
-            Process.Start("Client.exe", clientPort + " " + clientName);
-
-            string clientURL = "tcp://localhost:" + clientPort + "/" + clientName;
-            IClient client = (IClient) Activator.GetObject(typeof(IClient), clientURL);
-            clients.Add(clientName, client);
+            Process.Start( "DataServer.exe", port + " " + id );
+            RemoteObjectWrapper dataServerWrapper = new RemoteObjectWrapper( port, id, "localhost" );
+            dataServers.Add( id, dataServerWrapper );
         }
-
-        public void startMetaDataServers(int numServers)
+        
+        public void startMetaDataServers( int numServers )
         {
-            MetaInformationReader.initMetaData();
-
-            foreach (KeyValuePair<int, RemoteObjectWrapper> metadaServerEntry in MetaInformationReader.MetaDataServers)
+            //MetadataServers are fixed and their proprieties are specified in CommonTypes project
+            foreach ( RemoteObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers )
             {
-                createMetaDataServer(metadaServerEntry.Value);
+                Process.Start( "MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id );
             }
-        }
-
-        public void createMetaDataServer(RemoteObjectWrapper metadataObject)
-        {
-            Process.Start("MetaDataServer.exe", metadataObject.Port + " " + metadataObject.Id);
-            IMetaDataServer metadataServer = (IMetaDataServer)Activator.GetObject(typeof(IMetaDataServer), metadataObject.URL);
-            metadataServers.Add(metadataObject.Id, metadataServer);
-        }
-
-        public void createDataServer(int port, int id)
-        {
-            Process.Start("DataServer.exe", port + " " + id);
-
-            string dataserverURL = "tcp://localhost:" + port + "/" + id;
-            IDataServer dataServer = (IDataServer)Activator.GetObject(typeof(IDataServer), dataserverURL);
-            dataServers.Add(id, dataserverURL);
         }
 
         public void fail(string process) { }
@@ -98,14 +70,62 @@ namespace PuppetForm
 
         internal void test()
         {
-            for(int md=0; md<3; ++md)
+            //send dummy message to all metadata servers:
+            foreach( RemoteObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers )
             {
-                for(int ds=0; ds < 1; ++ds) 
-                {
-                metadataServers[md].registDataServer(ds, dataServers[ds]);
-                metadataServers[md].open("HELLO WORLD");
-                }
+                metadataWrapper.getObject<IMetaDataServer>().open( "PuppetMaster - HelloWorld!" );
             }
+
+            //send dummy message to all data servers:
+            foreach ( RemoteObjectWrapper dataServerWrapper in dataServers.Values )
+            {
+                dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
+            }
+
+            //send dummy message to all clients:
+            foreach ( RemoteObjectWrapper clientWrapper in clients.Values )
+            {
+                clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
+            }
+        }
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault( false );
+
+            TcpChannel channel = new TcpChannel();
+            ChannelServices.RegisterChannel( channel, true );
+
+            Application.Run( new ControlBoard() );
+
+        }
+
+        private static bool processIsRunning( string processName )
+        {
+            return ( System.Diagnostics.Process.GetProcessesByName( processName ).Length != 0 );
+        }
+
+        public void exitAll() 
+        {
+            foreach (RemoteObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                metadataWrapper.getObject<IMetaDataServer>().exit();
+            }
+            foreach (RemoteObjectWrapper dataServerWrapper in dataServers.Values)
+            {
+                dataServerWrapper.getObject<IDataServer>().exit();
+            }
+            foreach (RemoteObjectWrapper clientWrapper in clients.Values)
+            {
+                clientWrapper.getObject<IClient>().exit();
+            }
+
+            System.Environment.Exit(0);
         }
     }
 }

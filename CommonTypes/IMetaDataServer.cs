@@ -13,6 +13,7 @@ namespace CommonTypes
         void delete(string filename);
 
         void registDataServer(int id, string url);
+        void exit();
 
     }
 }

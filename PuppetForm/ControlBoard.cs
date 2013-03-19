@@ -24,17 +24,13 @@ namespace PuppetForm
         {
             if (!String.IsNullOrEmpty(clientPortTextBox.Text) && !String.IsNullOrEmpty(clientNameTextBox.Text))
             {
-                puppetMaster.createClient(clientPortTextBox.Text, clientNameTextBox.Text);
+                puppetMaster.createClient(Int32.Parse(clientPortTextBox.Text), Int32.Parse(clientNameTextBox.Text));
             }
-
-            puppetMaster.test();
         }
 
         private void startMetadataServersButton_Click(object sender, EventArgs e)
         {
             puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
-
-  
 
         }
 
@@ -42,6 +38,17 @@ namespace PuppetForm
         {
             puppetMaster.createDataServer(Int32.Parse(dataServerPortTextBox.Text), Int32.Parse(dataServerIdTextBox.Text));
         }
+
+        private void testButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.test();
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.exitAll();
+        }
+
 
     }
 }

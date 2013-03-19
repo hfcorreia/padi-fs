@@ -5,10 +5,11 @@ using System.Text;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting;
+using CommonTypes;
 
 namespace DataServer
 {
-    class DataServer
+    public class DataServer : MarshalByRefObject, IDataServer
     {
         public int Id { get; set; }
 
@@ -50,5 +51,27 @@ namespace DataServer
         }
 
 
+        public void write(File file) 
+        {
+            Console.WriteLine("#DS " + Id + " write " + file);
+        }
+        public File read(string filename)
+        {
+            Console.WriteLine("#DS " + Id + " read " + filename);
+            return null;
+        }
+        public void exit()
+        {
+            System.Environment.Exit(0);
+        }
+
+        public void sendToMetadataServer(string message)
+        {
+            //we need to test this!
+            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                metadataServerWrapper.getObject<IMetaDataServer>().open("dataserver");
+            }
+        }
     }
 }

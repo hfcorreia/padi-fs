@@ -9,5 +9,6 @@ namespace CommonTypes
     {
         void write(File file);
         File read(string filename);
+        void exit();
     }
 }
