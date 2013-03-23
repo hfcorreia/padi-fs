@@ -49,6 +49,16 @@ namespace PuppetForm
             puppetMaster.exitAll();
         }
 
+        private void ControlBoard_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ControlBoard_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            puppetMaster.exitAll();
+        }
+
 
     }
 }

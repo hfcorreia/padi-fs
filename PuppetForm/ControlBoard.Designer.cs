@@ -185,6 +185,8 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "ControlBoard";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControlBoard_FormClosing);
+            this.Load += new System.EventHandler(this.ControlBoard_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

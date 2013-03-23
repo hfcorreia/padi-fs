@@ -47,19 +47,39 @@ namespace Client
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Id, WellKnownObjectMode.Singleton);
+            create("RIJO FILE.txt");
+            open("RIJO FILE.txt");
         }
 
         public void write(string filename) { Console.WriteLine("#CLIENT " + Id + " write " + filename); }
 
         public void read(string filename) { Console.WriteLine("#CLIENT " + Id + " read " + filename); }
 
-        public void open(string filename) { Console.WriteLine("#CLIENT " + Id + " open " + filename); }
+        public void open(string filename) { 
+            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                Console.WriteLine("#CLIENT " + Id + " open " + filename);
+                metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
+            }
+        }
 
         public void close(string filename) { Console.WriteLine("#CLIENT " + Id + " close " + filename); }
 
         public void delete(string filename) { Console.WriteLine("#CLIENT " + Id + " delete " + filename); }
 
-        public void create(string filename) { Console.WriteLine("#CLIENT " + Id + " create " + filename); }
+        public void create(string filename) 
+        {
+            int numberOfDataServers = 1;
+            int readQuorum = 1;
+            int writeQuorum = 1;
+            List<RemoteObjectWrapper> dataserverForFile = null;
+            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                Console.WriteLine("#CLIENT " + Id + " create " + filename);
+                dataserverForFile = metadataServerWrapper.getObject<IMetaDataServer>().create(filename, numberOfDataServers, readQuorum, writeQuorum);
+            }
+            Console.WriteLine("#CLIENT " + Id + " created " + dataserverForFile);
+        }
 
         public void sendToMetadataServer(string message) 
         {

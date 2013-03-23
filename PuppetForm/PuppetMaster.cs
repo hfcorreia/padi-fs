@@ -29,7 +29,10 @@ namespace PuppetForm
         {
             Process.Start( "DataServer.exe", port + " " + id );
             RemoteObjectWrapper dataServerWrapper = new RemoteObjectWrapper( port, id, "localhost" );
-            dataServers.Add( id, dataServerWrapper );
+            if (!dataServers.ContainsKey(id))
+            {
+                dataServers.Add(id, dataServerWrapper);
+            }
         }
         
         public void startMetaDataServers( int numServers )
@@ -114,18 +117,33 @@ namespace PuppetForm
         {
             foreach (RemoteObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                metadataWrapper.getObject<IMetaDataServer>().exit();
+                try
+                {
+                    metadataWrapper.getObject<IMetaDataServer>().exit();
+                }
+                catch (Exception e) { Console.WriteLine("Error Closing."); }
             }
             foreach (RemoteObjectWrapper dataServerWrapper in dataServers.Values)
             {
-                dataServerWrapper.getObject<IDataServer>().exit();
+                try
+                {
+                    dataServerWrapper.getObject<IDataServer>().exit();
+                }
+                catch (Exception e) { Console.WriteLine("Error Closing."); }
             }
             foreach (RemoteObjectWrapper clientWrapper in clients.Values)
             {
+                try
+                {
                 clientWrapper.getObject<IClient>().exit();
+                }
+                catch (Exception e) { Console.WriteLine("Error Closing."); }
             }
-
-            System.Environment.Exit(0);
+            try
+            {
+                System.Environment.Exit(0);
+            }
+            catch (Exception e) { Console.WriteLine("Error exiting."); }
         }
     }
 }

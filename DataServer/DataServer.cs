@@ -14,8 +14,10 @@ namespace DataServer
         public int Id { get; set; }
 
         public int Port { get; set; }
+        
+        public string Host { get; set; }
 
-        public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } } 
+        public string Url { get { return "tcp://" + Host +":" + Port + "/" + Id; } } 
 
         static void Main(string[] args)
         {
@@ -27,7 +29,7 @@ namespace DataServer
             else
             {
                 DataServer dataServer = new DataServer();
-                dataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]));
+                dataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]), "localhost");
                 dataServer.startConnection();
 
                 Console.WriteLine("port: " + dataServer.Port + " Id: " + dataServer.Id + " url: " + dataServer.Url);
@@ -36,10 +38,11 @@ namespace DataServer
             }
         }
 
-        public void initialize(int port, int id)
+        public void initialize(int port, int id, string host)
         {
             Port = port;
             Id = id;
+            Host = host;
         }
 
         public void startConnection()
@@ -48,6 +51,7 @@ namespace DataServer
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(DataServer), "" + Id, WellKnownObjectMode.Singleton);
+            sendToMetadataServer("HELLO");
         }
 
 
@@ -70,7 +74,7 @@ namespace DataServer
             //we need to test this!
             foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                metadataServerWrapper.getObject<IMetaDataServer>().open("dataserver");
+                metadataServerWrapper.getObject<IMetaDataServer>().registDataServer(Id, Host, Port);
             }
         }
     }

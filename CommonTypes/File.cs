@@ -8,7 +8,7 @@ namespace CommonTypes
     public class File
     {
         private string Name { get; set; }
-        private string Id { get; set; }
+        private Int32 Version { get; set; }
         private byte[] Content { get; set; }
 
         public File() { }

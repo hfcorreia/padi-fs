@@ -15,6 +15,8 @@ namespace CommonTypes
 
         private Object wrappedObject = null;
 
+        public RemoteObjectWrapper(RemoteObjectWrapper original) : this(original.Port, original.Id, original.Host) { }
+
         public RemoteObjectWrapper( int port, int id, string host ) 
         {
             Port = port;
