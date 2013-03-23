@@ -20,7 +20,7 @@ namespace CommonTypes
          * Returns the metadata content for a given file.
          * In case the file does not exist throws an exception.
          **/
-        File open(string filename);
+        List<RemoteObjectWrapper> open(string filename);
 
         /**
          * Close

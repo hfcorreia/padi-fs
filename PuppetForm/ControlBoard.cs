@@ -56,7 +56,7 @@ namespace PuppetForm
 
         private void ControlBoard_FormClosing(object sender, FormClosingEventArgs e)
         {
-            puppetMaster.exitAll();
+            //puppetMaster.exitAll();
         }
 
 

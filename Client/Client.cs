@@ -6,6 +6,8 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using CommonTypes;
+using System.Runtime.Serialization.Formatters;
+using System.Collections;
 
 namespace Client
 {
@@ -14,7 +16,7 @@ namespace Client
         private int Port { get; set; }
         private string Id { get; set; }
         private string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
-
+        private Dictionary<String, List<RemoteObjectWrapper>> fileServers = new Dictionary<string, List<RemoteObjectWrapper>>();
         static void Main(string[] args)
         {
             if (args.Length < 2)
@@ -43,11 +45,15 @@ namespace Client
 
         void startConnection()
         {
-            TcpChannel channel = new TcpChannel(Port);
+            BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+            provider.TypeFilterLevel = TypeFilterLevel.Full;
+            IDictionary props = new Hashtable();
+            props["port"] = Port;
+            TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Id, WellKnownObjectMode.Singleton);
-            create("RIJO FILE.txt");
+            create("RIJO FILE.txt",2,1,1);
             open("RIJO FILE.txt");
         }
 
@@ -59,7 +65,8 @@ namespace Client
             foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 Console.WriteLine("#CLIENT " + Id + " open " + filename);
-                metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
+                List<RemoteObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
+                cacheServersForFile(filename, servers);
             }
         }
 
@@ -67,18 +74,27 @@ namespace Client
 
         public void delete(string filename) { Console.WriteLine("#CLIENT " + Id + " delete " + filename); }
 
-        public void create(string filename) 
+        public void create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum) 
         {
-            int numberOfDataServers = 1;
-            int readQuorum = 1;
-            int writeQuorum = 1;
             List<RemoteObjectWrapper> dataserverForFile = null;
             foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 Console.WriteLine("#CLIENT " + Id + " create " + filename);
                 dataserverForFile = metadataServerWrapper.getObject<IMetaDataServer>().create(filename, numberOfDataServers, readQuorum, writeQuorum);
             }
-            Console.WriteLine("#CLIENT " + Id + " created " + dataserverForFile);
+            cacheServersForFile(filename, dataserverForFile);
+            Console.WriteLine("#CLIENT " + Id + " created on" + dataserverForFile.Count + " servers");
+            foreach (RemoteObjectWrapper dataserverWrapper in dataserverForFile) {
+                dataserverWrapper.getObject<IDataServer>().write(new File());
+            }
+        }
+
+        private void cacheServersForFile(string filename, List<RemoteObjectWrapper> dataserverForFile)
+        {
+            if (!fileServers.ContainsKey(filename))
+            {
+                fileServers.Add(filename, dataserverForFile);
+            }
         }
 
         public void sendToMetadataServer(string message) 

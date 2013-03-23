@@ -5,7 +5,9 @@ using System.Text;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting;
+using System.Runtime.Serialization.Formatters;
 using CommonTypes;
+using System.Collections;
 
 namespace MetaDataServer
 {
@@ -43,7 +45,12 @@ namespace MetaDataServer
 
         public void startConnection()
         {
-            TcpChannel channel = new TcpChannel(Port);
+
+            BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+            provider.TypeFilterLevel = TypeFilterLevel.Full;
+            IDictionary props = new Hashtable();
+            props["port"] = Port;
+            TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(MetaDataServer), "" + Id, WellKnownObjectMode.Singleton);
@@ -56,9 +63,9 @@ namespace MetaDataServer
             Console.WriteLine("DS registed " + remoteObjectWrapper.Id + " w/ url: " + remoteObjectWrapper.URL);
         }
 
-        public File open(string filename)
+        public List<RemoteObjectWrapper> open(string filename)
         {
-            Console.WriteLine("#MDS " + Id + " open " + filename);
+            List<RemoteObjectWrapper> dataservers = new List<RemoteObjectWrapper>();
             return null;
         }
 
@@ -76,18 +83,19 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MDS " + Id + " create " + filename);
 
-            if (numberOfDataServers < dataServers.Count)
+            if (numberOfDataServers <= dataServers.Count)
             {
                 return getFirstServers(numberOfDataServers);
             }
-
 
             return null;
         }
 
         private List<RemoteObjectWrapper> getFirstServers(int numDataServers)
         {
+            Console.WriteLine("ENTREI");
             List<RemoteObjectWrapper> firstDataServers = new List<RemoteObjectWrapper>();
+
             foreach (RemoteObjectWrapper dataserverWrapper in dataServers.Values)
             {
                 if (firstDataServers.Count < numDataServers)
@@ -95,7 +103,8 @@ namespace MetaDataServer
                     firstDataServers.Add(new RemoteObjectWrapper(dataserverWrapper));
                 }
             }
-               return firstDataServers;
+            Console.WriteLine("LIST SIZE: " + firstDataServers.Count); 
+            return firstDataServers;
         }
 
         public void fail() { }

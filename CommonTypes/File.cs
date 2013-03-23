@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CommonTypes
 {
+    [Serializable]
     public class File
     {
         private string Name { get; set; }

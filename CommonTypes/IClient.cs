@@ -17,7 +17,7 @@ namespace CommonTypes
 
          void delete(string filename);
 
-         void create(string filename);
+         void create(string filename, int numberOfServers, int readQuorum, int writeQuorum);
 
          void exit();
     }
