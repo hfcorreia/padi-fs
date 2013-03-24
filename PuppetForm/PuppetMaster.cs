@@ -22,6 +22,7 @@ namespace PuppetForm
         {
             Process.Start( "Client.exe", clientPort + " " + clientId );
             RemoteObjectWrapper clientWrapper = new RemoteObjectWrapper( clientPort, clientId, "localhost" );
+            
             clients.Add( clientId, clientWrapper );
         }
 
@@ -73,22 +74,30 @@ namespace PuppetForm
 
         internal void test()
         {
+            startMetaDataServers(3);
+
+            createDataServer(1000, 0);
+            createDataServer(1000, 1);
+            createDataServer(1000, 2);
+
+            createClient(8085, 0);
+
             //send dummy message to all metadata servers:
             foreach( RemoteObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers )
             {
-                metadataWrapper.getObject<IMetaDataServer>().open( "PuppetMaster - HelloWorld!" );
+                //metadataWrapper.getObject<IMetaDataServer>().open( "PuppetMaster - HelloWorld!" );
             }
 
             //send dummy message to all data servers:
             foreach ( RemoteObjectWrapper dataServerWrapper in dataServers.Values )
             {
-                dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
+               // dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
             }
 
             //send dummy message to all clients:
             foreach ( RemoteObjectWrapper clientWrapper in clients.Values )
             {
-                clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
+               // clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
             }
         }
 
