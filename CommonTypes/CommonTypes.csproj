@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="exception\create\NotEnoughServerException.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="FileMetadata.cs" />
     <Compile Include="MetaInformationReader.cs" />
@@ -60,6 +61,13 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="exception\close\" />
+    <Folder Include="exception\connect\" />
+    <Folder Include="exception\open\" />
+    <Folder Include="exception\read\" />
+    <Folder Include="exception\write\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

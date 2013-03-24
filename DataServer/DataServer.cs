@@ -36,6 +36,10 @@ namespace DataServer
                 dataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]), "localhost");
                 dataServer.startConnection();
 
+                ///File newFile = new File("dataServerSession", 1, new byte[] { 0110 });
+                ///Util.writeToDisk(newFile, "" + "DS" + dataServer.Id);
+                ///Util.readFromDisk("DS" + dataServer.Id, "dataServerSession", 1);
+
                 Console.WriteLine("port: " + dataServer.Port + " Id: " + dataServer.Id + " url: " + dataServer.Url);
                 Console.WriteLine("connection started");
                 Console.ReadLine();
@@ -60,38 +64,47 @@ namespace DataServer
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(DataServer), "" + Id, WellKnownObjectMode.Singleton);
-            sendToMetadataServer("HELLO");
+            registInMetadataServers();
+            
         }
 
 
-        public void write(File file) 
+        public void write(File file)
         {
-
-            if(file==null)
+            Console.WriteLine("#DS " + Id + " write [filename: " + file.FileName + ", version:" + file.Version + "content: " + file.Content + "] - START");
+            if (file == null)
             {
                 return;
             }
 
-            if(files.ContainsKey(file.FileName)){
+            if (files.ContainsKey(file.FileName))
+            {
                 //updates the file
                 files.Remove(file.FileName);
             }
             //creates a new file
             files.Add(file.FileName, file);
 
-            Console.WriteLine("#DS " + Id + " write " + file);
+            Util.writeToDisk(file, "" + "DS" + Id);
+
+            Console.WriteLine("#DS " + Id + " write [filename: " + file.FileName + ", version:" + file.Version + "content: " + file.Content + "] - DONE!");
         }
+
+
+
         public File read(string filename)
         {
             Console.WriteLine("#DS " + Id + " read " + filename);
-            return null;
-        }
-        public void exit()
-        {
-            System.Environment.Exit(0);
+            if (filename == null || !files.ContainsKey(filename))
+            {
+                return null; //throw exception because the file does not exist
+            }
+
+            return Util.readFromDisk("DS" + Id, filename, files[filename].Version);
         }
 
-        public void sendToMetadataServer(string message)
+
+        public void registInMetadataServers()
         {
             //we need to test this!
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
@@ -99,5 +112,16 @@ namespace DataServer
                 metadataServerWrapper.getObject<IMetaDataServer>().registDataServer(Id, Host, Port);
             }
         }
+
+        public int readFileVersion(string filename)
+        {
+            return files.ContainsKey(filename) ? files[filename].Version : -1;
+        }
+
+        public void exit()
+        {
+            System.Environment.Exit(0);
+        }
+
     }
 }

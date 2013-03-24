@@ -23,10 +23,7 @@ namespace CommonTypes
             System.Xml.Serialization.XmlSerializer writer =
             new System.Xml.Serialization.XmlSerializer(typeof(File));
 
-            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(
-             @dirName + getFileName(file.FileName, file.Version) );
-            Console.WriteLine(file.FileName);
-            Console.ReadLine();
+            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + getFileName(file.FileName, file.Version) );
             writer.Serialize(fileWriter, file);
             fileWriter.Close();
         }
@@ -34,7 +31,7 @@ namespace CommonTypes
         public static File readFromDisk(String clientName, String name, Int32 version)
         {
             System.Xml.Serialization.XmlSerializer reader =
-        new System.Xml.Serialization.XmlSerializer(typeof(File));
+                      new System.Xml.Serialization.XmlSerializer(typeof(File));
 
             string dirName = Properties.Resources.TEMP_DIR + "\\" + clientName + getFileName(name, version) ;
             System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);

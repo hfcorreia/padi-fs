@@ -13,6 +13,10 @@ namespace Client
 {
     public class Client : MarshalByRefObject, IClient
     {
+        private static string FILENAME = "RIJO FILE.txt";
+        private static int INITIAL_FILE_VERSION = 0;
+        private static byte[] INITIAL_FILE_CONTENT = new byte[]{};
+
         private int Port { get; set; }
         private string Id { get; set; }
         private string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
@@ -28,14 +32,33 @@ namespace Client
             {
                 Client client = new Client();
                 client.initialize(Int32.Parse(args[0]), args[1]);
-                File newFile = new File("hugo", 1, new byte[] { 0110, 111, 0001, 011 });
-                Util.writeToDisk(newFile, client.Id);
-                Util.readFromDisk(client.Id, "hugo", 1);
+
+                Console.WriteLine("port: " + client.Port + " name: " + client.Id + " url: " + client.Url);
+                Console.WriteLine("connection started");
+                Console.ReadLine();
+
                 client.startConnection();
-                 
-               Console.WriteLine("port: " + client.Port + " name: " + client.Id + " url: " + client.Url);
-               Console.WriteLine("connection started");
-               Console.ReadLine();
+
+                Console.ReadLine();
+
+                client.create(FILENAME, 1, 1, 1);
+
+                System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+                try
+                {
+                    Byte[] fileAsBytes = encoding.GetBytes("EI EI");
+                    client.write(FILENAME, fileAsBytes);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("ERROR getting file content");
+                }
+
+                client.close(FILENAME);
+
+                //delete(FILENAME);
+                Console.ReadLine();
+
             }
 
         }
@@ -56,22 +79,47 @@ namespace Client
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Id, WellKnownObjectMode.Singleton);
-            create("RIJO FILE.txt",2,1,1);
-            open("RIJO FILE.txt");
-            close("RIJO FILE.txt");
-            delete("RIJO FILE.txt");
-            open("RIJO FILE.txt");
-            
+
         }
 
-        public void write(string filename) { Console.WriteLine("#CLIENT " + Id + " write " + filename); }
+        public void write(string filename, byte[] fileContent)
+        {
+            int fileVersion = readFileVersion(filename);
+            File file = new File(filename, fileVersion, fileContent);
+            write(file);
+        }
+
+        private int readFileVersion(string filename)
+        {
+            int fileVersion = 0;
+            if (fileServers.ContainsKey(filename))
+            {
+                foreach (ServerObjectWrapper dataServerWrapper in fileServers[filename]){
+                    fileVersion = dataServerWrapper.getObject<IDataServer>().readFileVersion(filename);
+                }
+            }
+           
+            return fileVersion;
+        }
+
+        public void write(File file)
+        { 
+            Console.WriteLine("#CLIENT " + Id + " write " + file.FileName);
+            if (fileServers.ContainsKey(file.FileName))
+            {
+                foreach (ServerObjectWrapper dataServerWrapper in fileServers[file.FileName])
+                {
+                    Console.WriteLine("#CLIENT " + Id + " write " + file.FileName + "fileVersion" + file.Version + "fileContent" + file.Content);
+                    dataServerWrapper.getObject<IDataServer>().write(file);
+                }
+            }
+        }
 
         public void read(string filename) { Console.WriteLine("#CLIENT " + Id + " read " + filename); }
 
         public void open(string filename) { 
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                Console.WriteLine("#CLIENT " + Id + " open " + filename);
                 List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
                 Console.WriteLine("Servers for file - " + filename + " - " + servers);
                 cacheServersForFile(filename, servers);
@@ -82,9 +130,9 @@ namespace Client
         { 
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-            Console.WriteLine("#CLIENT " + Id + " close " + filename);
-            metadataServerWrapper.getObject<IMetaDataServer>().close(filename);
-            removeCacheServersForFile(filename);
+                Console.WriteLine("#CLIENT " + Id + " close " + filename);
+                metadataServerWrapper.getObject<IMetaDataServer>().close(filename);
+                removeCacheServersForFile(filename);
             }
         }
 
@@ -109,26 +157,20 @@ namespace Client
 
         public void create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum) 
         {
+            Console.WriteLine("#CLIENT " + Id + " - CREATE - [filename: " + filename + ", NumberOfservers: " + numberOfDataServers + ", readQ: " + readQuorum + ", writeQ: " + writeQuorum + "] - START ");
             List<ServerObjectWrapper> dataserverForFile = null;
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 Console.WriteLine("#CLIENT " + Id + " create " + filename);
                 dataserverForFile = metadataServerWrapper.getObject<IMetaDataServer>().create(filename, numberOfDataServers, readQuorum, writeQuorum);
             }
-            if (dataserverForFile == null)
-            {
-                Console.WriteLine("#CLIENT " + Id + " Error creating file");
-            }
-            else
-            {
-                cacheServersForFile(filename, dataserverForFile);
-                Console.WriteLine("#CLIENT " + Id + " created on" + dataserverForFile.Count + " servers");
-                foreach (ServerObjectWrapper dataserverWrapper in dataserverForFile)
-                {
-                    //writes the first empty version of the file.
-                    dataserverWrapper.getObject<IDataServer>().write(new File(filename, 0, new byte[]{}));
-                }
-            }
+            
+            cacheServersForFile(filename, dataserverForFile);
+
+            File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
+            write(emptyFile); //writes an empty file
+
+            Console.WriteLine("#CLIENT " + Id + " - CREATE - " + filename + " created on " + dataserverForFile.Count + " servers - DONE!");
         }
 
         private void cacheServersForFile(string filename, List<ServerObjectWrapper> dataserverForFile)

@@ -19,11 +19,6 @@ namespace MetaDataServer
         private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
         private Dictionary<string, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
         
-        //private Dictionary<string, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>(); //<filename List<ServerId>> 
-        //private Dictionary<string, int> fileClients = new Dictionary<string, int>(); //<filename - number of clients> 
-
-        //private Dictionary<string, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
-
         static void Main(string[] args)
         {
             if (args.Length < 2)

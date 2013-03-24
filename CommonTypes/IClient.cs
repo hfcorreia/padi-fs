@@ -7,18 +7,20 @@ namespace CommonTypes
 {
     public interface IClient
     {
-         void write(string filename);
+        void write(File file);
 
-         void read(string filename);
+        void write(string filename, byte[] content);
 
-         void open(string filename);
+        void read(string filename);
+        
+        void open(string filename);
 
-         void close(string filename);
+        void close(string filename);
 
-         void delete(string filename);
+        void delete(string filename);
 
-         void create(string filename, int numberOfServers, int readQuorum, int writeQuorum);
+        void create(string filename, int numberOfServers, int readQuorum, int writeQuorum);
 
-         void exit();
+        void exit();
     }
 }
