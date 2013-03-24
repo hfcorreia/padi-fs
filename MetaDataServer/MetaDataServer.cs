@@ -27,6 +27,7 @@ namespace MetaDataServer
             {
                 MetaDataServer metadataServer = new MetaDataServer();
                 metadataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]));
+                Util.createDir(CommonTypes.Properties.Resources.TEMP_DIR);
                 metadataServer.startConnection();
 
                 Console.WriteLine("port: " + metadataServer.Port + " Id: " + metadataServer.Id + " url: " + metadataServer.Url);
@@ -34,6 +35,8 @@ namespace MetaDataServer
                 Console.ReadLine();
             }
         }
+
+        
 
         public void initialize(int port, int id)
         {
