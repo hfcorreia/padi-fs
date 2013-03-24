@@ -17,10 +17,12 @@ namespace MetaDataServer
         public  int Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-        private Dictionary<string, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>(); //<filename List<ServerId>> 
-        private Dictionary<string, int> fileClients = new Dictionary<string, int>(); //<filename - number of clients> 
+        private Dictionary<string, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
+        
+        //private Dictionary<string, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>(); //<filename List<ServerId>> 
+        //private Dictionary<string, int> fileClients = new Dictionary<string, int>(); //<filename - number of clients> 
 
-        private Dictionary<string, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
+        //private Dictionary<string, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
 
         static void Main(string[] args)
         {
@@ -69,10 +71,10 @@ namespace MetaDataServer
 
         public List<ServerObjectWrapper> open(string filename)
         {
-            if (fileServers.ContainsKey(filename))
+            if (filesInfo.ContainsKey(filename))
             {
-                fileClients[filename]++;
-                return fileServers[filename];
+                filesInfo[filename].NumberOfClients++;
+                return filesInfo[filename].DataServers;
             }
 
             return null;
@@ -80,9 +82,9 @@ namespace MetaDataServer
 
         public void close(string filename)
         {
-            if (fileClients.ContainsKey(filename)) 
+            if (filesInfo.ContainsKey(filename)) 
             {
-                fileClients[filename]--;
+                filesInfo[filename].NumberOfClients--;
             }
 
             Console.WriteLine("#MDS " + Id + " close " + filename);
@@ -91,10 +93,9 @@ namespace MetaDataServer
         public void delete(string filename)
         {
             Console.WriteLine("#MDS " + Id + " delete " + filename);
-            if (fileClients.ContainsKey(filename) && fileClients[filename] == 0)
+            if (filesInfo.ContainsKey(filename) && filesInfo[filename].NumberOfClients == 0)
             {
-                fileClients.Remove(filename);
-                fileServers.Remove(filename);
+                filesInfo.Remove(filename);
             }
             else
             { 
@@ -106,16 +107,19 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MDS " + Id + " create " + filename);
 
-            if (!fileServers.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
+            if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
             {
-                fileMetadata.Add(filename, new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum));
-                List<ServerObjectWrapper> dataserversForFile = getFirstServers(numberOfDataServers);
-                fileServers.Add(filename, dataserversForFile);
-                fileClients.Add(filename, 1);
-                return dataserversForFile;
+                FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum);
+                List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
+                
+                FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
+
+                filesInfo.Add(filename, newFileInfo);
+
+                return newFileDataServers;
             }
             {
-                return null;
+                return null; // throws exception
             }
             
         }
