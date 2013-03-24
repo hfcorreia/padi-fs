@@ -141,4 +141,8 @@
     <value>1002</value>
     <comment>Port of the MetaDataServer with id 3</comment>
   </data>
+  <data name="TEMP_DIR" xml:space="preserve">
+    <value>c:\TEMP\PADIFS</value>
+    <comment>Temporary Dir for writing files to.</comment>
+  </data>
 </root>

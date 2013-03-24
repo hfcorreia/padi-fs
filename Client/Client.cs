@@ -26,11 +26,14 @@ namespace Client
             {
                 Client client = new Client();
                 client.initialize(Int32.Parse(args[0]), args[1]);
+                File newFile = new File("hugo", 1, new byte[] { 0110, 111, 0001, 011 });
+                Util.writeToDisk(newFile, client.Id);
+                Util.readFromDisk(client.Id, "hugo", 1);
                 client.startConnection();
                  
-                Console.WriteLine("port: " + client.Port + " name: " + client.Id + " url: " + client.Url);
-                Console.WriteLine("connection started");
-                Console.ReadLine();
+               Console.WriteLine("port: " + client.Port + " name: " + client.Id + " url: " + client.Url);
+               Console.WriteLine("connection started");
+               Console.ReadLine();
             }
 
         }
