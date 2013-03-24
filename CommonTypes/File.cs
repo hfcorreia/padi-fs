@@ -8,15 +8,15 @@ namespace CommonTypes
     [Serializable]
     public class File
     {
-        public string Name { get; set; }
-        public Int32 Version { get; set; }
+        public string FileName { get; set; }
+        public int Version { get; set; }
         public byte[] Content { get; set; }
 
         public File() { }
-
-        public File(String name, Int32 verion, Byte[] content) {
-            Name = name;
-            Version = verion;
+        public File(string fileName, int version, byte[] content) 
+        {
+            FileName = fileName;
+            Version = version;
             Content = content;
         }
 

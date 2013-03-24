@@ -16,7 +16,7 @@ namespace Client
         private int Port { get; set; }
         private string Id { get; set; }
         private string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
-        private Dictionary<String, List<RemoteObjectWrapper>> fileServers = new Dictionary<string, List<RemoteObjectWrapper>>();
+        private Dictionary<String, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>();
         static void Main(string[] args)
         {
             if (args.Length < 2)
@@ -58,6 +58,7 @@ namespace Client
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Id, WellKnownObjectMode.Singleton);
             create("RIJO FILE.txt",2,1,1);
             open("RIJO FILE.txt");
+            close("RIJO FILE.txt");
         }
 
         public void write(string filename) { Console.WriteLine("#CLIENT " + Id + " write " + filename); }
@@ -65,34 +66,60 @@ namespace Client
         public void read(string filename) { Console.WriteLine("#CLIENT " + Id + " read " + filename); }
 
         public void open(string filename) { 
-            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 Console.WriteLine("#CLIENT " + Id + " open " + filename);
-                List<RemoteObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
+                List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
                 cacheServersForFile(filename, servers);
             }
         }
 
-        public void close(string filename) { Console.WriteLine("#CLIENT " + Id + " close " + filename); }
+        public void close(string filename) 
+        { 
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+            Console.WriteLine("#CLIENT " + Id + " close " + filename);
+            metadataServerWrapper.getObject<IMetaDataServer>().close(filename);
+            removeCacheServersForFile(filename);
+            }
+        }
+
+        private void removeCacheServersForFile(string filename)
+        {
+            if (fileServers.ContainsKey(filename))
+            {
+                fileServers.Remove(filename);
+            }
+
+        }
 
         public void delete(string filename) { Console.WriteLine("#CLIENT " + Id + " delete " + filename); }
 
         public void create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum) 
         {
-            List<RemoteObjectWrapper> dataserverForFile = null;
-            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            List<ServerObjectWrapper> dataserverForFile = null;
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 Console.WriteLine("#CLIENT " + Id + " create " + filename);
                 dataserverForFile = metadataServerWrapper.getObject<IMetaDataServer>().create(filename, numberOfDataServers, readQuorum, writeQuorum);
             }
-            cacheServersForFile(filename, dataserverForFile);
-            Console.WriteLine("#CLIENT " + Id + " created on" + dataserverForFile.Count + " servers");
-            foreach (RemoteObjectWrapper dataserverWrapper in dataserverForFile) {
-                dataserverWrapper.getObject<IDataServer>().write(new File());
+            if (dataserverForFile == null)
+            {
+                Console.WriteLine("#CLIENT " + Id + " Error creating file");
+            }
+            else
+            {
+                cacheServersForFile(filename, dataserverForFile);
+                Console.WriteLine("#CLIENT " + Id + " created on" + dataserverForFile.Count + " servers");
+                foreach (ServerObjectWrapper dataserverWrapper in dataserverForFile)
+                {
+                    //writes the first empty version of the file.
+                    dataserverWrapper.getObject<IDataServer>().write(new File(filename, 0, new byte[]{}));
+                }
             }
         }
 
-        private void cacheServersForFile(string filename, List<RemoteObjectWrapper> dataserverForFile)
+        private void cacheServersForFile(string filename, List<ServerObjectWrapper> dataserverForFile)
         {
             if (!fileServers.ContainsKey(filename))
             {
@@ -103,7 +130,7 @@ namespace Client
         public void sendToMetadataServer(string message) 
         {
             //we need to test this!
-            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 metadataServerWrapper.getObject<IMetaDataServer>().open("Client");
             }

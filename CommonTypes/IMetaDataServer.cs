@@ -13,14 +13,14 @@ namespace CommonTypes
          * Selects the dataservers for the file and assign a unique filename on each dataserver.
          * In case of success returns the metadata of that file, otherwise throws an exception.
          **/
-        List<RemoteObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum);
+        List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum);
 
         /**
          * Open
          * Returns the metadata content for a given file.
          * In case the file does not exist throws an exception.
          **/
-        List<RemoteObjectWrapper> open(string filename);
+        List<ServerObjectWrapper> open(string filename);
 
         /**
          * Close

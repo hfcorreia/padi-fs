@@ -19,7 +19,9 @@ namespace DataServer
         
         public string Host { get; set; }
 
-        public string Url { get { return "tcp://" + Host +":" + Port + "/" + Id; } } 
+        public string Url { get { return "tcp://" + Host +":" + Port + "/" + Id; } }
+
+        private Dictionary<string, File> files = new Dictionary<string, File>();
 
         static void Main(string[] args)
         {
@@ -64,6 +66,19 @@ namespace DataServer
 
         public void write(File file) 
         {
+
+            if(file==null)
+            {
+                return;
+            }
+
+            if(files.ContainsKey(file.FileName)){
+                //updates the file
+                files.Remove(file.FileName);
+            }
+            //creates a new file
+            files.Add(file.FileName, file);
+
             Console.WriteLine("#DS " + Id + " write " + file);
         }
         public File read(string filename)
@@ -79,7 +94,7 @@ namespace DataServer
         public void sendToMetadataServer(string message)
         {
             //we need to test this!
-            foreach (RemoteObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 metadataServerWrapper.getObject<IMetaDataServer>().registDataServer(Id, Host, Port);
             }

@@ -16,8 +16,12 @@ namespace MetaDataServer
         public  int Port { get; set; }
         public  int Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
-        private Dictionary<int, RemoteObjectWrapper> dataServers = new Dictionary<int, RemoteObjectWrapper>(); // <serverID, DataServerWrapper>
-        private Dictionary<string, List<int>> fileServers = new Dictionary<string, List<int>>(); //<filename List<ServerId>> 
+        private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
+        private Dictionary<string, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>(); //<filename List<ServerId>> 
+        private Dictionary<string, int> fileClients = new Dictionary<string, int>(); //<filename - number of clients> 
+
+        private Dictionary<string, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
+
         static void Main(string[] args)
         {
             if (args.Length < 2)
@@ -61,19 +65,30 @@ namespace MetaDataServer
 
         public void registDataServer(int id, string host, int port)
         {
-            RemoteObjectWrapper remoteObjectWrapper = new RemoteObjectWrapper(port, id, host);
+            ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
             dataServers.Add(id, remoteObjectWrapper);
             Console.WriteLine("DS registed " + remoteObjectWrapper.Id + " w/ url: " + remoteObjectWrapper.URL);
         }
 
-        public List<RemoteObjectWrapper> open(string filename)
+        public List<ServerObjectWrapper> open(string filename)
         {
-            List<RemoteObjectWrapper> dataservers = new List<RemoteObjectWrapper>();
+
+            if (fileServers.ContainsKey(filename))
+            {
+                fileClients[filename]++;
+                return fileServers[filename];
+            }
+
             return null;
         }
 
         public void close(string filename)
         {
+            if (fileClients.ContainsKey(filename)) 
+            {
+                fileClients[filename]--;
+            }
+
             Console.WriteLine("#MDS " + Id + " close " + filename);
         }
 
@@ -82,28 +97,34 @@ namespace MetaDataServer
             Console.WriteLine("#MDS " + Id + " delete " + filename);
         }
 
-        public List<RemoteObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
+        public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
             Console.WriteLine("#MDS " + Id + " create " + filename);
 
-            if (numberOfDataServers <= dataServers.Count)
+            if (!fileServers.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
             {
-                return getFirstServers(numberOfDataServers);
+                fileMetadata.Add(filename, new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum));
+                List<ServerObjectWrapper> dataserversForFile = getFirstServers(numberOfDataServers);
+                fileServers.Add(filename, dataserversForFile);
+                fileClients.Add(filename, 1);
+                return dataserversForFile;
             }
-
-            return null;
+            {
+                return null;
+            }
+            
         }
 
-        private List<RemoteObjectWrapper> getFirstServers(int numDataServers)
+        private List<ServerObjectWrapper> getFirstServers(int numDataServers)
         {
             Console.WriteLine("ENTREI");
-            List<RemoteObjectWrapper> firstDataServers = new List<RemoteObjectWrapper>();
+            List<ServerObjectWrapper> firstDataServers = new List<ServerObjectWrapper>();
 
-            foreach (RemoteObjectWrapper dataserverWrapper in dataServers.Values)
+            foreach (ServerObjectWrapper dataserverWrapper in dataServers.Values)
             {
                 if (firstDataServers.Count < numDataServers)
                 {
-                    firstDataServers.Add(new RemoteObjectWrapper(dataserverWrapper));
+                    firstDataServers.Add(new ServerObjectWrapper(dataserverWrapper));
                 }
             }
             Console.WriteLine("LIST SIZE: " + firstDataServers.Count); 

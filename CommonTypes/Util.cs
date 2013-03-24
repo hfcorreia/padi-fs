@@ -24,8 +24,8 @@ namespace CommonTypes
             new System.Xml.Serialization.XmlSerializer(typeof(File));
 
             System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(
-             @dirName + getFileName(file.Name, file.Version) );
-            Console.WriteLine(file.Name);
+             @dirName + getFileName(file.FileName, file.Version) );
+            Console.WriteLine(file.FileName);
             Console.ReadLine();
             writer.Serialize(fileWriter, file);
             fileWriter.Close();

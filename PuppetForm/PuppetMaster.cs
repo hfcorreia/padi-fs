@@ -15,21 +15,24 @@ namespace PuppetForm
     class PuppetMaster 
     {
 
-        private Dictionary<int, RemoteObjectWrapper> clients = new Dictionary<int, RemoteObjectWrapper>();      //<clientId, clientWrapper>
-        private Dictionary<int, RemoteObjectWrapper> dataServers = new Dictionary<int, RemoteObjectWrapper>();  //<dataServerId, dataServerWrapper>
+        private Dictionary<int, ServerObjectWrapper> clients = new Dictionary<int, ServerObjectWrapper>();      //<clientId, clientWrapper>
+        private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
 
         public void createClient(int clientPort, int clientId)
         {
             Process.Start( "Client.exe", clientPort + " " + clientId );
-            RemoteObjectWrapper clientWrapper = new RemoteObjectWrapper( clientPort, clientId, "localhost" );
-            
-            clients.Add( clientId, clientWrapper );
+            ServerObjectWrapper clientWrapper = new ServerObjectWrapper( clientPort, clientId, "localhost" );
+
+            if (!clients.ContainsKey(clientId))
+            {
+                clients.Add(clientId, clientWrapper);
+            }
         }
 
         public void createDataServer( int port, int id )
         {
             Process.Start( "DataServer.exe", port + " " + id );
-            RemoteObjectWrapper dataServerWrapper = new RemoteObjectWrapper( port, id, "localhost" );
+            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper( port, id, "localhost" );
             if (!dataServers.ContainsKey(id))
             {
                 dataServers.Add(id, dataServerWrapper);
@@ -39,7 +42,7 @@ namespace PuppetForm
         public void startMetaDataServers( int numServers )
         {
             //MetadataServers are fixed and their proprieties are specified in CommonTypes project
-            foreach ( RemoteObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers )
+            foreach ( ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers )
             {
                 Process.Start( "MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id );
             }
@@ -83,19 +86,19 @@ namespace PuppetForm
             createClient(8085, 0);
 
             //send dummy message to all metadata servers:
-            foreach( RemoteObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers )
+            foreach( ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers )
             {
                 //metadataWrapper.getObject<IMetaDataServer>().open( "PuppetMaster - HelloWorld!" );
             }
 
             //send dummy message to all data servers:
-            foreach ( RemoteObjectWrapper dataServerWrapper in dataServers.Values )
+            foreach ( ServerObjectWrapper dataServerWrapper in dataServers.Values )
             {
                // dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
             }
 
             //send dummy message to all clients:
-            foreach ( RemoteObjectWrapper clientWrapper in clients.Values )
+            foreach ( ServerObjectWrapper clientWrapper in clients.Values )
             {
                // clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
             }
@@ -124,7 +127,7 @@ namespace PuppetForm
 
         public void exitAll() 
         {
-            foreach (RemoteObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
+            foreach (ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 try
                 {
@@ -132,7 +135,7 @@ namespace PuppetForm
                 }
                 catch (Exception e) { Console.WriteLine("Error Closing."); }
             }
-            foreach (RemoteObjectWrapper dataServerWrapper in dataServers.Values)
+            foreach (ServerObjectWrapper dataServerWrapper in dataServers.Values)
             {
                 try
                 {
@@ -140,7 +143,7 @@ namespace PuppetForm
                 }
                 catch (Exception e) { Console.WriteLine("Error Closing."); }
             }
-            foreach (RemoteObjectWrapper clientWrapper in clients.Values)
+            foreach (ServerObjectWrapper clientWrapper in clients.Values)
             {
                 try
                 {

@@ -6,7 +6,7 @@ using System.Text;
 namespace CommonTypes
 {
     [Serializable]
-    public class RemoteObjectWrapper
+    public class ServerObjectWrapper
     {
         
         public int Port { get; set; }
@@ -16,9 +16,9 @@ namespace CommonTypes
 
         private Object wrappedObject = null;
 
-        public RemoteObjectWrapper(RemoteObjectWrapper original) : this(original.Port, original.Id, original.Host) { }
+        public ServerObjectWrapper(ServerObjectWrapper original) : this(original.Port, original.Id, original.Host) { }
 
-        public RemoteObjectWrapper( int port, int id, string host ) 
+        public ServerObjectWrapper( int port, int id, string host ) 
         {
             Port = port;
             Id = id;
