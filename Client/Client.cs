@@ -59,6 +59,9 @@ namespace Client
             create("RIJO FILE.txt",2,1,1);
             open("RIJO FILE.txt");
             close("RIJO FILE.txt");
+            delete("RIJO FILE.txt");
+            open("RIJO FILE.txt");
+            
         }
 
         public void write(string filename) { Console.WriteLine("#CLIENT " + Id + " write " + filename); }
@@ -70,6 +73,7 @@ namespace Client
             {
                 Console.WriteLine("#CLIENT " + Id + " open " + filename);
                 List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
+                Console.WriteLine("Servers for file - " + filename + " - " + servers);
                 cacheServersForFile(filename, servers);
             }
         }
@@ -93,7 +97,15 @@ namespace Client
 
         }
 
-        public void delete(string filename) { Console.WriteLine("#CLIENT " + Id + " delete " + filename); }
+        public void delete(string filename) 
+        {
+
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                Console.WriteLine("#CLIENT " + Id + " delete " + filename);
+                metadataServerWrapper.getObject<IMetaDataServer>().delete(filename);
+            }
+        }
 
         public void create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum) 
         {

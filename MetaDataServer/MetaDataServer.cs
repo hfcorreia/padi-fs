@@ -42,8 +42,6 @@ namespace MetaDataServer
             }
         }
 
-        
-
         public void initialize(int port, int id)
         {
             Port = port;
@@ -52,7 +50,6 @@ namespace MetaDataServer
 
         public void startConnection()
         {
-
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = TypeFilterLevel.Full;
             IDictionary props = new Hashtable();
@@ -72,7 +69,6 @@ namespace MetaDataServer
 
         public List<ServerObjectWrapper> open(string filename)
         {
-
             if (fileServers.ContainsKey(filename))
             {
                 fileClients[filename]++;
@@ -95,6 +91,15 @@ namespace MetaDataServer
         public void delete(string filename)
         {
             Console.WriteLine("#MDS " + Id + " delete " + filename);
+            if (fileClients.ContainsKey(filename) && fileClients[filename] == 0)
+            {
+                fileClients.Remove(filename);
+                fileServers.Remove(filename);
+            }
+            else
+            { 
+                //throw eception - because the file is open or does not exist
+            }
         }
 
         public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
