@@ -7,11 +7,18 @@ namespace CommonTypes
 {
     public class File
     {
-        private string Name { get; set; }
-        private Int32 Version { get; set; }
-        private byte[] Content { get; set; }
+        public string Name { get; set; }
+        public Int32 Version { get; set; }
+        public byte[] Content { get; set; }
 
         public File() { }
 
+        public File(String name, Int32 verion, Byte[] content) {
+            Name = name;
+            Version = verion;
+            Content = content;
+        }
+
     }
+
 }
