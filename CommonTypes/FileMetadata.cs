@@ -13,7 +13,7 @@ namespace CommonTypes
         public int ReadQuorum { get; set; }
         public int WriteQuorum { get; set; }
         public int NumServers { get; set; }
-        
+
         public FileMetadata() { }
         public FileMetadata(String filename, int numServers, int readQuorum, int writeQuorum)
         {
