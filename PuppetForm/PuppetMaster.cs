@@ -52,7 +52,7 @@ namespace PuppetForm
 
             IClient client = sow.getObject<IClient>();
 
-            client.open(filename);
+            client.open(clientId, filename);
         }
 
         public void close(int clientId, string filename) {
@@ -60,7 +60,7 @@ namespace PuppetForm
 
             IClient client = sow.getObject<IClient>();
 
-            client.close(filename);
+            client.close(clientId, filename);
         }
 
         public void create(int clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)

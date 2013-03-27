@@ -20,13 +20,13 @@ namespace CommonTypes
          * Returns the metadata content for a given file.
          * In case the file does not exist throws an exception.
          **/
-        List<ServerObjectWrapper> open(string filename);
+        List<ServerObjectWrapper> open(int clientID, string filename);
 
         /**
          * Close
          * Informs the metadataserver that the client is no longer using a given file
          **/
-        void close(string filename);
+        void close(int clientId, string filename);
 
         /**
          * Delete

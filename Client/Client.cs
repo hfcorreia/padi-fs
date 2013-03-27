@@ -92,20 +92,20 @@ namespace Client
 
         public void read(string filename) { Console.WriteLine("Not done"); }
 
-        public void open(string filename) {
+        public void open(int clientId, string filename) {
             
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(filename);
+                List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open( clientId, filename);
                 cacheServersForFile(filename, servers);
             }
         }
 
-        public void close(string filename) 
+        public void close(int clientId, string filename) 
         { 
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                metadataServerWrapper.getObject<IMetaDataServer>().close(filename);
+                metadataServerWrapper.getObject<IMetaDataServer>().close(clientId, filename);
                 removeCacheServersForFile(filename);
             }
         }
@@ -152,16 +152,7 @@ namespace Client
             }
         }
 
-        public void sendToMetadataServer(string message) 
-        {
-            //we need to test this!
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                metadataServerWrapper.getObject<IMetaDataServer>().open("Client");
-            }
-        }
-
-        public void exit()
+         public void exit()
         {
             System.Environment.Exit(0);
         }

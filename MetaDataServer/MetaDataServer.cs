@@ -64,40 +64,44 @@ namespace MetaDataServer
             dataServers.Add(id, remoteObjectWrapper);
         }
 
-        public List<ServerObjectWrapper> open(string filename)
+        public List<ServerObjectWrapper> open(int clientID, string filename)
         {
-            if (filesInfo.ContainsKey(filename))
+            if (filesInfo.ContainsKey(filename) )
             {
-                Console.WriteLine("#MDS: opened " + filename);
-                filesInfo[filename].NumberOfClients++;
-                return filesInfo[filename].DataServers;
+                if (!filesInfo[filename].Clients.Contains(clientID))
+                {
+                    Console.WriteLine("#MDS: opened file: " + filename);
+                    filesInfo[filename].Clients.Add(clientID);
+                    return filesInfo[filename].DataServers;
+                }
+                return null;
             }
             else
             {
-                Console.WriteLine("#MDS: No such file " + filename);
+                Console.WriteLine("#MDS: No such file: " + filename);
                 return null;
             }
          }
 
-        public void close(string filename)
+        public void close(int clientID, string filename)
         {
-            if (filesInfo.ContainsKey(filename))
+            if (filesInfo.ContainsKey(filename) && filesInfo[filename].Clients.Contains(clientID))
             {
-                Console.WriteLine("#MDS: closed " + filename);
-                filesInfo[filename].NumberOfClients--;
+                Console.WriteLine("#MDS: closed file: " + filename);
+                filesInfo[filename].Clients.Remove(clientID);
             }
             else
             {
-                Console.WriteLine("#MDS: " + filename + " does not exist");
+                Console.WriteLine("#MDS: " + filename + "isn't open");
             }
         }
 
         public void delete(string filename)
         {
-            if (filesInfo.ContainsKey(filename) && filesInfo[filename].NumberOfClients == 0)
+            if (filesInfo.ContainsKey(filename) && filesInfo[filename].Clients.Count == 0)
             {
                 filesInfo.Remove(filename);
-                Console.WriteLine("#MDS: Deleted " + filename);
+                Console.WriteLine("#MDS: Deleted file: " + filename);
             }
             else
             { 

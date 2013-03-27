@@ -11,13 +11,13 @@ namespace MetaDataServer
     {
         public FileMetadata Metadata { get; set; }
         public List<ServerObjectWrapper> DataServers { get; set; }
-        public int NumberOfClients { get; set; }
+        public List<int> Clients { get; set; }
 
         public FileInfo(FileMetadata metadata, List<ServerObjectWrapper> dataServers)
         {
             Metadata = metadata;
             DataServers = dataServers;
-            NumberOfClients = 0;
+            Clients = new List<int>();
         }
     }
 
