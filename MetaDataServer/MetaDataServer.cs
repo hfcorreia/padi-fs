@@ -74,6 +74,7 @@ namespace MetaDataServer
                     filesInfo[filename].Clients.Add(clientID);
                     return filesInfo[filename].DataServers;
                 }
+                Console.WriteLine("#MDS: " + filename + " is already opened");
                 return null;
             }
             else
@@ -92,7 +93,7 @@ namespace MetaDataServer
             }
             else
             {
-                Console.WriteLine("#MDS: " + filename + "isn't open");
+                Console.WriteLine("#MDS: " + filename + " isn't open");
             }
         }
 

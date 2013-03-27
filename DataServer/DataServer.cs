@@ -80,7 +80,8 @@ namespace DataServer
             //creates a new file
             files.Add(file.FileName, file);
 
-            Util.writeToDisk(file, "" + "DS" + Id);
+            Util.writeFileToDisk(file, "" + "DS" + Id);
+            makeCheckpoint(this);
         }
 
         public File read(string filename)
@@ -90,7 +91,7 @@ namespace DataServer
                 return null; //throw exception because the file does not exist
             }
 
-            return Util.readFromDisk("DS" + Id, filename, files[filename].Version);
+            return Util.readFileFromDisk("DS" + Id, filename, files[filename].Version);
         }
 
 
@@ -110,6 +111,37 @@ namespace DataServer
         public void exit()
         {
             System.Environment.Exit(0);
+        }
+
+        public void makeCheckpoint(DataServer ds)
+        {
+            
+            int dataServerId = ds.Id;
+            Console.WriteLine("#DS: making checkpoint " + ds.Id);
+
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\DS" + dataServerId;
+            Util.createDir(dirName);
+
+            System.Xml.Serialization.XmlSerializer writer =
+            new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+
+            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+            writer.Serialize(fileWriter, ds);
+            fileWriter.Close();
+        }
+
+        public static DataServer getCheckpoint(int dataServerId)
+        {
+            System.Xml.Serialization.XmlSerializer reader =
+                      new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\DS" + dataServerId + "\\checkpoint.xml"; 
+            System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
+
+            DataServer dataServer = new DataServer();
+            dataServer = (DataServer)reader.Deserialize(fileReader);
+
+            return dataServer;
         }
 
     }

@@ -15,7 +15,7 @@ namespace CommonTypes
             }
         }
 
-        public static void writeToDisk(File file, String clientName)
+        public static void writeFileToDisk(File file, String clientName)
         {
             string dirName = Properties.Resources.TEMP_DIR + "\\" + clientName;
             Util.createDir(dirName);
@@ -28,7 +28,7 @@ namespace CommonTypes
             fileWriter.Close();
         }
 
-        public static File readFromDisk(String clientName, String name, Int32 version)
+        public static File readFileFromDisk(String clientName, String name, Int32 version)
         {
             System.Xml.Serialization.XmlSerializer reader =
                       new System.Xml.Serialization.XmlSerializer(typeof(File));
