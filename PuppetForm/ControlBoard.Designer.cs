@@ -36,6 +36,7 @@
             this.dataServerPortTextBox = new System.Windows.Forms.TextBox();
             this.testButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -59,6 +60,10 @@
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
             this.CreateFileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.openFileButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,7 +71,7 @@
             this.FileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.readFileButton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
@@ -81,16 +86,36 @@
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.writeFileButton = new System.Windows.Forms.Button();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.button12 = new System.Windows.Forms.Button();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.textBox10 = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox9.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox8.SuspendLayout();
+            this.groupBox10.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.SuspendLayout();
             // 
             // createClientButton
@@ -173,6 +198,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Metadata Server Control";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(33, 51);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(45, 13);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "MDS ID";
+            // 
             // button5
             // 
             this.button5.Location = new System.Drawing.Point(123, 108);
@@ -249,9 +283,9 @@
             this.groupBox4.Controls.Add(this.button10);
             this.groupBox4.Controls.Add(this.exitButton);
             this.groupBox4.Controls.Add(this.testButton);
-            this.groupBox4.Location = new System.Drawing.Point(605, 12);
+            this.groupBox4.Location = new System.Drawing.Point(584, 238);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(177, 141);
+            this.groupBox4.Size = new System.Drawing.Size(177, 167);
             this.groupBox4.TabIndex = 29;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "GENERAL";
@@ -313,9 +347,9 @@
             // 
             // createFileButton
             // 
-            this.createFileButton.Location = new System.Drawing.Point(6, 130);
+            this.createFileButton.Location = new System.Drawing.Point(6, 124);
             this.createFileButton.Name = "createFileButton";
-            this.createFileButton.Size = new System.Drawing.Size(166, 23);
+            this.createFileButton.Size = new System.Drawing.Size(166, 29);
             this.createFileButton.TabIndex = 24;
             this.createFileButton.Text = "Create File";
             this.createFileButton.UseVisualStyleBackColor = true;
@@ -378,6 +412,10 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.groupBox11);
+            this.groupBox5.Controls.Add(this.groupBox10);
+            this.groupBox5.Controls.Add(this.groupBox4);
+            this.groupBox5.Controls.Add(this.groupBox9);
             this.groupBox5.Controls.Add(this.groupBox7);
             this.groupBox5.Controls.Add(this.groupBox3);
             this.groupBox5.Controls.Add(this.groupBox1);
@@ -386,10 +424,49 @@
             this.groupBox5.Controls.Add(this.CreateFile);
             this.groupBox5.Location = new System.Drawing.Point(12, 159);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(768, 236);
+            this.groupBox5.Size = new System.Drawing.Size(770, 402);
             this.groupBox5.TabIndex = 14;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.writeFileButton);
+            this.groupBox9.Controls.Add(this.textBox3);
+            this.groupBox9.Controls.Add(this.label12);
+            this.groupBox9.Controls.Add(this.textBox1);
+            this.groupBox9.Controls.Add(this.label8);
+            this.groupBox9.Location = new System.Drawing.Point(584, 71);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(184, 161);
+            this.groupBox9.TabIndex = 29;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "WriteFile";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 48);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(97, 13);
+            this.label12.TabIndex = 4;
+            this.label12.Text = "Byte Array Register";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(75, 23);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(102, 20);
+            this.textBox1.TabIndex = 30;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(4, 26);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 13);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "File Register";
             // 
             // groupBox7
             // 
@@ -454,7 +531,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.button2);
+            this.groupBox1.Controls.Add(this.readFileButton);
             this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.textBox7);
             this.groupBox1.Controls.Add(this.textBox6);
@@ -468,14 +545,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Read File";
             // 
-            // button2
+            // readFileButton
             // 
-            this.button2.Location = new System.Drawing.Point(6, 132);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(192, 23);
-            this.button2.TabIndex = 28;
-            this.button2.Text = "Read File";
-            this.button2.UseVisualStyleBackColor = true;
+            this.readFileButton.Location = new System.Drawing.Point(6, 124);
+            this.readFileButton.Name = "readFileButton";
+            this.readFileButton.Size = new System.Drawing.Size(192, 31);
+            this.readFileButton.TabIndex = 28;
+            this.readFileButton.Text = "Read File";
+            this.readFileButton.UseVisualStyleBackColor = true;
             // 
             // comboBox2
             // 
@@ -538,7 +615,7 @@
             this.groupBox6.Controls.Add(this.groupBox8);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
-            this.groupBox6.Location = new System.Drawing.Point(260, 12);
+            this.groupBox6.Location = new System.Drawing.Point(441, 12);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(339, 141);
             this.groupBox6.TabIndex = 7;
@@ -610,23 +687,179 @@
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "1";
             // 
-            // label6
+            // textBox3
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(33, 51);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(45, 13);
-            this.label6.TabIndex = 20;
-            this.label6.Text = "MDS ID";
+            this.textBox3.Location = new System.Drawing.Point(109, 45);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(68, 20);
+            this.textBox3.TabIndex = 31;
+            // 
+            // writeFileButton
+            // 
+            this.writeFileButton.Location = new System.Drawing.Point(5, 124);
+            this.writeFileButton.Name = "writeFileButton";
+            this.writeFileButton.Size = new System.Drawing.Size(173, 31);
+            this.writeFileButton.TabIndex = 32;
+            this.writeFileButton.Text = "Write File";
+            this.writeFileButton.UseVisualStyleBackColor = true;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.label14);
+            this.groupBox10.Controls.Add(this.button2);
+            this.groupBox10.Controls.Add(this.textBox5);
+            this.groupBox10.Controls.Add(this.textBox4);
+            this.groupBox10.Controls.Add(this.label13);
+            this.groupBox10.Location = new System.Drawing.Point(8, 236);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(175, 165);
+            this.groupBox10.TabIndex = 33;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Write File";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(5, 28);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(65, 13);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "File Register";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(76, 28);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(93, 20);
+            this.textBox4.TabIndex = 33;
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(76, 54);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(93, 20);
+            this.textBox5.TabIndex = 34;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(6, 134);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(164, 25);
+            this.button2.TabIndex = 35;
+            this.button2.Text = "Write File";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(5, 57);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(49, 13);
+            this.label14.TabIndex = 32;
+            this.label14.Text = "Contents";
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.textBox10);
+            this.groupBox11.Controls.Add(this.textBox9);
+            this.groupBox11.Controls.Add(this.textBox8);
+            this.groupBox11.Controls.Add(this.button12);
+            this.groupBox11.Controls.Add(this.label18);
+            this.groupBox11.Controls.Add(this.comboBox1);
+            this.groupBox11.Controls.Add(this.label17);
+            this.groupBox11.Controls.Add(this.label16);
+            this.groupBox11.Controls.Add(this.label15);
+            this.groupBox11.Location = new System.Drawing.Point(192, 236);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(176, 164);
+            this.groupBox11.TabIndex = 36;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Copy";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 28);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(71, 13);
+            this.label15.TabIndex = 4;
+            this.label15.Text = "File Register1";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(6, 84);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(71, 13);
+            this.label16.TabIndex = 5;
+            this.label16.Text = "File Register2";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Default",
+            "Monotonic"});
+            this.comboBox1.Location = new System.Drawing.Point(77, 54);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(93, 21);
+            this.comboBox1.TabIndex = 37;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(6, 57);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(56, 13);
+            this.label17.TabIndex = 27;
+            this.label17.Text = "Semantics";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 108);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(25, 13);
+            this.label18.TabIndex = 29;
+            this.label18.Text = "Salt";
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(6, 136);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(164, 24);
+            this.button12.TabIndex = 40;
+            this.button12.Text = "Copy File";
+            this.button12.UseVisualStyleBackColor = true;
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(77, 25);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(93, 20);
+            this.textBox8.TabIndex = 36;
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(77, 81);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(93, 20);
+            this.textBox9.TabIndex = 38;
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(77, 105);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(93, 20);
+            this.textBox10.TabIndex = 39;
             // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 407);
+            this.ClientSize = new System.Drawing.Size(789, 573);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox2);
             this.Name = "ControlBoard";
             this.Text = "Puppet Master";
@@ -639,6 +872,8 @@
             this.CreateFile.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -649,6 +884,10 @@
             this.groupBox6.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -689,7 +928,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button readFileButton;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.TextBox textBox6;
@@ -709,6 +948,28 @@
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button writeFileButton;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label label13;
     }
 }
 
