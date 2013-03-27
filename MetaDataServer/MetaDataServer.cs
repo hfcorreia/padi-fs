@@ -68,7 +68,7 @@ namespace MetaDataServer
         {
             if (filesInfo.ContainsKey(filename))
             {
-                Console.WriteLine("#MDS: " + filename + " does not exist");
+                Console.WriteLine("#MDS: opened " + filename);
                 filesInfo[filename].NumberOfClients++;
                 return filesInfo[filename].DataServers;
             }
