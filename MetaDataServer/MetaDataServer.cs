@@ -21,6 +21,7 @@ namespace MetaDataServer
         
         static void Main(string[] args)
         {
+            Console.SetWindowSize(80, 15);
             if (args.Length < 2)
             {
                 Console.WriteLine("Usage: port metadataServerId");
@@ -33,8 +34,7 @@ namespace MetaDataServer
                 Util.createDir(CommonTypes.Properties.Resources.TEMP_DIR);
                 metadataServer.startConnection();
 
-                Console.WriteLine("port: " + metadataServer.Port + " Id: " + metadataServer.Id + " url: " + metadataServer.Url);
-                Console.WriteLine("connection started");
+                Console.WriteLine("#MDS: Registered " + metadataServer.Id + " at " + metadataServer.Url);
                 Console.ReadLine();
             }
         }
@@ -59,38 +59,45 @@ namespace MetaDataServer
 
         public void registDataServer(int id, string host, int port)
         {
+            Console.WriteLine("#MDS: Registering DS " + id);
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
             dataServers.Add(id, remoteObjectWrapper);
-            Console.WriteLine("DS registed " + remoteObjectWrapper.Id + " w/ url: " + remoteObjectWrapper.URL);
         }
 
         public List<ServerObjectWrapper> open(string filename)
         {
             if (filesInfo.ContainsKey(filename))
             {
+                Console.WriteLine("#MDS: " + filename + " does not exist");
                 filesInfo[filename].NumberOfClients++;
                 return filesInfo[filename].DataServers;
             }
-
-            return null;
-        }
+            else
+            {
+                Console.WriteLine("#MDS: No such file " + filename);
+                return null;
+            }
+         }
 
         public void close(string filename)
         {
-            if (filesInfo.ContainsKey(filename)) 
+            if (filesInfo.ContainsKey(filename))
             {
+                Console.WriteLine("#MDS: closed " + filename);
                 filesInfo[filename].NumberOfClients--;
             }
-
-            Console.WriteLine("#MDS " + Id + " close " + filename);
+            else
+            {
+                Console.WriteLine("#MDS: " + filename + " does not exist");
+            }
         }
 
         public void delete(string filename)
         {
-            Console.WriteLine("#MDS " + Id + " delete " + filename);
             if (filesInfo.ContainsKey(filename) && filesInfo[filename].NumberOfClients == 0)
             {
                 filesInfo.Remove(filename);
+                Console.WriteLine("#MDS: Deleted " + filename);
             }
             else
             { 
@@ -100,8 +107,6 @@ namespace MetaDataServer
 
         public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            Console.WriteLine("#MDS " + Id + " create " + filename);
-
             if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
             {
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum);
@@ -110,9 +115,10 @@ namespace MetaDataServer
                 FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
                 filesInfo.Add(filename, newFileInfo);
-
+                Console.WriteLine("#MDS: Created " + filename);
                 return newFileDataServers;
             }
+            else
             {
                 return null; // throws exception
             }
@@ -121,7 +127,6 @@ namespace MetaDataServer
 
         private List<ServerObjectWrapper> getFirstServers(int numDataServers)
         {
-            Console.WriteLine("ENTREI");
             List<ServerObjectWrapper> firstDataServers = new List<ServerObjectWrapper>();
 
             foreach (ServerObjectWrapper dataserverWrapper in dataServers.Values)
@@ -131,11 +136,11 @@ namespace MetaDataServer
                     firstDataServers.Add(new ServerObjectWrapper(dataserverWrapper));
                 }
             }
-            Console.WriteLine("LIST SIZE: " + firstDataServers.Count); 
             return firstDataServers;
         }
 
         public void fail() { }
+     
         public void recover() { }
 
         public void exit() 

@@ -25,6 +25,7 @@ namespace DataServer
 
         static void Main(string[] args)
         {
+            Console.SetWindowSize(80, 15);
             if (args.Length < 2)
             {
                 Console.WriteLine("Usage: port metadataServerId");
@@ -36,12 +37,7 @@ namespace DataServer
                 dataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]), "localhost");
                 dataServer.startConnection();
 
-                ///File newFile = new File("dataServerSession", 1, new byte[] { 0110 });
-                ///Util.writeToDisk(newFile, "" + "DS" + dataServer.Id);
-                ///Util.readFromDisk("DS" + dataServer.Id, "dataServerSession", 1);
-
-                Console.WriteLine("port: " + dataServer.Port + " Id: " + dataServer.Id + " url: " + dataServer.Url);
-                Console.WriteLine("connection started");
+                Console.WriteLine("#DS: Registered "+ dataServer.Id + " at " + dataServer.Url);
                 Console.ReadLine();
             }
         }
@@ -71,7 +67,6 @@ namespace DataServer
 
         public void write(File file)
         {
-            Console.WriteLine("#DS " + Id + " write [filename: " + file.FileName + ", version:" + file.Version + "content: " + file.Content + "] - START");
             if (file == null)
             {
                 return;
@@ -86,15 +81,10 @@ namespace DataServer
             files.Add(file.FileName, file);
 
             Util.writeToDisk(file, "" + "DS" + Id);
-
-            Console.WriteLine("#DS " + Id + " write [filename: " + file.FileName + ", version:" + file.Version + "content: " + file.Content + "] - DONE!");
         }
-
-
 
         public File read(string filename)
         {
-            Console.WriteLine("#DS " + Id + " read " + filename);
             if (filename == null || !files.ContainsKey(filename))
             {
                 return null; //throw exception because the file does not exist
@@ -106,7 +96,6 @@ namespace DataServer
 
         public void registInMetadataServers()
         {
-            //we need to test this!
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 metadataServerWrapper.getObject<IMetaDataServer>().registDataServer(Id, Host, Port);

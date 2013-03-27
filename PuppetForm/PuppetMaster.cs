@@ -47,6 +47,30 @@ namespace PuppetForm
                 Process.Start( "MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id );
             }
         }
+        public void open(int clientId, string filename) {
+            ServerObjectWrapper sow = clients[clientId];
+
+            IClient client = sow.getObject<IClient>();
+
+            client.open(filename);
+        }
+
+        public void close(int clientId, string filename) {
+            ServerObjectWrapper sow = clients[clientId];
+
+            IClient client = sow.getObject<IClient>();
+
+            client.close(filename);
+        }
+
+        public void create(int clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
+        {
+            ServerObjectWrapper sow = clients[clientId];
+
+            IClient client = sow.getObject<IClient>();
+
+            client.create(filename, numberDataServers, readQuorum, writeQuorum);
+        }
 
         public void fail(string process) { }
 
@@ -55,12 +79,6 @@ namespace PuppetForm
         public void freeze(string process) { }
 
         public void unfreeze(string process) { }
-
-        public void create(string process, string filename, int numberDataServers, int readQuorum, int writeQuorum) { }
-
-        public void open(string process, string filename) { }
-
-        public void close(string process, string filename) { }
 
         public void read(string process, string fileRegister, string semantics, string stringRegister) { }
 

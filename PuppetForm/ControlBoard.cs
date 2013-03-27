@@ -59,14 +59,24 @@ namespace PuppetForm
             //puppetMaster.exitAll();
         }
 
-        private void label12_Click(object sender, EventArgs e)
+        private void openFileButton_Click(object sender, EventArgs e)
         {
-
+            puppetMaster.open(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        private void closeFileButton_Click(object sender, EventArgs e)
         {
+            puppetMaster.close(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
+        }
 
+        private void createFileButton_Click(object sender, EventArgs e)
+        {
+            int clientId = Int32.Parse(clientNameTextBox.Text);
+            int nDS = Int32.Parse(NumDsTextBox.Text);
+            int rQ = Int32.Parse(ReadQuorumTextBox.Text);
+            int wQ = Int32.Parse(WriteQuorumTextBox.Text);
+
+            puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
         }
 
     }
