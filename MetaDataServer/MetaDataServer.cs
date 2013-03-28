@@ -11,14 +11,15 @@ using System.Collections;
 
 namespace MetaDataServer
 {
+    [Serializable]
     public class MetaDataServer : MarshalByRefObject, IMetaDataServer
     {
-        public  int Port { get; set; }
-        public  int Id { get; set; }
+        public int Port { get; set; }
+        public int Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
         private Dictionary<string, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
-        
+
         static void Main(string[] args)
         {
             Console.SetWindowSize(80, 15);
@@ -32,7 +33,7 @@ namespace MetaDataServer
                 MetaDataServer metadataServer = new MetaDataServer();
                 metadataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]));
                 Util.createDir(CommonTypes.Properties.Resources.TEMP_DIR);
-                metadataServer.startConnection();
+                metadataServer.startConnection(metadataServer);
 
                 Console.WriteLine("#MDS: Registered " + metadataServer.Id + " at " + metadataServer.Url);
                 Console.ReadLine();
@@ -45,7 +46,7 @@ namespace MetaDataServer
             Id = id;
         }
 
-        public void startConnection()
+        public void startConnection(MetaDataServer metadataServer)
         {
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -54,7 +55,7 @@ namespace MetaDataServer
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(MetaDataServer), "" + Id, WellKnownObjectMode.Singleton);
+            RemotingServices.Marshal(metadataServer, "" + Id, typeof(MetaDataServer));
         }
 
         public void registDataServer(int id, string host, int port)
@@ -62,16 +63,18 @@ namespace MetaDataServer
             Console.WriteLine("#MDS: Registering DS " + id);
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
             dataServers.Add(id, remoteObjectWrapper);
+            makeCheckpoint();
         }
 
         public List<ServerObjectWrapper> open(int clientID, string filename)
         {
-            if (filesInfo.ContainsKey(filename) )
+            if (filesInfo.ContainsKey(filename))
             {
                 if (!filesInfo[filename].Clients.Contains(clientID))
                 {
                     Console.WriteLine("#MDS: opened file: " + filename);
                     filesInfo[filename].Clients.Add(clientID);
+                    makeCheckpoint();
                     return filesInfo[filename].DataServers;
                 }
                 Console.WriteLine("#MDS: " + filename + " is already opened");
@@ -82,7 +85,7 @@ namespace MetaDataServer
                 Console.WriteLine("#MDS: No such file: " + filename);
                 return null;
             }
-         }
+        }
 
         public void close(int clientID, string filename)
         {
@@ -90,6 +93,7 @@ namespace MetaDataServer
             {
                 Console.WriteLine("#MDS: closed file: " + filename);
                 filesInfo[filename].Clients.Remove(clientID);
+                makeCheckpoint();
             }
             else
             {
@@ -103,9 +107,10 @@ namespace MetaDataServer
             {
                 filesInfo.Remove(filename);
                 Console.WriteLine("#MDS: Deleted file: " + filename);
+                makeCheckpoint();
             }
             else
-            { 
+            {
                 //throw eception - because the file is open or does not exist
             }
         }
@@ -116,18 +121,19 @@ namespace MetaDataServer
             {
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum);
                 List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
-                
+
                 FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
                 filesInfo.Add(filename, newFileInfo);
                 Console.WriteLine("#MDS: Created " + filename);
+                makeCheckpoint();
                 return newFileDataServers;
             }
             else
             {
                 return null; // throws exception
             }
-            
+
         }
 
         private List<ServerObjectWrapper> getFirstServers(int numDataServers)
@@ -145,12 +151,44 @@ namespace MetaDataServer
         }
 
         public void fail() { }
-     
+
         public void recover() { }
 
-        public void exit() 
+        public void exit()
         {
             System.Environment.Exit(0);
+        }
+
+
+        public void makeCheckpoint()
+        {
+
+            int metadataServerId = Id;
+            Console.WriteLine("#MDS: making checkpoint " + Id);
+
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\MDS" + metadataServerId;
+            Util.createDir(dirName);
+
+            System.Xml.Serialization.XmlSerializer writer =
+            new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+
+            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+            writer.Serialize(fileWriter, this);
+            fileWriter.Close();
+        }
+
+        public static MetaDataServer getCheckpoint(int metadataServerId)
+        {
+            System.Xml.Serialization.XmlSerializer reader =
+                      new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\MDS" + metadataServerId + "\\checkpoint.xml";
+            System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
+
+            MetaDataServer metadaServer = new MetaDataServer();
+            metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
+
+            return metadaServer;
         }
     }
 

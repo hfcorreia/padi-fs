@@ -35,7 +35,7 @@ namespace DataServer
             {
                 DataServer dataServer = new DataServer();
                 dataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]), "localhost");
-                dataServer.startConnection();
+                dataServer.startConnection(dataServer);
 
                 Console.WriteLine("#DS: Registered "+ dataServer.Id + " at " + dataServer.Url);
                 Console.ReadLine();
@@ -49,7 +49,7 @@ namespace DataServer
             Host = host;
         }
 
-        public void startConnection()
+        public void startConnection(DataServer dataServer)
         {
 
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
@@ -59,7 +59,7 @@ namespace DataServer
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(DataServer), "" + Id, WellKnownObjectMode.Singleton);
+            RemotingServices.Marshal(dataServer, "" + Id, typeof(DataServer));
             registInMetadataServers();
             
         }
@@ -81,7 +81,7 @@ namespace DataServer
             files.Add(file.FileName, file);
 
             Util.writeFileToDisk(file, "" + "DS" + Id);
-            makeCheckpoint(this);
+            makeCheckpoint();
         }
 
         public File read(string filename)
@@ -113,11 +113,11 @@ namespace DataServer
             System.Environment.Exit(0);
         }
 
-        public void makeCheckpoint(DataServer ds)
+        public void makeCheckpoint()
         {
             
-            int dataServerId = ds.Id;
-            Console.WriteLine("#DS: making checkpoint " + ds.Id);
+            int dataServerId = Id;
+            Console.WriteLine("#DS: making checkpoint " + Id);
 
             string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\DS" + dataServerId;
             Util.createDir(dirName);
@@ -126,7 +126,7 @@ namespace DataServer
             new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
             System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-            writer.Serialize(fileWriter, ds);
+            writer.Serialize(fileWriter, this);
             fileWriter.Close();
         }
 

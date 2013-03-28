@@ -11,6 +11,7 @@ using System.Collections;
 
 namespace Client
 {
+    [Serializable]
     public class Client : MarshalByRefObject, IClient
     {
         private static int INITIAL_FILE_VERSION = 0;
@@ -33,7 +34,7 @@ namespace Client
                 Client client = new Client();
                 client.initialize(Int32.Parse(args[0]), args[1]);
 
-                client.startConnection();
+                client.startConnection(client);
                 Console.WriteLine("#Client: Registered " + client.Id + " at " + client.Url);
                 Console.ReadLine();
             }
@@ -46,7 +47,7 @@ namespace Client
             Id = id;
         }
 
-        void startConnection()
+        void startConnection(Client client)
         {
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -55,7 +56,7 @@ namespace Client
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), Id, WellKnownObjectMode.Singleton);
+            RemotingServices.Marshal(client, "" + Id, typeof(Client));
 
         }
 
