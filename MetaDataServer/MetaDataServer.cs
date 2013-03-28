@@ -68,22 +68,18 @@ namespace MetaDataServer
 
         public List<ServerObjectWrapper> open(int clientID, string filename)
         {
-            if (filesInfo.ContainsKey(filename))
+            if (filesInfo.ContainsKey(filename) && !filesInfo[filename].Clients.Contains(clientID))
             {
-                if (!filesInfo[filename].Clients.Contains(clientID))
-                {
                     Console.WriteLine("#MDS: opened file: " + filename);
                     filesInfo[filename].Clients.Add(clientID);
                     makeCheckpoint();
                     return filesInfo[filename].DataServers;
-                }
-                Console.WriteLine("#MDS: " + filename + " is already opened");
-                return null;
             }
             else
             {
-                Console.WriteLine("#MDS: No such file: " + filename);
-                return null;
+               if (!filesInfo.ContainsKey(filename))
+                    throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " does not exist");
+                else throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " is already opend.");
             }
         }
 

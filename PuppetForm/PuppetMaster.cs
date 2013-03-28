@@ -51,8 +51,14 @@ namespace PuppetForm
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
-
-            client.open(clientId, filename);
+            try
+            {
+                client.open(clientId, filename);
+            }
+            catch (CommonTypes.Exceptions.OpenFileException e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
         }
 
         public void close(int clientId, string filename) {
