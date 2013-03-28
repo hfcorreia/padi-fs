@@ -69,7 +69,31 @@ namespace PuppetForm
 
             IClient client = sow.getObject<IClient>();
 
-            client.create(filename, numberDataServers, readQuorum, writeQuorum);
+            try
+            {
+                client.create(filename, numberDataServers, readQuorum, writeQuorum);
+            }
+            catch (CommonTypes.Exceptions.CreateFileException e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+        }
+
+        public void delete(int clientId, string filename)
+        {
+            ServerObjectWrapper sow = clients[clientId];
+
+            IClient client = sow.getObject<IClient>();
+
+            try
+            {
+                client.delete(filename);
+            }
+            catch (CommonTypes.Exceptions.DeleteFileException e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+
         }
 
         public void fail(string process) { }

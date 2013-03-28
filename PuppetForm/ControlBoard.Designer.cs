@@ -57,6 +57,9 @@
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
             this.CreateFileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
@@ -101,13 +104,12 @@
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox12.SuspendLayout();
             this.groupBox11.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -116,7 +118,6 @@
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox8.SuspendLayout();
-            this.groupBox12.SuspendLayout();
             this.SuspendLayout();
             // 
             // createClientButton
@@ -401,6 +402,36 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
             // 
+            // groupBox12
+            // 
+            this.groupBox12.Controls.Add(this.button4);
+            this.groupBox12.Controls.Add(this.button3);
+            this.groupBox12.Location = new System.Drawing.Point(374, 236);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(203, 164);
+            this.groupBox12.TabIndex = 41;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "Scripts";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(6, 132);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(192, 26);
+            this.button4.TabIndex = 42;
+            this.button4.Text = "Run Script";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(6, 101);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(192, 26);
+            this.button3.TabIndex = 41;
+            this.button3.Text = "Load Script";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // groupBox11
             // 
             this.groupBox11.Controls.Add(this.textBox10);
@@ -608,6 +639,7 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.button10);
             this.groupBox7.Controls.Add(this.openFileButton);
             this.groupBox7.Controls.Add(this.label1);
             this.groupBox7.Controls.Add(this.closeFileButton);
@@ -621,7 +653,7 @@
             // 
             // openFileButton
             // 
-            this.openFileButton.Location = new System.Drawing.Point(6, 92);
+            this.openFileButton.Location = new System.Drawing.Point(6, 61);
             this.openFileButton.Name = "openFileButton";
             this.openFileButton.Size = new System.Drawing.Size(166, 26);
             this.openFileButton.TabIndex = 18;
@@ -640,7 +672,7 @@
             // 
             // closeFileButton
             // 
-            this.closeFileButton.Location = new System.Drawing.Point(6, 124);
+            this.closeFileButton.Location = new System.Drawing.Point(6, 93);
             this.closeFileButton.Name = "closeFileButton";
             this.closeFileButton.Size = new System.Drawing.Size(166, 26);
             this.closeFileButton.TabIndex = 19;
@@ -825,35 +857,15 @@
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "1";
             // 
-            // groupBox12
+            // button10
             // 
-            this.groupBox12.Controls.Add(this.button4);
-            this.groupBox12.Controls.Add(this.button3);
-            this.groupBox12.Location = new System.Drawing.Point(374, 236);
-            this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(203, 164);
-            this.groupBox12.TabIndex = 41;
-            this.groupBox12.TabStop = false;
-            this.groupBox12.Text = "Scripts";
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(6, 101);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(192, 26);
-            this.button3.TabIndex = 41;
-            this.button3.Text = "Load Script";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(6, 132);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(192, 26);
-            this.button4.TabIndex = 42;
-            this.button4.Text = "Run Script";
-            this.button4.UseVisualStyleBackColor = true;
+            this.button10.Location = new System.Drawing.Point(6, 124);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(166, 26);
+            this.button10.TabIndex = 20;
+            this.button10.Text = "Delete File";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // ControlBoard
             // 
@@ -874,6 +886,7 @@
             this.CreateFile.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.groupBox12.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
             this.groupBox10.ResumeLayout(false);
@@ -890,7 +903,6 @@
             this.groupBox6.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
-            this.groupBox12.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -973,6 +985,7 @@
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button10;
     }
 }
 

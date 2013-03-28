@@ -88,6 +88,13 @@ namespace PuppetForm
             }
         }
 
+        private void button10_Click(object sender, EventArgs e)
+        {
+            puppetMaster.delete(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
+
+
+        }
+
     
 
     }

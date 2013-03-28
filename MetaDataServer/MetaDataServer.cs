@@ -111,13 +111,18 @@ namespace MetaDataServer
             }
             else
             {
-                //throw eception - because the file is open or does not exist
+                if (!filesInfo.ContainsKey(filename))
+                    throw new CommonTypes.Exceptions.DeleteFileException("File " + filename + " does not exist");
+                else throw new CommonTypes.Exceptions.DeleteFileException("File " + filename + " is open.");
             }
         }
 
         public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count && readQuorum <= numberOfDataServers && writeQuorum <= numberOfDataServers)
+            if(! (readQuorum <= numberOfDataServers) || ! (writeQuorum <= numberOfDataServers) ) 
+                throw new CommonTypes.Exceptions.CreateFileException("Invalid quorums values in create " + filename);
+
+            if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
             {
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum);
                 List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
@@ -131,7 +136,7 @@ namespace MetaDataServer
             }
             else
             {
-                return null; // throws exception
+                throw new CommonTypes.Exceptions.CreateFileException("Not enough data servers for create " + filename);
             }
 
         }
@@ -164,8 +169,6 @@ namespace MetaDataServer
         {
 
             int metadataServerId = Id;
-            Console.WriteLine("#MDS: making checkpoint " + Id);
-
             string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\MDS" + metadataServerId;
             Util.createDir(dirName);
 
