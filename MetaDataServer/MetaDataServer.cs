@@ -70,14 +70,14 @@ namespace MetaDataServer
         {
             if (filesInfo.ContainsKey(filename) && !filesInfo[filename].Clients.Contains(clientID))
             {
-                    Console.WriteLine("#MDS: opened file: " + filename);
-                    filesInfo[filename].Clients.Add(clientID);
-                    makeCheckpoint();
-                    return filesInfo[filename].DataServers;
+                Console.WriteLine("#MDS: opened file: " + filename);
+                filesInfo[filename].Clients.Add(clientID);
+                makeCheckpoint();
+                return filesInfo[filename].DataServers;
             }
             else
             {
-               if (!filesInfo.ContainsKey(filename))
+                if (!filesInfo.ContainsKey(filename))
                     throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " does not exist");
                 else throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " is already opend.");
             }
@@ -117,7 +117,7 @@ namespace MetaDataServer
 
         public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            if(! (readQuorum <= numberOfDataServers) || ! (writeQuorum <= numberOfDataServers) ) 
+            if (!(readQuorum <= numberOfDataServers) || !(writeQuorum <= numberOfDataServers))
                 throw new CommonTypes.Exceptions.CreateFileException("Invalid quorums values in create " + filename);
 
             if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)

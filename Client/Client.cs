@@ -15,7 +15,7 @@ namespace Client
     public class Client : MarshalByRefObject, IClient
     {
         private static int INITIAL_FILE_VERSION = 0;
-        private static byte[] INITIAL_FILE_CONTENT = new byte[]{};
+        private static byte[] INITIAL_FILE_CONTENT = new byte[] { };
 
         private int Port { get; set; }
         private string Id { get; set; }
@@ -72,16 +72,17 @@ namespace Client
             int fileVersion = 0;
             if (fileServers.ContainsKey(filename))
             {
-                foreach (ServerObjectWrapper dataServerWrapper in fileServers[filename]){
+                foreach (ServerObjectWrapper dataServerWrapper in fileServers[filename])
+                {
                     fileVersion = dataServerWrapper.getObject<IDataServer>().readFileVersion(filename);
                 }
             }
-           
+
             return fileVersion;
         }
 
         public void write(File file)
-        { 
+        {
             if (fileServers.ContainsKey(file.FileName))
             {
                 foreach (ServerObjectWrapper dataServerWrapper in fileServers[file.FileName])
@@ -93,16 +94,17 @@ namespace Client
 
         public void read(string filename) { Console.WriteLine("Not done"); }
 
-        public void open(int clientId, string filename) {
-            
+        public void open(int clientId, string filename)
+        {
+
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open( clientId, filename);
+                List<ServerObjectWrapper> servers = metadataServerWrapper.getObject<IMetaDataServer>().open(clientId, filename);
                 cacheServersForFile(filename, servers);
             }
         }
 
-        public void close(int clientId, string filename) 
+        public void close(int clientId, string filename)
         {
             Console.WriteLine("#Client: closing file " + filename);
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
@@ -110,6 +112,33 @@ namespace Client
                 metadataServerWrapper.getObject<IMetaDataServer>().close(clientId, filename);
                 removeCacheServersForFile(filename);
             }
+        }
+
+
+
+        public void delete(string filename)
+        {
+            Console.WriteLine("#Client: Deleting file " + filename);
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                metadataServerWrapper.getObject<IMetaDataServer>().delete(filename);
+            }
+        }
+
+        public void create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
+        {
+            Console.WriteLine("#Client: creating file " + filename);
+            List<ServerObjectWrapper> dataserverForFile = null;
+            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+
+                dataserverForFile = metadataServerWrapper.getObject<IMetaDataServer>().create(filename, numberOfDataServers, readQuorum, writeQuorum);
+            }
+
+            cacheServersForFile(filename, dataserverForFile);
+
+            File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
+            write(emptyFile); //writes an empty file
         }
 
         private void removeCacheServersForFile(string filename)
@@ -121,31 +150,6 @@ namespace Client
 
         }
 
-        public void delete(string filename) 
-        {
-
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                metadataServerWrapper.getObject<IMetaDataServer>().delete(filename);
-            }
-        }
-
-        public void create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
-        {
-            Console.WriteLine("#Client: creating file " + filename );
-            List<ServerObjectWrapper> dataserverForFile = null;
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                
-                dataserverForFile = metadataServerWrapper.getObject<IMetaDataServer>().create(filename, numberOfDataServers, readQuorum, writeQuorum);
-            }
-            
-            cacheServersForFile(filename, dataserverForFile);
-
-            File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
-            write(emptyFile); //writes an empty file
-        }
-
         private void cacheServersForFile(string filename, List<ServerObjectWrapper> dataserverForFile)
         {
             if (!fileServers.ContainsKey(filename))
@@ -154,7 +158,7 @@ namespace Client
             }
         }
 
-         public void exit()
+        public void exit()
         {
             System.Environment.Exit(0);
         }

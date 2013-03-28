@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,7 +12,7 @@ using CommonTypes;
 
 namespace PuppetForm
 {
-    class PuppetMaster 
+    class PuppetMaster
     {
 
         private Dictionary<int, ServerObjectWrapper> clients = new Dictionary<int, ServerObjectWrapper>();      //<clientId, clientWrapper>
@@ -20,8 +20,8 @@ namespace PuppetForm
 
         public void createClient(int clientPort, int clientId)
         {
-            Process.Start( "Client.exe", clientPort + " " + clientId );
-            ServerObjectWrapper clientWrapper = new ServerObjectWrapper( clientPort, clientId, "localhost" );
+            Process.Start("Client.exe", clientPort + " " + clientId);
+            ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
 
             if (!clients.ContainsKey(clientId))
             {
@@ -29,25 +29,26 @@ namespace PuppetForm
             }
         }
 
-        public void createDataServer( int port, int id )
+        public void createDataServer(int port, int id)
         {
-            Process.Start( "DataServer.exe", port + " " + id );
-            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper( port, id, "localhost" );
+            Process.Start("DataServer.exe", port + " " + id);
+            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
             if (!dataServers.ContainsKey(id))
             {
                 dataServers.Add(id, dataServerWrapper);
             }
         }
-        
-        public void startMetaDataServers( int numServers )
+
+        public void startMetaDataServers(int numServers)
         {
             //MetadataServers are fixed and their proprieties are specified in CommonTypes project
-            foreach ( ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers )
+            foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                Process.Start( "MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id );
+                Process.Start("MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id);
             }
         }
-        public void open(int clientId, string filename) {
+        public void open(int clientId, string filename)
+        {
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
@@ -61,7 +62,8 @@ namespace PuppetForm
             }
         }
 
-        public void close(int clientId, string filename) {
+        public void close(int clientId, string filename)
+        {
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
@@ -126,16 +128,18 @@ namespace PuppetForm
 
         public void dump(string process) { }
 
-        public void exeScript(string process, string filename) { 
+        public void exeScript(string process, string filename)
+        {
             System.IO.StreamReader file = new System.IO.StreamReader(filename);
             String line;
-            while((line = file.ReadLine()) != null){
+            while ((line = file.ReadLine()) != null)
+            {
                 System.Windows.Forms.MessageBox.Show(line);
             }
 
             file.Close();
         }
-    
+
 
 
         internal void test()
@@ -149,21 +153,21 @@ namespace PuppetForm
             createClient(8085, 0);
 
             //send dummy message to all metadata servers:
-            foreach( ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers )
+            foreach (ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 //metadataWrapper.getObject<IMetaDataServer>().open( "PuppetMaster - HelloWorld!" );
             }
 
             //send dummy message to all data servers:
-            foreach ( ServerObjectWrapper dataServerWrapper in dataServers.Values )
+            foreach (ServerObjectWrapper dataServerWrapper in dataServers.Values)
             {
-               // dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
+                // dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
             }
 
             //send dummy message to all clients:
-            foreach ( ServerObjectWrapper clientWrapper in clients.Values )
+            foreach (ServerObjectWrapper clientWrapper in clients.Values)
             {
-               // clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
+                // clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
             }
         }
 
@@ -174,21 +178,21 @@ namespace PuppetForm
         static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault( false );
+            Application.SetCompatibleTextRenderingDefault(false);
 
             TcpChannel channel = new TcpChannel();
-            ChannelServices.RegisterChannel( channel, true );
+            ChannelServices.RegisterChannel(channel, true);
 
-            Application.Run( new ControlBoard() );
+            Application.Run(new ControlBoard());
 
         }
 
-        private static bool processIsRunning( string processName )
+        private static bool processIsRunning(string processName)
         {
-            return ( System.Diagnostics.Process.GetProcessesByName( processName ).Length != 0 );
+            return (System.Diagnostics.Process.GetProcessesByName(processName).Length != 0);
         }
 
-        public void exitAll() 
+        public void exitAll()
         {
             foreach (ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
@@ -210,7 +214,7 @@ namespace PuppetForm
             {
                 try
                 {
-                clientWrapper.getObject<IClient>().exit();
+                    clientWrapper.getObject<IClient>().exit();
                 }
                 catch (Exception e) { Console.WriteLine("Error Closing."); }
             }
