@@ -117,7 +117,7 @@ namespace MetaDataServer
 
         public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
+            if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count && readQuorum <= numberOfDataServers && writeQuorum <= numberOfDataServers)
             {
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum);
                 List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);

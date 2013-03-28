@@ -90,7 +90,16 @@ namespace PuppetForm
 
         public void dump(string process) { }
 
-        public void exeScript(string process, string filename) { }
+        public void exeScript(string process, string filename) { 
+            System.IO.StreamReader file = new System.IO.StreamReader(filename);
+            String line;
+            while((line = file.ReadLine()) != null){
+                System.Windows.Forms.MessageBox.Show(line);
+            }
+
+            file.Close();
+        }
+    
 
 
         internal void test()

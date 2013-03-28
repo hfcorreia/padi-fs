@@ -79,6 +79,15 @@ namespace PuppetForm
             puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                puppetMaster.exeScript("change this", fileDialog.FileName);
+            }
+        }
+
     
 
     }
