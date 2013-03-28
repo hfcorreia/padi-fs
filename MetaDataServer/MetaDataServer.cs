@@ -97,7 +97,9 @@ namespace MetaDataServer
             }
             else
             {
-                Console.WriteLine("#MDS: " + filename + " isn't open");
+                if (!filesInfo.ContainsKey(filename))
+                    throw new CommonTypes.Exceptions.CloseFileException("File " + filename + " does not exist");
+                else throw new CommonTypes.Exceptions.CloseFileException("File " + filename + " is already closed.");
             }
         }
 

@@ -103,7 +103,8 @@ namespace Client
         }
 
         public void close(int clientId, string filename) 
-        { 
+        {
+            Console.WriteLine("#Client: closing file " + filename);
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 metadataServerWrapper.getObject<IMetaDataServer>().close(clientId, filename);
