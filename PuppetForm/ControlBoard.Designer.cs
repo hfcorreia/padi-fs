@@ -83,6 +83,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.button10 = new System.Windows.Forms.Button();
             this.openFileButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.closeFileButton = new System.Windows.Forms.Button();
@@ -104,7 +105,6 @@
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.button10 = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -491,6 +491,7 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "Default",
@@ -651,6 +652,16 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Open/Close File";
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(6, 124);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(166, 26);
+            this.button10.TabIndex = 20;
+            this.button10.Text = "Delete File";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
             // openFileButton
             // 
             this.openFileButton.Location = new System.Drawing.Point(6, 61);
@@ -726,6 +737,7 @@
             // 
             // comboBox2
             // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
             "Default",
@@ -733,6 +745,7 @@
             this.comboBox2.Location = new System.Drawing.Point(78, 44);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 21);
+            this.comboBox2.Sorted = true;
             this.comboBox2.TabIndex = 26;
             // 
             // textBox7
@@ -856,16 +869,6 @@
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "1";
-            // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(6, 124);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(166, 26);
-            this.button10.TabIndex = 20;
-            this.button10.Text = "Delete File";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // ControlBoard
             // 
