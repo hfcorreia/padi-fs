@@ -102,10 +102,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.label19 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.scriptBox = new System.Windows.Forms.RichTextBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -829,10 +827,8 @@
             // 
             // groupBox12
             // 
-            this.groupBox12.Controls.Add(this.scriptBox);
             this.groupBox12.Controls.Add(this.button4);
             this.groupBox12.Controls.Add(this.button3);
-            this.groupBox12.Controls.Add(this.label19);
             this.groupBox12.Location = new System.Drawing.Point(374, 236);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(203, 164);
@@ -840,21 +836,12 @@
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Scripts";
             // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(5, 31);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(78, 13);
-            this.label19.TabIndex = 0;
-            this.label19.Text = "Script Location";
-            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(6, 101);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(192, 26);
-            this.button3.TabIndex = 43;
+            this.button3.TabIndex = 41;
             this.button3.Text = "Load Script";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -864,17 +851,9 @@
             this.button4.Location = new System.Drawing.Point(6, 132);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(192, 26);
-            this.button4.TabIndex = 44;
+            this.button4.TabIndex = 42;
             this.button4.Text = "Run Script";
             this.button4.UseVisualStyleBackColor = true;
-            // 
-            // scriptBox
-            // 
-            this.scriptBox.Location = new System.Drawing.Point(89, 28);
-            this.scriptBox.Name = "scriptBox";
-            this.scriptBox.Size = new System.Drawing.Size(105, 21);
-            this.scriptBox.TabIndex = 45;
-            this.scriptBox.Text = "";
             // 
             // ControlBoard
             // 
@@ -912,7 +891,6 @@
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox12.ResumeLayout(false);
-            this.groupBox12.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -995,8 +973,6 @@
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.RichTextBox scriptBox;
     }
 }
 
