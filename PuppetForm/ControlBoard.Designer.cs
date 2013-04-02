@@ -34,7 +34,6 @@
             this.startMetadataServersButton = new System.Windows.Forms.Button();
             this.createDataServerButton = new System.Windows.Forms.Button();
             this.dataServerPortTextBox = new System.Windows.Forms.TextBox();
-            this.testButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
@@ -58,8 +57,9 @@
             this.CreateFileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.nextStepButton = new System.Windows.Forms.Button();
+            this.runScriptButton = new System.Windows.Forms.Button();
+            this.loadScriptButton = new System.Windows.Forms.Button();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
@@ -174,16 +174,6 @@
             this.dataServerPortTextBox.TabIndex = 8;
             this.dataServerPortTextBox.Text = "8000";
             // 
-            // testButton
-            // 
-            this.testButton.Location = new System.Drawing.Point(6, 80);
-            this.testButton.Name = "testButton";
-            this.testButton.Size = new System.Drawing.Size(164, 23);
-            this.testButton.TabIndex = 46;
-            this.testButton.Text = "test";
-            this.testButton.UseVisualStyleBackColor = true;
-            this.testButton.Click += new System.EventHandler(this.testButton_Click);
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label6);
@@ -263,7 +253,6 @@
             // 
             this.groupBox4.Controls.Add(this.button11);
             this.groupBox4.Controls.Add(this.exitButton);
-            this.groupBox4.Controls.Add(this.testButton);
             this.groupBox4.Location = new System.Drawing.Point(584, 238);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(177, 162);
@@ -404,8 +393,9 @@
             // 
             // groupBox12
             // 
-            this.groupBox12.Controls.Add(this.button4);
-            this.groupBox12.Controls.Add(this.button3);
+            this.groupBox12.Controls.Add(this.nextStepButton);
+            this.groupBox12.Controls.Add(this.runScriptButton);
+            this.groupBox12.Controls.Add(this.loadScriptButton);
             this.groupBox12.Location = new System.Drawing.Point(374, 236);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(203, 164);
@@ -413,24 +403,35 @@
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Scripts";
             // 
-            // button4
+            // nextStepButton
             // 
-            this.button4.Location = new System.Drawing.Point(6, 132);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(192, 26);
-            this.button4.TabIndex = 42;
-            this.button4.Text = "Run Script";
-            this.button4.UseVisualStyleBackColor = true;
+            this.nextStepButton.Location = new System.Drawing.Point(6, 81);
+            this.nextStepButton.Name = "nextStepButton";
+            this.nextStepButton.Size = new System.Drawing.Size(192, 26);
+            this.nextStepButton.TabIndex = 43;
+            this.nextStepButton.Text = "Next Step Script";
+            this.nextStepButton.UseVisualStyleBackColor = true;
+            this.nextStepButton.Click += new System.EventHandler(this.nextStepButton_Click);
             // 
-            // button3
+            // runScriptButton
             // 
-            this.button3.Location = new System.Drawing.Point(6, 101);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(192, 26);
-            this.button3.TabIndex = 41;
-            this.button3.Text = "Load Script";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.runScriptButton.Location = new System.Drawing.Point(6, 48);
+            this.runScriptButton.Name = "runScriptButton";
+            this.runScriptButton.Size = new System.Drawing.Size(192, 26);
+            this.runScriptButton.TabIndex = 42;
+            this.runScriptButton.Text = "Run Script";
+            this.runScriptButton.UseVisualStyleBackColor = true;
+            this.runScriptButton.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // loadScriptButton
+            // 
+            this.loadScriptButton.Location = new System.Drawing.Point(6, 15);
+            this.loadScriptButton.Name = "loadScriptButton";
+            this.loadScriptButton.Size = new System.Drawing.Size(192, 26);
+            this.loadScriptButton.TabIndex = 41;
+            this.loadScriptButton.Text = "Load Script";
+            this.loadScriptButton.UseVisualStyleBackColor = true;
+            this.loadScriptButton.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox11
             // 
@@ -918,7 +919,6 @@
         private System.Windows.Forms.Button startMetadataServersButton;
         private System.Windows.Forms.Button createDataServerButton;
         private System.Windows.Forms.TextBox dataServerPortTextBox;
-        private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button exitButton;
@@ -986,9 +986,10 @@
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.GroupBox groupBox12;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button runScriptButton;
+        private System.Windows.Forms.Button loadScriptButton;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button nextStepButton;
     }
 }
 

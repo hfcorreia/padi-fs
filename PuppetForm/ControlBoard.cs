@@ -39,11 +39,6 @@ namespace PuppetForm
             puppetMaster.createDataServer(Int32.Parse(dataServerPortTextBox.Text), Int32.Parse(dataServerIdTextBox.Text));
         }
 
-        private void testButton_Click(object sender, EventArgs e)
-        {
-            puppetMaster.test();
-        }
-
         private void exitButton_Click(object sender, EventArgs e)
         {
             puppetMaster.exitAll();
@@ -84,7 +79,7 @@ namespace PuppetForm
             OpenFileDialog fileDialog = new OpenFileDialog();
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
-                puppetMaster.exeScript("change this", fileDialog.FileName);
+                puppetMaster.LoadedScriptReader = new System.IO.StreamReader(fileDialog.FileName);
             }
         }
 
@@ -92,10 +87,35 @@ namespace PuppetForm
         {
             puppetMaster.delete(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
 
-
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
+        }
 
+        private void nextStepButton_Click(object sender, EventArgs e)
+        {
+            if (puppetMaster.LoadedScriptReader != null)
+            {
+                String line = puppetMaster.LoadedScriptReader.ReadLine();
+
+                if (line != null)
+                {
+                    puppetMaster.exeScriptCommand(line);
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("End of file!");
+                    puppetMaster.LoadedScriptReader.Close();
+                    puppetMaster.LoadedScriptReader = null;
+                }
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Script file not loaded");
+            }
+        }
 
     }
 }

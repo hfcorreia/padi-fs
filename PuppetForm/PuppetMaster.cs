@@ -17,6 +17,7 @@ namespace PuppetForm
 
         private Dictionary<int, ServerObjectWrapper> clients = new Dictionary<int, ServerObjectWrapper>();      //<clientId, clientWrapper>
         private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
+        public System.IO.StreamReader LoadedScriptReader { get; set; }
 
         public void createClient(int clientPort, int clientId)
         {
@@ -110,66 +111,81 @@ namespace PuppetForm
 
         }
 
-        public void fail(string process) { }
+        public void fail(string process) { System.Windows.Forms.MessageBox.Show("FAIL: Not Done Yet"); }
 
-        public void recover(string process) { }
+        public void recover(string process) { System.Windows.Forms.MessageBox.Show("RECOVER: Not Done Yet"); }
 
-        public void freeze(string process) { }
+        public void freeze(string process) { System.Windows.Forms.MessageBox.Show("FREEZE: Not Done Yet"); }
 
-        public void unfreeze(string process) { }
+        public void unfreeze(string process) { System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
 
-        public void read(string process, string fileRegister, string semantics, string stringRegister) { }
-
-        public void write(string process, string fileRegister, byte[] byteArrayRegister) { }
-
-        public void write(string process, string fileRegister, string contents) { }
-
-        public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt) { }
-
-        public void dump(string process) { }
-
-        public void exeScript(string process, string filename)
-        {
-            System.IO.StreamReader file = new System.IO.StreamReader(filename);
-            String line;
-            while ((line = file.ReadLine()) != null)
-            {
-                System.Windows.Forms.MessageBox.Show(line);
-            }
-
-            file.Close();
+        public void read(string process, string fileRegister, string semantics, string stringRegister) {
+            System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
         }
 
-
-
-        internal void test()
-        {
-            startMetaDataServers(3);
-
-            createDataServer(1000, 0);
-            createDataServer(1000, 1);
-            createDataServer(1000, 2);
-
-            createClient(8085, 0);
-
-            //send dummy message to all metadata servers:
-            foreach (ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                //metadataWrapper.getObject<IMetaDataServer>().open( "PuppetMaster - HelloWorld!" );
-            }
-
-            //send dummy message to all data servers:
-            foreach (ServerObjectWrapper dataServerWrapper in dataServers.Values)
-            {
-                // dataServerWrapper.getObject<IDataServer>().read( "PuppetMaster - HelloWorld!" );
-            }
-
-            //send dummy message to all clients:
-            foreach (ServerObjectWrapper clientWrapper in clients.Values)
-            {
-                // clientWrapper.getObject<IClient>().open( "PuppetMaster - HelloWorld!" );
-            }
+        public void write(string process, string fileRegister, byte[] byteArrayRegister) {
+            System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
         }
+
+        public void write(string process, string fileRegister, string contents) {
+            System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
+        }
+
+        public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt) {
+            System.Windows.Forms.MessageBox.Show("COPY: Not Done Yet");
+        }
+
+        public void dump(string process) {
+            System.Windows.Forms.MessageBox.Show("DUMP: Not Done Yet");
+        }
+
+        public void exeScriptCommand(String line)
+        {
+                String[] input = line.Split(' ');
+                switch(input[0])
+                {
+                    case "open":
+                        open(Int32.Parse(input[1]), input[2]);
+                        break;
+                    case "close":
+                        close(Int32.Parse(input[1]), input[2]);
+                        break;
+                    case "create":
+                        create(Int32.Parse(input[1]), input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
+                        break;
+                    case "delete":
+                        delete(Int32.Parse(input[1]), input[2]);
+                        break;
+                    case "write":
+                        write(input[1], input[2], input[3]);
+                        break;
+                    case "read":
+                        read(input[1], input[2], input[3], input[4]);
+                        break;
+                    case "copy":
+                        copy(input[1], input[2], input[3], input[4], input[5]);
+                        break;
+                    case "dump":
+                        dump(input[1]);
+                        break;
+                    case "fail":
+                        fail(input[1]);
+                        break;
+                    case "recover":
+                        recover(input[1]);
+                        break;
+                    case "freeze":
+                        freeze(input[1]);
+                        break;
+                    case "unfreeze":
+                        break;
+                    case "#":
+                        break;
+                    default:
+                        System.Windows.Forms.MessageBox.Show("No such command: " + input[0] + "!");
+                        break;
+                }
+            }
 
         /// <summary>
         /// The main entry point for the application.
