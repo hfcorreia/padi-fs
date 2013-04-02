@@ -15,11 +15,11 @@ namespace PuppetForm
     class PuppetMaster
     {
 
-        private Dictionary<int, ServerObjectWrapper> clients = new Dictionary<int, ServerObjectWrapper>();      //<clientId, clientWrapper>
-        private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
+        private Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
+        private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public System.IO.StreamReader LoadedScriptReader { get; set; }
 
-        public void createClient(int clientPort, int clientId)
+        public void createClient(int clientPort, String clientId)
         {
             Process.Start("Client.exe", clientPort + " " + clientId);
             ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
@@ -30,7 +30,7 @@ namespace PuppetForm
             }
         }
 
-        public void createDataServer(int port, int id)
+        public void createDataServer(int port, String id)
         {
             Process.Start("DataServer.exe", port + " " + id);
             ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
@@ -48,7 +48,7 @@ namespace PuppetForm
                 Process.Start("MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id);
             }
         }
-        public void open(int clientId, string filename)
+        public void open(String clientId, string filename)
         {
             ServerObjectWrapper sow = clients[clientId];
 
@@ -63,7 +63,7 @@ namespace PuppetForm
             }
         }
 
-        public void close(int clientId, string filename)
+        public void close(String clientId, string filename)
         {
             ServerObjectWrapper sow = clients[clientId];
 
@@ -78,7 +78,7 @@ namespace PuppetForm
             }
         }
 
-        public void create(int clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
+        public void create(String clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
         {
             ServerObjectWrapper sow = clients[clientId];
 
@@ -94,7 +94,7 @@ namespace PuppetForm
             }
         }
 
-        public void delete(int clientId, string filename)
+        public void delete(String clientId, string filename)
         {
             ServerObjectWrapper sow = clients[clientId];
 
@@ -145,16 +145,16 @@ namespace PuppetForm
                 switch(input[0])
                 {
                     case "open":
-                        open(Int32.Parse(input[1]), input[2]);
+                        open(input[1], input[2]);
                         break;
                     case "close":
-                        close(Int32.Parse(input[1]), input[2]);
+                        close(input[1], input[2]);
                         break;
                     case "create":
-                        create(Int32.Parse(input[1]), input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
+                        create(input[1], input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
                         break;
                     case "delete":
-                        delete(Int32.Parse(input[1]), input[2]);
+                        delete(input[1], input[2]);
                         break;
                     case "write":
                         write(input[1], input[2], input[3]);

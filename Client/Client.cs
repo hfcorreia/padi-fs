@@ -18,8 +18,8 @@ namespace Client
         private static byte[] INITIAL_FILE_CONTENT = new byte[] { };
 
         private int Port { get; set; }
-        private string Id { get; set; }
-        private string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
+        private String Id { get; set; }
+        private String Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         private Dictionary<String, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>();
         static void Main(string[] args)
         {
@@ -56,7 +56,7 @@ namespace Client
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingServices.Marshal(client, "" + Id, typeof(Client));
+            RemotingServices.Marshal(client, Id, typeof(Client));
 
         }
 
@@ -94,7 +94,7 @@ namespace Client
 
         public void read(string filename) { Console.WriteLine("Not done"); }
 
-        public void open(int clientId, string filename)
+        public void open(String clientId, string filename)
         {
 
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
@@ -104,7 +104,7 @@ namespace Client
             }
         }
 
-        public void close(int clientId, string filename)
+        public void close(String clientId, string filename)
         {
             Console.WriteLine("#Client: closing file " + filename);
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)

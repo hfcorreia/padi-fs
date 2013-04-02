@@ -20,13 +20,13 @@ namespace CommonTypes
          * Returns the metadata content for a given file.
          * In case the file does not exist throws an exception.
          **/
-        List<ServerObjectWrapper> open(int clientID, string filename);
+        List<ServerObjectWrapper> open(string clientID, string filename);
 
         /**
          * Close
          * Informs the metadataserver that the client is no longer using a given file
          **/
-        void close(int clientId, string filename);
+        void close(string clientId, string filename);
 
         /**
          * Delete
@@ -47,7 +47,7 @@ namespace CommonTypes
          **/
         void recover();
 
-        void registDataServer(int id, string host, int port);
+        void registDataServer(string id, string host, int port);
         void exit();
 
     }

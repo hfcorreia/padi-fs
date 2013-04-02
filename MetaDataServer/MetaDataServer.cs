@@ -15,10 +15,10 @@ namespace MetaDataServer
     public class MetaDataServer : MarshalByRefObject, IMetaDataServer
     {
         public int Port { get; set; }
-        public int Id { get; set; }
+        public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
-        private Dictionary<int, ServerObjectWrapper> dataServers = new Dictionary<int, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-        private Dictionary<string, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
+        private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
+        private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
 
         static void Main(string[] args)
         {
@@ -31,7 +31,7 @@ namespace MetaDataServer
             else
             {
                 MetaDataServer metadataServer = new MetaDataServer();
-                metadataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]));
+                metadataServer.initialize(Int32.Parse(args[0]), args[1]);
                 Util.createDir(CommonTypes.Properties.Resources.TEMP_DIR);
                 metadataServer.startConnection(metadataServer);
 
@@ -40,7 +40,7 @@ namespace MetaDataServer
             }
         }
 
-        public void initialize(int port, int id)
+        public void initialize(int port, String id)
         {
             Port = port;
             Id = id;
@@ -55,10 +55,10 @@ namespace MetaDataServer
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingServices.Marshal(metadataServer, "" + Id, typeof(MetaDataServer));
+            RemotingServices.Marshal(metadataServer, Id, typeof(MetaDataServer));
         }
 
-        public void registDataServer(int id, string host, int port)
+        public void registDataServer(String id, string host, int port)
         {
             Console.WriteLine("#MDS: Registering DS " + id);
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
@@ -66,7 +66,7 @@ namespace MetaDataServer
             makeCheckpoint();
         }
 
-        public List<ServerObjectWrapper> open(int clientID, string filename)
+        public List<ServerObjectWrapper> open(String clientID, string filename)
         {
             if (filesInfo.ContainsKey(filename) && !filesInfo[filename].Clients.Contains(clientID))
             {
@@ -83,7 +83,7 @@ namespace MetaDataServer
             }
         }
 
-        public void close(int clientID, string filename)
+        public void close(String clientID, string filename)
         {
             if (filesInfo.ContainsKey(filename) && filesInfo[filename].Clients.Contains(clientID))
             {
@@ -166,8 +166,8 @@ namespace MetaDataServer
         public void makeCheckpoint()
         {
 
-            int metadataServerId = Id;
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\MDS" + metadataServerId;
+            String metadataServerId = Id;
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
             Util.createDir(dirName);
 
             System.Xml.Serialization.XmlSerializer writer =
@@ -178,12 +178,12 @@ namespace MetaDataServer
             fileWriter.Close();
         }
 
-        public static MetaDataServer getCheckpoint(int metadataServerId)
+        public static MetaDataServer getCheckpoint(String metadataServerId)
         {
             System.Xml.Serialization.XmlSerializer reader =
                       new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\MDS" + metadataServerId + "\\checkpoint.xml";
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId + "\\checkpoint.xml";
             System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
 
             MetaDataServer metadaServer = new MetaDataServer();

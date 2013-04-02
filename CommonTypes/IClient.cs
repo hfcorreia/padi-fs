@@ -13,9 +13,9 @@ namespace CommonTypes
 
         void read(string filename);
         
-        void open(int clientId, string filename);
+        void open(string clientId, string filename);
 
-        void close(int clientId, string filename);
+        void close(string clientId, string filename);
 
         void delete(string filename);
 

@@ -24,7 +24,7 @@ namespace PuppetForm
         {
             if (!String.IsNullOrEmpty(clientPortTextBox.Text) && !String.IsNullOrEmpty(clientNameTextBox.Text))
             {
-                puppetMaster.createClient(Int32.Parse(clientPortTextBox.Text), Int32.Parse(clientNameTextBox.Text));
+                puppetMaster.createClient(Int32.Parse(clientPortTextBox.Text), clientNameTextBox.Text);
             }
         }
 
@@ -36,7 +36,7 @@ namespace PuppetForm
 
         private void createDataServerButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.createDataServer(Int32.Parse(dataServerPortTextBox.Text), Int32.Parse(dataServerIdTextBox.Text));
+            puppetMaster.createDataServer(Int32.Parse(dataServerPortTextBox.Text), dataServerIdTextBox.Text);
         }
 
         private void exitButton_Click(object sender, EventArgs e)
@@ -56,17 +56,17 @@ namespace PuppetForm
 
         private void openFileButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.open(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
+            puppetMaster.open(clientNameTextBox.Text, FileNameTextBox.Text);
         }
 
         private void closeFileButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.close(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
+            puppetMaster.close(clientNameTextBox.Text, FileNameTextBox.Text);
         }
 
         private void createFileButton_Click(object sender, EventArgs e)
         {
-            int clientId = Int32.Parse(clientNameTextBox.Text);
+            string clientId = clientNameTextBox.Text;
             int nDS = Int32.Parse(NumDsTextBox.Text);
             int rQ = Int32.Parse(ReadQuorumTextBox.Text);
             int wQ = Int32.Parse(WriteQuorumTextBox.Text);
@@ -85,7 +85,7 @@ namespace PuppetForm
 
         private void button10_Click(object sender, EventArgs e)
         {
-            puppetMaster.delete(Int32.Parse(clientNameTextBox.Text), FileNameTextBox.Text);
+            puppetMaster.delete(clientNameTextBox.Text, FileNameTextBox.Text);
 
         }
 

@@ -13,7 +13,7 @@ namespace DataServer
 {
     public class DataServer : MarshalByRefObject, IDataServer
     {
-        public int Id { get; set; }
+        public String Id { get; set; }
 
         public int Port { get; set; }
         
@@ -34,7 +34,7 @@ namespace DataServer
             else
             {
                 DataServer dataServer = new DataServer();
-                dataServer.initialize(Int32.Parse(args[0]), Int32.Parse(args[1]), "localhost");
+                dataServer.initialize(Int32.Parse(args[0]), args[1], "localhost");
                 dataServer.startConnection(dataServer);
 
                 Console.WriteLine("#DS: Registered "+ dataServer.Id + " at " + dataServer.Url);
@@ -42,7 +42,7 @@ namespace DataServer
             }
         }
 
-        public void initialize(int port, int id, string host)
+        public void initialize(int port, string id, string host)
         {
             Port = port;
             Id = id;
@@ -59,7 +59,7 @@ namespace DataServer
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemotingServices.Marshal(dataServer, "" + Id, typeof(DataServer));
+            RemotingServices.Marshal(dataServer, Id, typeof(DataServer));
             registInMetadataServers();
             
         }
@@ -91,7 +91,7 @@ namespace DataServer
                 return null; //throw exception because the file does not exist
             }
 
-            return Util.readFileFromDisk("DS" + Id, filename, files[filename].Version);
+            return Util.readFileFromDisk(Id, filename, files[filename].Version);
         }
 
 
@@ -116,10 +116,10 @@ namespace DataServer
         public void makeCheckpoint()
         {
             
-            int dataServerId = Id;
+            String dataServerId = Id;
             Console.WriteLine("#DS: making checkpoint " + Id);
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\DS" + dataServerId;
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
             Util.createDir(dirName);
 
             System.Xml.Serialization.XmlSerializer writer =
@@ -130,12 +130,12 @@ namespace DataServer
             fileWriter.Close();
         }
 
-        public static DataServer getCheckpoint(int dataServerId)
+        public static DataServer getCheckpoint(String dataServerId)
         {
             System.Xml.Serialization.XmlSerializer reader =
                       new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\DS" + dataServerId + "\\checkpoint.xml"; 
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId + "\\checkpoint.xml"; 
             System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
 
             DataServer dataServer = new DataServer();
