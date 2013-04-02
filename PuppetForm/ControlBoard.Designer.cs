@@ -30,17 +30,12 @@
         {
             this.createClientButton = new System.Windows.Forms.Button();
             this.clientNameTextBox = new System.Windows.Forms.TextBox();
-            this.clientPortTextBox = new System.Windows.Forms.TextBox();
-            this.startMetadataServersButton = new System.Windows.Forms.Button();
             this.createDataServerButton = new System.Windows.Forms.Button();
-            this.dataServerPortTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button11 = new System.Windows.Forms.Button();
@@ -88,7 +83,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.closeFileButton = new System.Windows.Forms.Button();
             this.FileNameTextBox = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.readFileButton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -102,7 +96,6 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
@@ -114,15 +107,13 @@
             this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
-            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // createClientButton
             // 
-            this.createClientButton.Location = new System.Drawing.Point(93, 14);
+            this.createClientButton.Location = new System.Drawing.Point(131, 30);
             this.createClientButton.Name = "createClientButton";
             this.createClientButton.Size = new System.Drawing.Size(179, 24);
             this.createClientButton.TabIndex = 16;
@@ -138,27 +129,9 @@
             this.clientNameTextBox.TabIndex = 14;
             this.clientNameTextBox.Text = "1";
             // 
-            // clientPortTextBox
-            // 
-            this.clientPortTextBox.Location = new System.Drawing.Point(38, 17);
-            this.clientPortTextBox.Name = "clientPortTextBox";
-            this.clientPortTextBox.Size = new System.Drawing.Size(49, 20);
-            this.clientPortTextBox.TabIndex = 15;
-            this.clientPortTextBox.Text = "8085";
-            // 
-            // startMetadataServersButton
-            // 
-            this.startMetadataServersButton.Location = new System.Drawing.Point(6, 19);
-            this.startMetadataServersButton.Name = "startMetadataServersButton";
-            this.startMetadataServersButton.Size = new System.Drawing.Size(171, 23);
-            this.startMetadataServersButton.TabIndex = 1;
-            this.startMetadataServersButton.Text = "Start Metadata Servers";
-            this.startMetadataServersButton.UseVisualStyleBackColor = true;
-            this.startMetadataServersButton.Click += new System.EventHandler(this.startMetadataServersButton_Click);
-            // 
             // createDataServerButton
             // 
-            this.createDataServerButton.Location = new System.Drawing.Point(85, 11);
+            this.createDataServerButton.Location = new System.Drawing.Point(126, 32);
             this.createDataServerButton.Name = "createDataServerButton";
             this.createDataServerButton.Size = new System.Drawing.Size(112, 23);
             this.createDataServerButton.TabIndex = 9;
@@ -166,21 +139,12 @@
             this.createDataServerButton.UseVisualStyleBackColor = true;
             this.createDataServerButton.Click += new System.EventHandler(this.createDataServerButton_Click);
             // 
-            // dataServerPortTextBox
-            // 
-            this.dataServerPortTextBox.Location = new System.Drawing.Point(39, 13);
-            this.dataServerPortTextBox.Name = "dataServerPortTextBox";
-            this.dataServerPortTextBox.Size = new System.Drawing.Size(40, 20);
-            this.dataServerPortTextBox.TabIndex = 8;
-            this.dataServerPortTextBox.Text = "8000";
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.textBox2);
-            this.groupBox2.Controls.Add(this.startMetadataServersButton);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(184, 141);
@@ -221,24 +185,6 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(120, 20);
             this.textBox2.TabIndex = 2;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 16);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(26, 13);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Port";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 20);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(26, 13);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Port";
             // 
             // label4
             // 
@@ -373,13 +319,13 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.createClientButton);
             this.groupBox5.Controls.Add(this.groupBox12);
             this.groupBox5.Controls.Add(this.groupBox11);
             this.groupBox5.Controls.Add(this.groupBox10);
             this.groupBox5.Controls.Add(this.groupBox4);
             this.groupBox5.Controls.Add(this.groupBox9);
             this.groupBox5.Controls.Add(this.groupBox7);
-            this.groupBox5.Controls.Add(this.groupBox3);
             this.groupBox5.Controls.Add(this.groupBox1);
             this.groupBox5.Controls.Add(this.label4);
             this.groupBox5.Controls.Add(this.clientNameTextBox);
@@ -699,18 +645,6 @@
             this.FileNameTextBox.Size = new System.Drawing.Size(98, 20);
             this.FileNameTextBox.TabIndex = 17;
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.clientPortTextBox);
-            this.groupBox3.Controls.Add(this.createClientButton);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Location = new System.Drawing.Point(302, 22);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(276, 43);
-            this.groupBox3.TabIndex = 15;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Create Client";
-            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.readFileButton);
@@ -792,11 +726,11 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.createDataServerButton);
             this.groupBox6.Controls.Add(this.button6);
             this.groupBox6.Controls.Add(this.button7);
             this.groupBox6.Controls.Add(this.button8);
             this.groupBox6.Controls.Add(this.button9);
-            this.groupBox6.Controls.Add(this.groupBox8);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
             this.groupBox6.Location = new System.Drawing.Point(202, 12);
@@ -841,18 +775,6 @@
             this.button9.TabIndex = 11;
             this.button9.Text = "Fail";
             this.button9.UseVisualStyleBackColor = true;
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.label7);
-            this.groupBox8.Controls.Add(this.dataServerPortTextBox);
-            this.groupBox8.Controls.Add(this.createDataServerButton);
-            this.groupBox8.Location = new System.Drawing.Point(127, 19);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(203, 40);
-            this.groupBox8.TabIndex = 15;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Create DS";
             // 
             // label3
             // 
@@ -899,14 +821,10 @@
             this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -915,10 +833,7 @@
 
         private System.Windows.Forms.Button createClientButton;
         private System.Windows.Forms.TextBox clientNameTextBox;
-        private System.Windows.Forms.TextBox clientPortTextBox;
-        private System.Windows.Forms.Button startMetadataServersButton;
         private System.Windows.Forms.Button createDataServerButton;
-        private System.Windows.Forms.TextBox dataServerPortTextBox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button exitButton;
@@ -940,8 +855,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox dataServerIdTextBox;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
@@ -951,8 +864,6 @@
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button5;

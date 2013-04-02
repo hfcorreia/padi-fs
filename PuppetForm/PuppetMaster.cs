@@ -18,24 +18,27 @@ namespace PuppetForm
         private Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public System.IO.StreamReader LoadedScriptReader { get; set; }
+        
 
-        public void createClient(int clientPort, String clientId)
+        public void createClient(String clientId)
         {
-            Process.Start("Client.exe", clientPort + " " + clientId);
-            ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
-
             if (!clients.ContainsKey(clientId))
             {
+                int clientPort = Util.getNewPort();
+                Process.Start("Client.exe", clientPort + " " + clientId);
+                ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
                 clients.Add(clientId, clientWrapper);
             }
         }
 
-        public void createDataServer(int port, String id)
+        public void createDataServer(String id)
         {
-            Process.Start("DataServer.exe", port + " " + id);
-            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
             if (!dataServers.ContainsKey(id))
             {
+                int port = Util.getNewPort();
+                Process.Start("DataServer.exe", port + " " + id);
+                ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
+
                 dataServers.Add(id, dataServerWrapper);
             }
         }
@@ -50,6 +53,10 @@ namespace PuppetForm
         }
         public void open(String clientId, string filename)
         {
+            //-this is not good at all!
+            createClient(clientId);
+            //------------------------
+
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
@@ -119,73 +126,78 @@ namespace PuppetForm
 
         public void unfreeze(string process) { System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
 
-        public void read(string process, string fileRegister, string semantics, string stringRegister) {
+        public void read(string process, string fileRegister, string semantics, string stringRegister)
+        {
             System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
         }
 
-        public void write(string process, string fileRegister, byte[] byteArrayRegister) {
+        public void write(string process, string fileRegister, byte[] byteArrayRegister)
+        {
             System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
         }
 
-        public void write(string process, string fileRegister, string contents) {
+        public void write(string process, string fileRegister, string contents)
+        {
             System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
         }
 
-        public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt) {
+        public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt)
+        {
             System.Windows.Forms.MessageBox.Show("COPY: Not Done Yet");
         }
 
-        public void dump(string process) {
+        public void dump(string process)
+        {
             System.Windows.Forms.MessageBox.Show("DUMP: Not Done Yet");
         }
 
         public void exeScriptCommand(String line)
         {
-                String[] input = line.Split(' ');
-                switch(input[0])
-                {
-                    case "open":
-                        open(input[1], input[2]);
-                        break;
-                    case "close":
-                        close(input[1], input[2]);
-                        break;
-                    case "create":
-                        create(input[1], input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
-                        break;
-                    case "delete":
-                        delete(input[1], input[2]);
-                        break;
-                    case "write":
-                        write(input[1], input[2], input[3]);
-                        break;
-                    case "read":
-                        read(input[1], input[2], input[3], input[4]);
-                        break;
-                    case "copy":
-                        copy(input[1], input[2], input[3], input[4], input[5]);
-                        break;
-                    case "dump":
-                        dump(input[1]);
-                        break;
-                    case "fail":
-                        fail(input[1]);
-                        break;
-                    case "recover":
-                        recover(input[1]);
-                        break;
-                    case "freeze":
-                        freeze(input[1]);
-                        break;
-                    case "unfreeze":
-                        break;
-                    case "#":
-                        break;
-                    default:
-                        System.Windows.Forms.MessageBox.Show("No such command: " + input[0] + "!");
-                        break;
-                }
+            String[] input = line.Split(' ');
+            switch (input[0])
+            {
+                case "open":
+                    open(input[1], input[2]);
+                    break;
+                case "close":
+                    close(input[1], input[2]);
+                    break;
+                case "create":
+                    create(input[1], input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
+                    break;
+                case "delete":
+                    delete(input[1], input[2]);
+                    break;
+                case "write":
+                    write(input[1], input[2], input[3]);
+                    break;
+                case "read":
+                    read(input[1], input[2], input[3], input[4]);
+                    break;
+                case "copy":
+                    copy(input[1], input[2], input[3], input[4], input[5]);
+                    break;
+                case "dump":
+                    dump(input[1]);
+                    break;
+                case "fail":
+                    fail(input[1]);
+                    break;
+                case "recover":
+                    recover(input[1]);
+                    break;
+                case "freeze":
+                    freeze(input[1]);
+                    break;
+                case "unfreeze":
+                    break;
+                case "#":
+                    break;
+                default:
+                    System.Windows.Forms.MessageBox.Show("No such command: " + input[0] + "!");
+                    break;
             }
+        }
 
         /// <summary>
         /// The main entry point for the application.
@@ -200,6 +212,7 @@ namespace PuppetForm
             ChannelServices.RegisterChannel(channel, true);
 
             Application.Run(new ControlBoard());
+            
 
         }
 

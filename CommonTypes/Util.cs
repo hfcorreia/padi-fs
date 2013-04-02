@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net.Sockets;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace CommonTypes
 {
@@ -47,6 +50,28 @@ namespace CommonTypes
             return "\\" + name + "-V" + version + ".xml";
         }
 
-        
+
+        public static int getNewPort()
+        {
+            const int PortStartIndex = 1000;
+            const int PortEndIndex = 10000;
+            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
+            IEnumerable<int> query =
+                  (from n in tcpEndPoints.OrderBy(n => n.Port)
+                   where (n.Port >= PortStartIndex) && (n.Port <= PortEndIndex)
+                   select n.Port).ToArray().Distinct();
+
+            int i = PortStartIndex;
+            foreach (int p in query)
+            {
+                if (p != i)
+                {
+                    break;
+                }
+                i++;
+            }
+            return i;
+        }
     }
 }

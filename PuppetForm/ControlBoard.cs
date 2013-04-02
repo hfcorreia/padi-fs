@@ -18,25 +18,20 @@ namespace PuppetForm
         public ControlBoard()
         {
             InitializeComponent();
+            puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
         }
 
         private void createClientButton_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(clientPortTextBox.Text) && !String.IsNullOrEmpty(clientNameTextBox.Text))
+            if (!String.IsNullOrEmpty(clientNameTextBox.Text))
             {
-                puppetMaster.createClient(Int32.Parse(clientPortTextBox.Text), clientNameTextBox.Text);
+                puppetMaster.createClient(clientNameTextBox.Text);
             }
-        }
-
-        private void startMetadataServersButton_Click(object sender, EventArgs e)
-        {
-            puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
-
         }
 
         private void createDataServerButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.createDataServer(Int32.Parse(dataServerPortTextBox.Text), dataServerIdTextBox.Text);
+            puppetMaster.createDataServer(dataServerIdTextBox.Text);
         }
 
         private void exitButton_Click(object sender, EventArgs e)
