@@ -1,0 +1,2 @@
+# This is a simple script file
+# That does nothing
