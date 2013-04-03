@@ -98,6 +98,7 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
+            this.dataServersListBox = new System.Windows.Forms.ListBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -131,7 +132,7 @@
             // 
             // createDataServerButton
             // 
-            this.createDataServerButton.Location = new System.Drawing.Point(126, 32);
+            this.createDataServerButton.Location = new System.Drawing.Point(136, 32);
             this.createDataServerButton.Name = "createDataServerButton";
             this.createDataServerButton.Size = new System.Drawing.Size(112, 23);
             this.createDataServerButton.TabIndex = 9;
@@ -147,7 +148,7 @@
             this.groupBox2.Controls.Add(this.mdIdTextBox);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(184, 141);
+            this.groupBox2.Size = new System.Drawing.Size(310, 141);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Metadata Server Control";
@@ -187,7 +188,7 @@
             this.mdIdTextBox.Name = "mdIdTextBox";
             this.mdIdTextBox.Size = new System.Drawing.Size(120, 20);
             this.mdIdTextBox.TabIndex = 2;
-            this.mdIdTextBox.Text = "md-1";
+            this.mdIdTextBox.Text = "m-1";
             // 
             // label4
             // 
@@ -734,6 +735,7 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.dataServersListBox);
             this.groupBox6.Controls.Add(this.createDataServerButton);
             this.groupBox6.Controls.Add(this.RecoverDSButton);
             this.groupBox6.Controls.Add(this.UnfreezeDSButton);
@@ -741,9 +743,9 @@
             this.groupBox6.Controls.Add(this.FailDSButton);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
-            this.groupBox6.Location = new System.Drawing.Point(202, 12);
+            this.groupBox6.Location = new System.Drawing.Point(328, 12);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(339, 141);
+            this.groupBox6.Size = new System.Drawing.Size(454, 141);
             this.groupBox6.TabIndex = 7;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data Server Control";
@@ -803,13 +805,21 @@
             this.dataServerIdTextBox.Name = "dataServerIdTextBox";
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
-            this.dataServerIdTextBox.Text = "ds-1";
+            this.dataServerIdTextBox.Text = "d-1";
+            // 
+            // dataServersListBox
+            // 
+            this.dataServersListBox.FormattingEnabled = true;
+            this.dataServersListBox.Location = new System.Drawing.Point(343, 19);
+            this.dataServersListBox.Name = "dataServersListBox";
+            this.dataServersListBox.Size = new System.Drawing.Size(95, 108);
+            this.dataServersListBox.TabIndex = 46;
             // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(789, 573);
+            this.ClientSize = new System.Drawing.Size(999, 573);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox2);
@@ -913,6 +923,7 @@
         private System.Windows.Forms.Button loadScriptButton;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button nextStepButton;
+        private System.Windows.Forms.ListBox dataServersListBox;
     }
 }
 

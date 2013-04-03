@@ -18,25 +18,52 @@ namespace PuppetForm
         public ControlBoard()
         {
             InitializeComponent();
-            puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
+            try
+            {
+                puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers " + exception.Message);
+            }
         }
 
         private void createClientButton_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(clientNameTextBox.Text))
             {
-                puppetMaster.createClient(clientNameTextBox.Text);
+                try
+                {
+                    puppetMaster.createClient(clientNameTextBox.Text);
+                }
+                catch (Exception exception)
+                {
+                    System.Windows.Forms.MessageBox.Show("Error creating client Metadata servers " + exception.Message);
+                }
             }
         }
 
         private void createDataServerButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.createDataServer(dataServerIdTextBox.Text);
+            try
+            {
+                puppetMaster.createDataServer(dataServerIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error creating DS" + exception.Message);
+            }
         }
 
         private void exitButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.exitAll();
+            try{
+                puppetMaster.exitAll();
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error exiting" + exception.Message);
+            }
         }
 
         private void ControlBoard_Load(object sender, EventArgs e)
@@ -51,97 +78,178 @@ namespace PuppetForm
 
         private void openFileButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.open(clientNameTextBox.Text, FileNameTextBox.Text);
+            try {
+                puppetMaster.open(clientNameTextBox.Text, FileNameTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error opening file" + exception.Message);
+            }
         }
 
         private void closeFileButton_Click(object sender, EventArgs e)
         {
+            try{
             puppetMaster.close(clientNameTextBox.Text, FileNameTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error closing file " + exception.Message);
+            }
         }
 
         private void createFileButton_Click(object sender, EventArgs e)
         {
+            try{
             string clientId = clientNameTextBox.Text;
             int nDS = Int32.Parse(NumDsTextBox.Text);
             int rQ = Int32.Parse(ReadQuorumTextBox.Text);
             int wQ = Int32.Parse(WriteQuorumTextBox.Text);
 
             puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error creating file \n" + exception.Message);
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            if (fileDialog.ShowDialog() == DialogResult.OK)
+            try{
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    puppetMaster.LoadedScriptReader = new System.IO.StreamReader(fileDialog.FileName);
+                }
+            }
+            catch (Exception exception)
             {
-                puppetMaster.LoadedScriptReader = new System.IO.StreamReader(fileDialog.FileName);
+                System.Windows.Forms.MessageBox.Show("Error loading script" + exception.Message);
             }
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            puppetMaster.delete(clientNameTextBox.Text, FileNameTextBox.Text);
+            try
+            {
+                puppetMaster.delete(clientNameTextBox.Text, FileNameTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error deleting file" + exception.Message);
+            }
 
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
+           
+           System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
         {
-            if (puppetMaster.LoadedScriptReader != null)
-            {
-                String line = puppetMaster.LoadedScriptReader.ReadLine();
-
-                if (line != null)
+            try{
+                if (puppetMaster.LoadedScriptReader != null)
                 {
-                    puppetMaster.exeScriptCommand(line);
+                    String line = puppetMaster.LoadedScriptReader.ReadLine();
+
+                    if (line != null)
+                    {
+                        puppetMaster.exeScriptCommand(line);
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("End of file!");
+                        puppetMaster.LoadedScriptReader.Close();
+                        puppetMaster.LoadedScriptReader = null;
+                    }
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show("End of file!");
-                    puppetMaster.LoadedScriptReader.Close();
-                    puppetMaster.LoadedScriptReader = null;
+                    System.Windows.Forms.MessageBox.Show("Script file not loaded");
                 }
             }
-            else
+            catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Script file not loaded");
+                System.Windows.Forms.MessageBox.Show("Error executing next step of script" + exception.Message);
             }
         }
 
         private void failMetaDataButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.fail(mdIdTextBox.Text);
+            try{
+                puppetMaster.fail(mdIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing button" + exception.Message);
+            }
         }
 
         private void recoverMetadataButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.recover(mdIdTextBox.Text);
+            try{
+                puppetMaster.recover(mdIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error recovering metadataserver" + exception.Message);
+            }
         }
 
         private void freezeDSButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.freeze(dataServerIdTextBox.Text);
+            try
+            {
+                puppetMaster.freeze(dataServerIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error freezing DS" + exception.Message);
+            }
         }
 
         private void UnfreezeDSButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.unfreeze(dataServerIdTextBox.Text);
+            try{
+                puppetMaster.unfreeze(dataServerIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error unfreezing DS" + exception.Message);
+            }
         }
 
-        private void FailDSButton_Click(object sender, EventArgs e)
+        private void FailDSButton_Click(object sender, EventArgs e) 
         {
-            puppetMaster.fail(dataServerIdTextBox.Text);
+            try{
+                puppetMaster.fail(dataServerIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing DS" + exception.Message);
+            }
         }
 
         private void RecoverDSButton_Click(object sender, EventArgs e)
         {
-            puppetMaster.recover(dataServerIdTextBox.Text);
+            try
+            {
+                puppetMaster.recover(dataServerIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error recovering DS" + exception.Message);
+            }
         }
 
+
+        private void updateDataServersList() 
+        {
+            //dataServersListBox. puppetMaster.dataServers.Keys;
+        }
 
     }
 }
