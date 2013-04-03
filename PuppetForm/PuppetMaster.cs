@@ -57,7 +57,7 @@ namespace PuppetForm
 
         public void open(String clientId, string filename)
         {
-            createClient(clientId);
+            startProcess(clientId);
             
             ServerObjectWrapper sow = clients[clientId];
 
@@ -74,7 +74,7 @@ namespace PuppetForm
 
         public void close(String clientId, string filename)
         {
-            createClient(clientId);
+            startProcess(clientId);
 
             ServerObjectWrapper sow = clients[clientId];
 
@@ -91,7 +91,7 @@ namespace PuppetForm
 
         public void create(String clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
         {
-            createClient(clientId);
+            startProcess(clientId);
 
             ServerObjectWrapper sow = clients[clientId];
 
@@ -110,7 +110,7 @@ namespace PuppetForm
 
         public void delete(String clientId, string filename)
         {
-            createClient(clientId);
+            startProcess(clientId);
 
             ServerObjectWrapper sow = clients[clientId];
 
@@ -127,37 +127,68 @@ namespace PuppetForm
 
         }
 
-        public void fail(string process) { System.Windows.Forms.MessageBox.Show("FAIL: Not Done Yet"); }
+        public void fail(string process) {
+            startProcess(process);
+            System.Windows.Forms.MessageBox.Show("FAIL: Not Done Yet"); }
 
-        public void recover(string process) { System.Windows.Forms.MessageBox.Show("RECOVER: Not Done Yet"); }
+        public void recover(string process) {
+            startProcess(process);
+            System.Windows.Forms.MessageBox.Show("RECOVER: Not Done Yet"); }
 
-        public void freeze(string process) { System.Windows.Forms.MessageBox.Show("FREEZE: Not Done Yet"); }
+        public void freeze(string process) {
+            startProcess(process);
+            System.Windows.Forms.MessageBox.Show("FREEZE: Not Done Yet"); }
 
-        public void unfreeze(string process) { System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
+        public void unfreeze(string process) {
+            startProcess(process);
+            System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
 
         public void read(string process, string fileRegister, string semantics, string stringRegister)
         {
+            startProcess(process);
             System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
         }
 
         public void write(string process, string fileRegister, byte[] byteArrayRegister)
         {
+            startProcess(process);
             System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
         }
 
         public void write(string process, string fileRegister, string contents)
         {
+            startProcess(process);
             System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
         }
 
         public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt)
         {
+            startProcess(process);
+
             System.Windows.Forms.MessageBox.Show("COPY: Not Done Yet");
         }
 
         public void dump(string process)
         {
+            startProcess(process);
+
             System.Windows.Forms.MessageBox.Show("DUMP: Not Done Yet");
+        }
+
+        private void startProcess(string process)
+        {
+            if (process.StartsWith("c-"))
+            {
+                createClient(process);
+            }
+            else if (process.StartsWith("d-"))
+            {
+                createDataServer(process);
+            }
+            else if (process.StartsWith("m-"))
+            {
+                /** not implemented only need when mds fail **/
+            }
         }
 
         public void exeScriptCommand(String line)
