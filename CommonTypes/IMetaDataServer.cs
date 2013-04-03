@@ -13,14 +13,14 @@ namespace CommonTypes
          * Selects the dataservers for the file and assign a unique filename on each dataserver.
          * In case of success returns the metadata of that file, otherwise throws an exception.
          **/
-        List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum);
+        FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum);
 
         /**
          * Open
          * Returns the metadata content for a given file.
          * In case the file does not exist throws an exception.
          **/
-        List<ServerObjectWrapper> open(string clientID, string filename);
+        FileMetadata open(string clientID, string filename);
 
         /**
          * Close
@@ -33,7 +33,7 @@ namespace CommonTypes
          * if the file is not open by any client it deletes a that file from the dataservers and returns true.
          * otherwise throws an exception.
          **/
-        void delete(string filename);
+        void delete(string clientId, string filename);
 
         /**
          * Fail
