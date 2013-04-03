@@ -24,21 +24,25 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers " + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers :\n" + exception.Message);
             }
         }
 
         private void createClientButton_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(clientNameTextBox.Text))
+            string clientId = clientNameTextBox.Text;
+            if (!String.IsNullOrEmpty(clientId))
             {
                 try
                 {
-                    puppetMaster.createClient(clientNameTextBox.Text);
+                    puppetMaster.createClient(clientId);
+                    updateClientsList();
+                    setNextClientId();
+                    selectClient(clientId);
                 }
                 catch (Exception exception)
                 {
-                    System.Windows.Forms.MessageBox.Show("Error creating client Metadata servers " + exception.Message);
+                    System.Windows.Forms.MessageBox.Show("Error creating client:\n" + exception.Message);
                 }
             }
         }
@@ -47,13 +51,19 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.createDataServer(dataServerIdTextBox.Text);
+                string newDataserverId = dataServerIdTextBox.Text;
+                puppetMaster.createDataServer(newDataserverId);
+                updateDataServersList();
+                setNextDataServerId();
+                selectDataServer(newDataserverId);
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error creating DS" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error creating DS:\n" + exception.Message);
             }
         }
+
+
 
         private void exitButton_Click(object sender, EventArgs e)
         {
@@ -62,7 +72,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error exiting" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error exiting:\n" + exception.Message);
             }
         }
 
@@ -79,40 +89,47 @@ namespace PuppetForm
         private void openFileButton_Click(object sender, EventArgs e)
         {
             try {
-                puppetMaster.open(clientNameTextBox.Text, FileNameTextBox.Text);
+                puppetMaster.open(getSelectedClient(), getSelectedFileRegister());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error opening file" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error opening file :\n" + exception.Message);
             }
         }
 
         private void closeFileButton_Click(object sender, EventArgs e)
         {
             try{
-            puppetMaster.close(clientNameTextBox.Text, FileNameTextBox.Text);
+                puppetMaster.close(getSelectedClient(), getSelectedFileRegister());
+                updateClientFileRegister(getSelectedClient());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error closing file " + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error closing file :\n" + exception.Message);
             }
         }
 
         private void createFileButton_Click(object sender, EventArgs e)
         {
             try{
-            string clientId = clientNameTextBox.Text;
-            int nDS = Int32.Parse(NumDsTextBox.Text);
-            int rQ = Int32.Parse(ReadQuorumTextBox.Text);
-            int wQ = Int32.Parse(WriteQuorumTextBox.Text);
+                string clientId = getSelectedClient();
+                string fileName = CreateFileNameTextBox.Text;
+                int nDS = Int32.Parse(NumDsTextBox.Text);
+                int rQ = Int32.Parse(ReadQuorumTextBox.Text);
+                int wQ = Int32.Parse(WriteQuorumTextBox.Text);
 
-            puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
+                puppetMaster.create(clientId, fileName, nDS, rQ, wQ);
+
+                updateClientFileRegister(clientId);
+                selectFileRegister(fileName);
             }
             catch (Exception exception)
             {
                 System.Windows.Forms.MessageBox.Show("Error creating file \n" + exception.Message);
             }
         }
+
+
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -125,27 +142,27 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error loading script" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error loading script:\n" + exception.Message);
             }
         }
 
-        private void button10_Click(object sender, EventArgs e)
+        private void client_deleteFile(object sender, EventArgs e)
         {
             try
             {
-                puppetMaster.delete(clientNameTextBox.Text, FileNameTextBox.Text);
+                puppetMaster.delete(getSelectedClient(), getSelectedFileRegister());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error deleting file" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error deleting file :\n" + exception.Message);
             }
 
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-           
-           System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
+
+            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing! :\n");
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
@@ -161,19 +178,19 @@ namespace PuppetForm
                     }
                     else
                     {
-                        System.Windows.Forms.MessageBox.Show("End of file!");
+                        System.Windows.Forms.MessageBox.Show("End of file! :\n");
                         puppetMaster.LoadedScriptReader.Close();
                         puppetMaster.LoadedScriptReader = null;
                     }
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show("Script file not loaded");
+                    System.Windows.Forms.MessageBox.Show("Script file not loaded :\n");
                 }
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error executing next step of script" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error executing next step of script :\n" + exception.Message);
             }
         }
 
@@ -184,7 +201,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing button" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error failing button :\n" + exception.Message);
             }
         }
 
@@ -195,7 +212,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error recovering metadataserver" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error recovering metadataserver :\n" + exception.Message);
             }
         }
 
@@ -203,33 +220,33 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.freeze(dataServerIdTextBox.Text);
+                puppetMaster.freeze(getSelectedDS());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error freezing DS" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error freezing DS :\n" + exception.Message);
             }
         }
 
         private void UnfreezeDSButton_Click(object sender, EventArgs e)
         {
             try{
-                puppetMaster.unfreeze(dataServerIdTextBox.Text);
+                puppetMaster.unfreeze(getSelectedDS());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error unfreezing DS" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error unfreezing DS :\n" + exception.Message);
             }
         }
 
         private void FailDSButton_Click(object sender, EventArgs e) 
         {
             try{
-                puppetMaster.fail(dataServerIdTextBox.Text);
+                puppetMaster.fail(getSelectedDS());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing DS" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error failing DS :\n" + exception.Message);
             }
         }
 
@@ -237,18 +254,169 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.recover(dataServerIdTextBox.Text);
+                puppetMaster.recover(getSelectedDS());
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error recovering DS" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error recovering DS :\n" + exception.Message);
             }
         }
 
+        //selected DS
+        private string getSelectedDS() 
+        {
+            return (string) dataServersListBox.Items[dataServersListBox.SelectedIndex];
+        }
 
         private void updateDataServersList() 
         {
-            //dataServersListBox. puppetMaster.dataServers.Keys;
+            dataServersListBox.Items.Clear();
+            foreach (string dataserverId in puppetMaster.dataServers.Keys)
+            {
+                dataServersListBox.Items.Add(dataserverId);
+            }
+        }
+
+        private void selectDataServer(string newDataserverId)
+        {
+            for (int index = 0; index < dataServersListBox.Items.Count; ++index)
+            {
+                if (newDataserverId.Equals(dataServersListBox.Items[index]))
+                {
+                    dataServersListBox.SetSelected(index, true);
+                    break;
+                }
+            }
+        }
+        private void setNextDataServerId()
+        {
+            string dataserverPrefix = "d-";
+            dataServerIdTextBox.Text = dataserverPrefix + (dataServersListBox.Items.Count + 1);
+        }
+
+        //selected Client
+        private string getSelectedClient()
+        {
+            return (string) ClientsListBox.Items[ClientsListBox.SelectedIndex];
+        }
+
+        private void updateClientsList()
+        {
+            ClientsListBox.Items.Clear();
+            foreach (string clientId in puppetMaster.clients.Keys)
+            {
+                ClientsListBox.Items.Add(clientId);
+            }
+        }
+
+        private void selectClient(string clientId)
+        {
+            for (int index = 0; index < ClientsListBox.Items.Count; ++index)
+            {
+                if (clientId.Equals(ClientsListBox.Items[index]))
+                {
+                    ClientsListBox.SetSelected(index, true);
+                    break;
+                }
+            }
+            updateClientFileRegister(clientId);
+            updateClientStringRegister(clientId);
+        }
+
+        private void selectFileRegister(string fileName)
+        {
+            for (int index = 0; index < clientFileRegisterlistBox.Items.Count; ++index)
+            {
+                if (fileName.Equals(clientFileRegisterlistBox.Items[index]))
+                {
+                    clientFileRegisterlistBox.SetSelected(index, true);
+                    break;
+                }
+            }
+        }
+
+        private void selectStringRegister(string fileName)
+        {
+            for (int index = 0; index < clientStringRegisterListBox.Items.Count; ++index)
+            {
+                if (fileName.Equals(clientStringRegisterListBox.Items[index]))
+                {
+                    clientStringRegisterListBox.SetSelected(index, true);
+                    break;
+                }
+            }
+        }
+
+        private string getSelectedStringRegister()
+        {
+            return (string) clientStringRegisterListBox.Items[clientStringRegisterListBox.SelectedIndex];
+        }
+
+        private string getSelectedFileRegister()
+        {
+            return (string) clientFileRegisterlistBox.Items[clientFileRegisterlistBox.SelectedIndex];
+        }
+
+
+        private void setNextClientId()
+        {
+            string clientPrefix = "c-";
+            clientNameTextBox.Text = clientPrefix + (ClientsListBox.Items.Count + 1);
+        }
+
+        private void updateClientFileRegister(string clientId) 
+        {
+            clientFileRegisterlistBox.Items.Clear();
+            foreach (string register in puppetMaster.fileRegistersForClient(clientId))
+            {
+                clientFileRegisterlistBox.Items.Add(register);
+            }
+        }
+
+        private void updateClientStringRegister(string clientId)
+        {
+            clientStringRegisterListBox.Items.Clear();
+            foreach (string register in puppetMaster.stringRegistersForClient(clientId))
+            {
+                clientStringRegisterListBox.Items.Add(register);
+            }
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void clientFileRegisterlistBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //updateClientFileRegister(getSelectedClient());
+            updateClientStringRegister(getSelectedClient());
+        }
+
+        private void clientStringRegisterListBox_SelectedIndexChanged(object sender, EventArgs e){}
+
+        private void ClientsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            updateClientFileRegister(getSelectedClient());
+            updateClientStringRegister(getSelectedClient());
+        }
+
+        private void readFileButton_Click(object sender, EventArgs e)
+        {
+            //TODO
+        }
+
+        private void writeFileButton_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(byteArrayTextBox.Text))
+            {
+                puppetMaster.write(getSelectedClient(), getSelectedFileRegister(), byteArrayTextBox.Text);
+                //updateClientFileRegister(getSelectedClient());
+                updateClientStringRegister(getSelectedClient());
+            }
+            else {
+                System.Windows.Forms.MessageBox.Show("Error: Please enter the content you want to write in the file.");
+            }
         }
 
     }

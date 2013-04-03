@@ -51,6 +51,7 @@
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
             this.CreateFileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.ClientsListBox = new System.Windows.Forms.ListBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.nextStepButton = new System.Windows.Forms.Button();
             this.runScriptButton = new System.Windows.Forms.Button();
@@ -73,16 +74,12 @@
             this.label13 = new System.Windows.Forms.Label();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.writeFileButton = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.byteArrayTextBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.button10 = new System.Windows.Forms.Button();
             this.openFileButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.closeFileButton = new System.Windows.Forms.Button();
-            this.FileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.readFileButton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -92,13 +89,18 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.dataServersListBox = new System.Windows.Forms.ListBox();
             this.RecoverDSButton = new System.Windows.Forms.Button();
             this.UnfreezeDSButton = new System.Windows.Forms.Button();
             this.freezeDSButton = new System.Windows.Forms.Button();
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.dataServersListBox = new System.Windows.Forms.ListBox();
+            this.clientFileRegisterlistBox = new System.Windows.Forms.ListBox();
+            this.clientStringRegisterListBox = new System.Windows.Forms.ListBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -116,7 +118,7 @@
             // 
             this.createClientButton.Location = new System.Drawing.Point(131, 30);
             this.createClientButton.Name = "createClientButton";
-            this.createClientButton.Size = new System.Drawing.Size(179, 24);
+            this.createClientButton.Size = new System.Drawing.Size(101, 24);
             this.createClientButton.TabIndex = 16;
             this.createClientButton.Text = "Create Client";
             this.createClientButton.UseVisualStyleBackColor = true;
@@ -156,7 +158,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 51);
+            this.label6.Location = new System.Drawing.Point(6, 53);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(45, 13);
             this.label6.TabIndex = 20;
@@ -203,7 +205,7 @@
             // 
             this.groupBox4.Controls.Add(this.button11);
             this.groupBox4.Controls.Add(this.exitButton);
-            this.groupBox4.Location = new System.Drawing.Point(584, 238);
+            this.groupBox4.Location = new System.Drawing.Point(584, 295);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(177, 162);
             this.groupBox4.TabIndex = 45;
@@ -212,18 +214,18 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(7, 22);
+            this.button11.Location = new System.Drawing.Point(7, 33);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(163, 23);
+            this.button11.Size = new System.Drawing.Size(163, 44);
             this.button11.TabIndex = 45;
             this.button11.Text = "Dump MDs";
             this.button11.UseVisualStyleBackColor = true;
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(6, 108);
+            this.exitButton.Location = new System.Drawing.Point(6, 80);
             this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(164, 23);
+            this.exitButton.Size = new System.Drawing.Size(164, 43);
             this.exitButton.TabIndex = 47;
             this.exitButton.Text = "Exit";
             this.exitButton.UseVisualStyleBackColor = true;
@@ -240,7 +242,7 @@
             this.CreateFile.Controls.Add(this.ReadQuorumTextBox);
             this.CreateFile.Controls.Add(this.WriteQuorumTextBox);
             this.CreateFile.Controls.Add(this.CreateFileNameTextBox);
-            this.CreateFile.Location = new System.Drawing.Point(190, 71);
+            this.CreateFile.Location = new System.Drawing.Point(190, 128);
             this.CreateFile.Name = "CreateFile";
             this.CreateFile.Size = new System.Drawing.Size(178, 159);
             this.CreateFile.TabIndex = 20;
@@ -250,7 +252,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 22);
+            this.label2.Location = new System.Drawing.Point(62, 19);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 13);
             this.label2.TabIndex = 9;
@@ -319,14 +321,20 @@
             // 
             // CreateFileNameTextBox
             // 
-            this.CreateFileNameTextBox.Location = new System.Drawing.Point(72, 19);
+            this.CreateFileNameTextBox.Location = new System.Drawing.Point(122, 19);
             this.CreateFileNameTextBox.Name = "CreateFileNameTextBox";
-            this.CreateFileNameTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CreateFileNameTextBox.Size = new System.Drawing.Size(50, 20);
             this.CreateFileNameTextBox.TabIndex = 20;
             this.CreateFileNameTextBox.Text = "test1";
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label19);
+            this.groupBox5.Controls.Add(this.label7);
+            this.groupBox5.Controls.Add(this.label5);
+            this.groupBox5.Controls.Add(this.clientStringRegisterListBox);
+            this.groupBox5.Controls.Add(this.clientFileRegisterlistBox);
+            this.groupBox5.Controls.Add(this.ClientsListBox);
             this.groupBox5.Controls.Add(this.createClientButton);
             this.groupBox5.Controls.Add(this.groupBox12);
             this.groupBox5.Controls.Add(this.groupBox11);
@@ -340,17 +348,27 @@
             this.groupBox5.Controls.Add(this.CreateFile);
             this.groupBox5.Location = new System.Drawing.Point(12, 159);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(770, 402);
+            this.groupBox5.Size = new System.Drawing.Size(798, 461);
             this.groupBox5.TabIndex = 14;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
+            this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
+            // 
+            // ClientsListBox
+            // 
+            this.ClientsListBox.FormattingEnabled = true;
+            this.ClientsListBox.Location = new System.Drawing.Point(330, 19);
+            this.ClientsListBox.Name = "ClientsListBox";
+            this.ClientsListBox.Size = new System.Drawing.Size(127, 95);
+            this.ClientsListBox.TabIndex = 47;
+            this.ClientsListBox.SelectedIndexChanged += new System.EventHandler(this.ClientsListBox_SelectedIndexChanged);
             // 
             // groupBox12
             // 
             this.groupBox12.Controls.Add(this.nextStepButton);
             this.groupBox12.Controls.Add(this.runScriptButton);
             this.groupBox12.Controls.Add(this.loadScriptButton);
-            this.groupBox12.Location = new System.Drawing.Point(374, 236);
+            this.groupBox12.Location = new System.Drawing.Point(374, 293);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(203, 164);
             this.groupBox12.TabIndex = 41;
@@ -359,7 +377,7 @@
             // 
             // nextStepButton
             // 
-            this.nextStepButton.Location = new System.Drawing.Point(6, 81);
+            this.nextStepButton.Location = new System.Drawing.Point(6, 110);
             this.nextStepButton.Name = "nextStepButton";
             this.nextStepButton.Size = new System.Drawing.Size(192, 26);
             this.nextStepButton.TabIndex = 43;
@@ -369,7 +387,7 @@
             // 
             // runScriptButton
             // 
-            this.runScriptButton.Location = new System.Drawing.Point(6, 48);
+            this.runScriptButton.Location = new System.Drawing.Point(6, 77);
             this.runScriptButton.Name = "runScriptButton";
             this.runScriptButton.Size = new System.Drawing.Size(192, 26);
             this.runScriptButton.TabIndex = 42;
@@ -379,7 +397,7 @@
             // 
             // loadScriptButton
             // 
-            this.loadScriptButton.Location = new System.Drawing.Point(6, 15);
+            this.loadScriptButton.Location = new System.Drawing.Point(6, 44);
             this.loadScriptButton.Name = "loadScriptButton";
             this.loadScriptButton.Size = new System.Drawing.Size(192, 26);
             this.loadScriptButton.TabIndex = 41;
@@ -398,7 +416,7 @@
             this.groupBox11.Controls.Add(this.label17);
             this.groupBox11.Controls.Add(this.label16);
             this.groupBox11.Controls.Add(this.label15);
-            this.groupBox11.Location = new System.Drawing.Point(192, 236);
+            this.groupBox11.Location = new System.Drawing.Point(192, 293);
             this.groupBox11.Name = "groupBox11";
             this.groupBox11.Size = new System.Drawing.Size(176, 164);
             this.groupBox11.TabIndex = 36;
@@ -490,7 +508,7 @@
             this.groupBox10.Controls.Add(this.textBox5);
             this.groupBox10.Controls.Add(this.textBox4);
             this.groupBox10.Controls.Add(this.label13);
-            this.groupBox10.Location = new System.Drawing.Point(8, 236);
+            this.groupBox10.Location = new System.Drawing.Point(8, 293);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Size = new System.Drawing.Size(175, 165);
             this.groupBox10.TabIndex = 33;
@@ -541,11 +559,9 @@
             // groupBox9
             // 
             this.groupBox9.Controls.Add(this.writeFileButton);
-            this.groupBox9.Controls.Add(this.textBox3);
+            this.groupBox9.Controls.Add(this.byteArrayTextBox);
             this.groupBox9.Controls.Add(this.label12);
-            this.groupBox9.Controls.Add(this.textBox1);
-            this.groupBox9.Controls.Add(this.label8);
-            this.groupBox9.Location = new System.Drawing.Point(584, 71);
+            this.groupBox9.Location = new System.Drawing.Point(584, 128);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(184, 161);
             this.groupBox9.TabIndex = 29;
@@ -560,13 +576,14 @@
             this.writeFileButton.TabIndex = 32;
             this.writeFileButton.Text = "Write File";
             this.writeFileButton.UseVisualStyleBackColor = true;
+            this.writeFileButton.Click += new System.EventHandler(this.writeFileButton_Click);
             // 
-            // textBox3
+            // byteArrayTextBox
             // 
-            this.textBox3.Location = new System.Drawing.Point(109, 45);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(68, 20);
-            this.textBox3.TabIndex = 31;
+            this.byteArrayTextBox.Location = new System.Drawing.Point(109, 45);
+            this.byteArrayTextBox.Name = "byteArrayTextBox";
+            this.byteArrayTextBox.Size = new System.Drawing.Size(68, 20);
+            this.byteArrayTextBox.TabIndex = 31;
             // 
             // label12
             // 
@@ -577,30 +594,12 @@
             this.label12.TabIndex = 4;
             this.label12.Text = "Byte Array Register";
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(75, 23);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(102, 20);
-            this.textBox1.TabIndex = 30;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(4, 26);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(65, 13);
-            this.label8.TabIndex = 2;
-            this.label8.Text = "File Register";
-            // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.button10);
             this.groupBox7.Controls.Add(this.openFileButton);
-            this.groupBox7.Controls.Add(this.label1);
             this.groupBox7.Controls.Add(this.closeFileButton);
-            this.groupBox7.Controls.Add(this.FileNameTextBox);
-            this.groupBox7.Location = new System.Drawing.Point(6, 71);
+            this.groupBox7.Location = new System.Drawing.Point(6, 128);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(178, 159);
             this.groupBox7.TabIndex = 17;
@@ -609,17 +608,17 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(6, 124);
+            this.button10.Location = new System.Drawing.Point(6, 103);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(166, 26);
             this.button10.TabIndex = 20;
             this.button10.Text = "Delete File";
             this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
+            this.button10.Click += new System.EventHandler(this.client_deleteFile);
             // 
             // openFileButton
             // 
-            this.openFileButton.Location = new System.Drawing.Point(6, 61);
+            this.openFileButton.Location = new System.Drawing.Point(6, 40);
             this.openFileButton.Name = "openFileButton";
             this.openFileButton.Size = new System.Drawing.Size(166, 26);
             this.openFileButton.TabIndex = 18;
@@ -627,32 +626,15 @@
             this.openFileButton.UseVisualStyleBackColor = true;
             this.openFileButton.Click += new System.EventHandler(this.openFileButton_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "File Name";
-            // 
             // closeFileButton
             // 
-            this.closeFileButton.Location = new System.Drawing.Point(6, 93);
+            this.closeFileButton.Location = new System.Drawing.Point(6, 72);
             this.closeFileButton.Name = "closeFileButton";
             this.closeFileButton.Size = new System.Drawing.Size(166, 26);
             this.closeFileButton.TabIndex = 19;
             this.closeFileButton.Text = "Close File";
             this.closeFileButton.UseVisualStyleBackColor = true;
             this.closeFileButton.Click += new System.EventHandler(this.closeFileButton_Click);
-            // 
-            // FileNameTextBox
-            // 
-            this.FileNameTextBox.Location = new System.Drawing.Point(74, 23);
-            this.FileNameTextBox.Name = "FileNameTextBox";
-            this.FileNameTextBox.Size = new System.Drawing.Size(98, 20);
-            this.FileNameTextBox.TabIndex = 17;
-            this.FileNameTextBox.Text = "test1";
             // 
             // groupBox1
             // 
@@ -663,7 +645,7 @@
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Location = new System.Drawing.Point(374, 71);
+            this.groupBox1.Location = new System.Drawing.Point(374, 128);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(204, 161);
             this.groupBox1.TabIndex = 25;
@@ -672,12 +654,14 @@
             // 
             // readFileButton
             // 
+            this.readFileButton.Enabled = false;
             this.readFileButton.Location = new System.Drawing.Point(6, 124);
             this.readFileButton.Name = "readFileButton";
             this.readFileButton.Size = new System.Drawing.Size(192, 31);
             this.readFileButton.TabIndex = 28;
             this.readFileButton.Text = "Read File";
             this.readFileButton.UseVisualStyleBackColor = true;
+            this.readFileButton.Click += new System.EventHandler(this.readFileButton_Click);
             // 
             // comboBox2
             // 
@@ -686,21 +670,24 @@
             this.comboBox2.Items.AddRange(new object[] {
             "Default",
             "Monotonic"});
-            this.comboBox2.Location = new System.Drawing.Point(78, 44);
+            this.comboBox2.Location = new System.Drawing.Point(89, 44);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 21);
+            this.comboBox2.Size = new System.Drawing.Size(109, 21);
             this.comboBox2.Sorted = true;
             this.comboBox2.TabIndex = 26;
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(78, 19);
+            this.textBox7.Enabled = false;
+            this.textBox7.Location = new System.Drawing.Point(89, 19);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(120, 20);
+            this.textBox7.Size = new System.Drawing.Size(109, 20);
             this.textBox7.TabIndex = 25;
+            this.textBox7.Visible = false;
             // 
             // textBox6
             // 
+            this.textBox6.Enabled = false;
             this.textBox6.Location = new System.Drawing.Point(89, 71);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(109, 20);
@@ -727,11 +714,13 @@
             // label9
             // 
             this.label9.AutoSize = true;
+            this.label9.Enabled = false;
             this.label9.Location = new System.Drawing.Point(7, 22);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(65, 13);
             this.label9.TabIndex = 1;
             this.label9.Text = "File Register";
+            this.label9.Visible = false;
             // 
             // groupBox6
             // 
@@ -749,6 +738,14 @@
             this.groupBox6.TabIndex = 7;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data Server Control";
+            // 
+            // dataServersListBox
+            // 
+            this.dataServersListBox.FormattingEnabled = true;
+            this.dataServersListBox.Location = new System.Drawing.Point(343, 14);
+            this.dataServersListBox.Name = "dataServersListBox";
+            this.dataServersListBox.Size = new System.Drawing.Size(95, 121);
+            this.dataServersListBox.TabIndex = 46;
             // 
             // RecoverDSButton
             // 
@@ -807,19 +804,59 @@
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
             // 
-            // dataServersListBox
+            // clientFileRegisterlistBox
             // 
-            this.dataServersListBox.FormattingEnabled = true;
-            this.dataServersListBox.Location = new System.Drawing.Point(343, 19);
-            this.dataServersListBox.Name = "dataServersListBox";
-            this.dataServersListBox.Size = new System.Drawing.Size(95, 108);
-            this.dataServersListBox.TabIndex = 46;
+            this.clientFileRegisterlistBox.FormattingEnabled = true;
+            this.clientFileRegisterlistBox.Location = new System.Drawing.Point(482, 19);
+            this.clientFileRegisterlistBox.Name = "clientFileRegisterlistBox";
+            this.clientFileRegisterlistBox.Size = new System.Drawing.Size(133, 95);
+            this.clientFileRegisterlistBox.TabIndex = 48;
+            this.clientFileRegisterlistBox.SelectedIndexChanged += new System.EventHandler(this.clientFileRegisterlistBox_SelectedIndexChanged);
+            // 
+            // clientStringRegisterListBox
+            // 
+            this.clientStringRegisterListBox.FormattingEnabled = true;
+            this.clientStringRegisterListBox.Location = new System.Drawing.Point(637, 19);
+            this.clientStringRegisterListBox.Name = "clientStringRegisterListBox";
+            this.clientStringRegisterListBox.Size = new System.Drawing.Size(133, 95);
+            this.clientStringRegisterListBox.TabIndex = 49;
+            this.clientStringRegisterListBox.SelectedIndexChanged += new System.EventHandler(this.clientStringRegisterListBox_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(366, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(55, 16);
+            this.label5.TabIndex = 50;
+            this.label5.Text = "Clients";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(479, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(145, 16);
+            this.label7.TabIndex = 51;
+            this.label7.Text = "Client - FileRegister";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(630, 0);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(159, 16);
+            this.label19.TabIndex = 52;
+            this.label19.Text = "Client - StringRegister";
             // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(999, 573);
+            this.ClientSize = new System.Drawing.Size(833, 634);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox2);
@@ -842,7 +879,6 @@
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -871,8 +907,6 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button closeFileButton;
         private System.Windows.Forms.Button openFileButton;
-        private System.Windows.Forms.TextBox FileNameTextBox;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox dataServerIdTextBox;
@@ -898,10 +932,8 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox9;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button writeFileButton;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox byteArrayTextBox;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.TextBox textBox10;
         private System.Windows.Forms.TextBox textBox9;
@@ -924,6 +956,12 @@
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button nextStepButton;
         private System.Windows.Forms.ListBox dataServersListBox;
+        private System.Windows.Forms.ListBox ClientsListBox;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ListBox clientStringRegisterListBox;
+        private System.Windows.Forms.ListBox clientFileRegisterlistBox;
     }
 }
 

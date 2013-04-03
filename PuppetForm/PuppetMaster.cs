@@ -142,18 +142,26 @@ namespace PuppetForm
             startProcess(process);
             System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
         }
-
-        public void write(string process, string fileRegister, byte[] byteArrayRegister)
-        {
-            startProcess(process);
-            System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
-        }
-
+        
         public void write(string process, string fileRegister, string contents)
         {
-            startProcess(process);
-            System.Windows.Forms.MessageBox.Show("WRITE: Not Done Yet");
+            byte[] byteArrayRegister = System.Text.Encoding.UTF8.GetBytes(contents);
+            createClient(process);
+
+            ServerObjectWrapper sow = clients[process];
+
+            IClient client = sow.getObject<IClient>();
+
+            try
+            {
+                client.write(fileRegister, byteArrayRegister);
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
         }
+        
 
         public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt)
         {
@@ -287,5 +295,65 @@ namespace PuppetForm
             }
             catch (Exception e) { Console.WriteLine("Error exiting."); }
         }
+        /*
+        internal IEnumerable<string> fileRegistersForClient(string clientId)
+        {
+            List<string> fileRegisters = new List<string>();
+            if (clients.ContainsKey(clientId)) 
+            {
+                fileRegisters = clients[clientId].getObject<IClient>().getAllFileRegisters();
+            }
+            return fileRegisters;
+        }*/
+
+        /*
+        {
+            List<string> stringRegisters = new List<string>();
+            if (clients.ContainsKey(clientId))
+            {
+                stringRegisters  = clients[clientId].getObject<IClient>().getAllStringRegisters();
+            }
+            return stringRegisters;
+        }*/
+
+       public List<string> stringRegistersForClient(string clientId)
+        {
+            createClient(clientId);
+
+            ServerObjectWrapper sow = clients[clientId];
+
+            IClient client = sow.getObject<IClient>();
+
+            try
+            {
+                return client.getAllStringRegisters();
+            }
+            catch (CommonTypes.Exceptions.DeleteFileException e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+
+            return new List<string>();
+        }
+
+       public List<string> fileRegistersForClient(string clientId)
+       {
+           createClient(clientId);
+
+           ServerObjectWrapper sow = clients[clientId];
+
+           IClient client = sow.getObject<IClient>();
+
+           try
+           {
+               return client.getAllFileRegisters();
+           }
+           catch (CommonTypes.Exceptions.DeleteFileException e)
+           {
+               System.Windows.Forms.MessageBox.Show(e.Message);
+           }
+
+           return new List<string>();
+       }
     }
 }

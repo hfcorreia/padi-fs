@@ -82,5 +82,18 @@ namespace CommonTypes
             }
             return -1;
         }
+
+        public List<string> getAllFileNames()
+        {
+            List<string> result = new List<string>();
+            foreach (File file in Files)
+            {
+                if (file != null && file.FileName != null)
+                {
+                    result.Add(file.FileName);
+                }
+            }
+            return result;
+        }
     }
 }
