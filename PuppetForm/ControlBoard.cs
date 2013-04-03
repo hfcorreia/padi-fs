@@ -112,5 +112,36 @@ namespace PuppetForm
             }
         }
 
+        private void failMetaDataButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.fail(mdIdTextBox.Text);
+        }
+
+        private void recoverMetadataButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.recover(mdIdTextBox.Text);
+        }
+
+        private void freezeDSButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.freeze(dataServerIdTextBox.Text);
+        }
+
+        private void UnfreezeDSButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.unfreeze(dataServerIdTextBox.Text);
+        }
+
+        private void FailDSButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.fail(dataServerIdTextBox.Text);
+        }
+
+        private void RecoverDSButton_Click(object sender, EventArgs e)
+        {
+            puppetMaster.recover(dataServerIdTextBox.Text);
+        }
+
+
     }
 }

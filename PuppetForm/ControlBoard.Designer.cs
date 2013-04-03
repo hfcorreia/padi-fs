@@ -33,9 +33,9 @@
             this.createDataServerButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.recoverMetadataButton = new System.Windows.Forms.Button();
+            this.failMetaDataButton = new System.Windows.Forms.Button();
+            this.mdIdTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button11 = new System.Windows.Forms.Button();
@@ -92,10 +92,10 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
+            this.RecoverDSButton = new System.Windows.Forms.Button();
+            this.UnfreezeDSButton = new System.Windows.Forms.Button();
+            this.freezeDSButton = new System.Windows.Forms.Button();
+            this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
@@ -127,7 +127,7 @@
             this.clientNameTextBox.Name = "clientNameTextBox";
             this.clientNameTextBox.Size = new System.Drawing.Size(50, 20);
             this.clientNameTextBox.TabIndex = 14;
-            this.clientNameTextBox.Text = "1";
+            this.clientNameTextBox.Text = "c-1";
             // 
             // createDataServerButton
             // 
@@ -142,9 +142,9 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.button5);
-            this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Controls.Add(this.textBox2);
+            this.groupBox2.Controls.Add(this.recoverMetadataButton);
+            this.groupBox2.Controls.Add(this.failMetaDataButton);
+            this.groupBox2.Controls.Add(this.mdIdTextBox);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(184, 141);
@@ -161,30 +161,33 @@
             this.label6.TabIndex = 20;
             this.label6.Text = "MDS ID";
             // 
-            // button5
+            // recoverMetadataButton
             // 
-            this.button5.Location = new System.Drawing.Point(6, 108);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(171, 27);
-            this.button5.TabIndex = 6;
-            this.button5.Text = "Recover";
-            this.button5.UseVisualStyleBackColor = true;
+            this.recoverMetadataButton.Location = new System.Drawing.Point(6, 108);
+            this.recoverMetadataButton.Name = "recoverMetadataButton";
+            this.recoverMetadataButton.Size = new System.Drawing.Size(171, 27);
+            this.recoverMetadataButton.TabIndex = 6;
+            this.recoverMetadataButton.Text = "Recover";
+            this.recoverMetadataButton.UseVisualStyleBackColor = true;
+            this.recoverMetadataButton.Click += new System.EventHandler(this.recoverMetadataButton_Click);
             // 
-            // button1
+            // failMetaDataButton
             // 
-            this.button1.Location = new System.Drawing.Point(6, 76);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(171, 27);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Fail";
-            this.button1.UseVisualStyleBackColor = true;
+            this.failMetaDataButton.Location = new System.Drawing.Point(6, 76);
+            this.failMetaDataButton.Name = "failMetaDataButton";
+            this.failMetaDataButton.Size = new System.Drawing.Size(171, 27);
+            this.failMetaDataButton.TabIndex = 4;
+            this.failMetaDataButton.Text = "Fail";
+            this.failMetaDataButton.UseVisualStyleBackColor = true;
+            this.failMetaDataButton.Click += new System.EventHandler(this.failMetaDataButton_Click);
             // 
-            // textBox2
+            // mdIdTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(57, 50);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(120, 20);
-            this.textBox2.TabIndex = 2;
+            this.mdIdTextBox.Location = new System.Drawing.Point(57, 50);
+            this.mdIdTextBox.Name = "mdIdTextBox";
+            this.mdIdTextBox.Size = new System.Drawing.Size(120, 20);
+            this.mdIdTextBox.TabIndex = 2;
+            this.mdIdTextBox.Text = "md-1";
             // 
             // label4
             // 
@@ -295,6 +298,7 @@
             this.NumDsTextBox.Name = "NumDsTextBox";
             this.NumDsTextBox.Size = new System.Drawing.Size(50, 20);
             this.NumDsTextBox.TabIndex = 21;
+            this.NumDsTextBox.Text = "1";
             // 
             // ReadQuorumTextBox
             // 
@@ -302,6 +306,7 @@
             this.ReadQuorumTextBox.Name = "ReadQuorumTextBox";
             this.ReadQuorumTextBox.Size = new System.Drawing.Size(50, 20);
             this.ReadQuorumTextBox.TabIndex = 22;
+            this.ReadQuorumTextBox.Text = "1";
             // 
             // WriteQuorumTextBox
             // 
@@ -309,6 +314,7 @@
             this.WriteQuorumTextBox.Name = "WriteQuorumTextBox";
             this.WriteQuorumTextBox.Size = new System.Drawing.Size(50, 20);
             this.WriteQuorumTextBox.TabIndex = 23;
+            this.WriteQuorumTextBox.Text = "1";
             // 
             // CreateFileNameTextBox
             // 
@@ -316,6 +322,7 @@
             this.CreateFileNameTextBox.Name = "CreateFileNameTextBox";
             this.CreateFileNameTextBox.Size = new System.Drawing.Size(100, 20);
             this.CreateFileNameTextBox.TabIndex = 20;
+            this.CreateFileNameTextBox.Text = "test1";
             // 
             // groupBox5
             // 
@@ -644,6 +651,7 @@
             this.FileNameTextBox.Name = "FileNameTextBox";
             this.FileNameTextBox.Size = new System.Drawing.Size(98, 20);
             this.FileNameTextBox.TabIndex = 17;
+            this.FileNameTextBox.Text = "test1";
             // 
             // groupBox1
             // 
@@ -727,10 +735,10 @@
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.createDataServerButton);
-            this.groupBox6.Controls.Add(this.button6);
-            this.groupBox6.Controls.Add(this.button7);
-            this.groupBox6.Controls.Add(this.button8);
-            this.groupBox6.Controls.Add(this.button9);
+            this.groupBox6.Controls.Add(this.RecoverDSButton);
+            this.groupBox6.Controls.Add(this.UnfreezeDSButton);
+            this.groupBox6.Controls.Add(this.freezeDSButton);
+            this.groupBox6.Controls.Add(this.FailDSButton);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
             this.groupBox6.Location = new System.Drawing.Point(202, 12);
@@ -740,41 +748,45 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data Server Control";
             // 
-            // button6
+            // RecoverDSButton
             // 
-            this.button6.Location = new System.Drawing.Point(166, 109);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(164, 27);
-            this.button6.TabIndex = 13;
-            this.button6.Text = "Recover";
-            this.button6.UseVisualStyleBackColor = true;
+            this.RecoverDSButton.Location = new System.Drawing.Point(166, 109);
+            this.RecoverDSButton.Name = "RecoverDSButton";
+            this.RecoverDSButton.Size = new System.Drawing.Size(164, 27);
+            this.RecoverDSButton.TabIndex = 13;
+            this.RecoverDSButton.Text = "Recover";
+            this.RecoverDSButton.UseVisualStyleBackColor = true;
+            this.RecoverDSButton.Click += new System.EventHandler(this.RecoverDSButton_Click);
             // 
-            // button7
+            // UnfreezeDSButton
             // 
-            this.button7.Location = new System.Drawing.Point(6, 108);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(154, 27);
-            this.button7.TabIndex = 12;
-            this.button7.Text = "Unfreeze";
-            this.button7.UseVisualStyleBackColor = true;
+            this.UnfreezeDSButton.Location = new System.Drawing.Point(6, 108);
+            this.UnfreezeDSButton.Name = "UnfreezeDSButton";
+            this.UnfreezeDSButton.Size = new System.Drawing.Size(154, 27);
+            this.UnfreezeDSButton.TabIndex = 12;
+            this.UnfreezeDSButton.Text = "Unfreeze";
+            this.UnfreezeDSButton.UseVisualStyleBackColor = true;
+            this.UnfreezeDSButton.Click += new System.EventHandler(this.UnfreezeDSButton_Click);
             // 
-            // button8
+            // freezeDSButton
             // 
-            this.button8.Location = new System.Drawing.Point(6, 76);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(154, 27);
-            this.button8.TabIndex = 10;
-            this.button8.Text = "Freeze";
-            this.button8.UseVisualStyleBackColor = true;
+            this.freezeDSButton.Location = new System.Drawing.Point(6, 76);
+            this.freezeDSButton.Name = "freezeDSButton";
+            this.freezeDSButton.Size = new System.Drawing.Size(154, 27);
+            this.freezeDSButton.TabIndex = 10;
+            this.freezeDSButton.Text = "Freeze";
+            this.freezeDSButton.UseVisualStyleBackColor = true;
+            this.freezeDSButton.Click += new System.EventHandler(this.freezeDSButton_Click);
             // 
-            // button9
+            // FailDSButton
             // 
-            this.button9.Location = new System.Drawing.Point(166, 76);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(164, 27);
-            this.button9.TabIndex = 11;
-            this.button9.Text = "Fail";
-            this.button9.UseVisualStyleBackColor = true;
+            this.FailDSButton.Location = new System.Drawing.Point(166, 76);
+            this.FailDSButton.Name = "FailDSButton";
+            this.FailDSButton.Size = new System.Drawing.Size(164, 27);
+            this.FailDSButton.TabIndex = 11;
+            this.FailDSButton.Text = "Fail";
+            this.FailDSButton.UseVisualStyleBackColor = true;
+            this.FailDSButton.Click += new System.EventHandler(this.FailDSButton_Click);
             // 
             // label3
             // 
@@ -791,7 +803,7 @@
             this.dataServerIdTextBox.Name = "dataServerIdTextBox";
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
-            this.dataServerIdTextBox.Text = "1";
+            this.dataServerIdTextBox.Text = "ds-1";
             // 
             // ControlBoard
             // 
@@ -864,13 +876,13 @@
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button failMetaDataButton;
+        private System.Windows.Forms.TextBox mdIdTextBox;
+        private System.Windows.Forms.Button recoverMetadataButton;
+        private System.Windows.Forms.Button RecoverDSButton;
+        private System.Windows.Forms.Button UnfreezeDSButton;
+        private System.Windows.Forms.Button freezeDSButton;
+        private System.Windows.Forms.Button FailDSButton;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label6;

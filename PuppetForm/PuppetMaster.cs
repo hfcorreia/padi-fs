@@ -53,10 +53,8 @@ namespace PuppetForm
         }
         public void open(String clientId, string filename)
         {
-            //-this is not good at all!
             createClient(clientId);
-            //------------------------
-
+            
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
@@ -72,6 +70,8 @@ namespace PuppetForm
 
         public void close(String clientId, string filename)
         {
+            createClient(clientId);
+
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
@@ -87,6 +87,8 @@ namespace PuppetForm
 
         public void create(String clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
         {
+            createClient(clientId);
+
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
@@ -103,6 +105,8 @@ namespace PuppetForm
 
         public void delete(String clientId, string filename)
         {
+            createClient(clientId);
+
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
