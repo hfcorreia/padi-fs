@@ -40,10 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileContentContainer.cs" />
     <Compile Include="exception\CloseFileException.cs" />
     <Compile Include="exception\OpenFileException.cs" />
     <Compile Include="exception\DeleteFileException.cs" />
     <Compile Include="exception\CreateFileException.cs" />
+    <Compile Include="FileMetadataContainer.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="FileMetadata.cs" />
     <Compile Include="MetaInformationReader.cs" />

@@ -18,7 +18,8 @@ namespace MetaDataServer
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-        private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
+        //private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
+        private Dictionary<String, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
 
         static void Main(string[] args)
         {
@@ -66,18 +67,18 @@ namespace MetaDataServer
             makeCheckpoint();
         }
 
-        public List<ServerObjectWrapper> open(String clientID, string filename)
+        public FileMetadata open(String clientID, string filename)
         {
-            if (filesInfo.ContainsKey(filename) && !filesInfo[filename].Clients.Contains(clientID))
+            if (fileMetadata.ContainsKey(filename) && !fileMetadata[filename].Clients.Contains(clientID))
             {
                 Console.WriteLine("#MDS: opened file: " + filename);
-                filesInfo[filename].Clients.Add(clientID);
+                fileMetadata[filename].Clients.Add(clientID);
                 makeCheckpoint();
-                return filesInfo[filename].DataServers;
+                return fileMetadata[filename];
             }
             else
             {
-                if (!filesInfo.ContainsKey(filename))
+                if (!fileMetadata.ContainsKey(filename))
                     throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " does not exist");
                 else throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " is already opend.");
             }
@@ -85,52 +86,54 @@ namespace MetaDataServer
 
         public void close(String clientID, string filename)
         {
-            if (filesInfo.ContainsKey(filename) && filesInfo[filename].Clients.Contains(clientID))
+            if (fileMetadata.ContainsKey(filename) && fileMetadata[filename].Clients.Contains(clientID))
             {
                 Console.WriteLine("#MDS: closed file: " + filename);
-                filesInfo[filename].Clients.Remove(clientID);
+                fileMetadata[filename].Clients.Remove(clientID);
                 makeCheckpoint();
             }
             else
             {
-                if (!filesInfo.ContainsKey(filename))
+                if (!fileMetadata.ContainsKey(filename))
                     throw new CommonTypes.Exceptions.CloseFileException("File " + filename + " does not exist");
                 else throw new CommonTypes.Exceptions.CloseFileException("File " + filename + " is already closed.");
             }
         }
 
-        public void delete(string filename)
+        public void delete(string clientId, string filename)
         {
-            if (filesInfo.ContainsKey(filename) && filesInfo[filename].Clients.Count == 0)
+            if (fileMetadata.ContainsKey(filename) && fileMetadata[filename].Clients.Count == 1 && fileMetadata[filename].Clients.Contains(clientId))
             {
-                filesInfo.Remove(filename);
+                fileMetadata[filename].Clients.Remove(clientId);
+                fileMetadata.Remove(filename);
                 Console.WriteLine("#MDS: Deleted file: " + filename);
                 makeCheckpoint();
             }
             else
             {
-                if (!filesInfo.ContainsKey(filename))
+                if (!fileMetadata.ContainsKey(filename))
                     throw new CommonTypes.Exceptions.DeleteFileException("File " + filename + " does not exist");
                 else throw new CommonTypes.Exceptions.DeleteFileException("File " + filename + " is open.");
             }
         }
 
-        public List<ServerObjectWrapper> create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
+        public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
             if (!(readQuorum <= numberOfDataServers) || !(writeQuorum <= numberOfDataServers))
                 throw new CommonTypes.Exceptions.CreateFileException("Invalid quorums values in create " + filename);
 
-            if (!filesInfo.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
+            if (!fileMetadata.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
             {
-                FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum);
                 List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
+                FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
+                //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
-                FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
-                filesInfo.Add(filename, newFileInfo);
+                fileMetadata.Add(filename, newFileMetadata);
                 Console.WriteLine("#MDS: Created " + filename);
                 makeCheckpoint();
-                return newFileDataServers;
+
+                return open(clientID, filename);
             }
             else
             {

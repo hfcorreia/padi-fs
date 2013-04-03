@@ -14,7 +14,8 @@ namespace PuppetForm
 {
     class PuppetMaster
     {
-
+        private Dictionary<string, FileMetadataContainer> fileMetadataContainer = new Dictionary<string,FileMetadataContainer>();
+        private Dictionary<string, FileContentContainer> fileContentContainer = new Dictionary<string,FileContentContainer>();
         private Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public System.IO.StreamReader LoadedScriptReader { get; set; }
@@ -28,6 +29,8 @@ namespace PuppetForm
                 Process.Start("Client.exe", clientPort + " " + clientId);
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
                 clients.Add(clientId, clientWrapper);
+                fileMetadataContainer[clientId] = new FileMetadataContainer(Int32.Parse(Properties.Resources.FILE_REGISTER_CAPACITY));
+                fileContentContainer[clientId] = new FileContentContainer(Int32.Parse(Properties.Resources.FILE_STRING_CAPACITY));
             }
         }
 
@@ -51,6 +54,7 @@ namespace PuppetForm
                 Process.Start("MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id);
             }
         }
+
         public void open(String clientId, string filename)
         {
             //-this is not good at all!
@@ -93,7 +97,8 @@ namespace PuppetForm
 
             try
             {
-                client.create(filename, numberDataServers, readQuorum, writeQuorum);
+                FileMetadata metadata = client.create(filename, numberDataServers, readQuorum, writeQuorum);
+                fileMetadataContainer[clientId].addFileMetadata(metadata);
             }
             catch (CommonTypes.Exceptions.CreateFileException e)
             {

@@ -13,14 +13,18 @@ namespace CommonTypes
         public int ReadQuorum { get; set; }
         public int WriteQuorum { get; set; }
         public int NumServers { get; set; }
+        public List<ServerObjectWrapper> FileServers { get; set; }
+        public List<String> Clients { get; set; }
 
         public FileMetadata() { }
-        public FileMetadata(String filename, int numServers, int readQuorum, int writeQuorum)
+        public FileMetadata(String filename, int numServers, int readQuorum, int writeQuorum, List<ServerObjectWrapper> fileServers)
         {
             FileName = filename;
             NumServers = numServers;
             ReadQuorum = readQuorum;
             WriteQuorum = writeQuorum;
+            FileServers = fileServers;
+            Clients = new List<string>();
         }
     }
 }
