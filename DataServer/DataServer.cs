@@ -80,7 +80,7 @@ namespace DataServer
             //creates a new file
             files.Add(file.FileName, file);
 
-            Util.writeFileToDisk(file, "" + "DS" + Id);
+            Util.writeFileToDisk(file, Id);
             makeCheckpoint();
         }
 
