@@ -14,8 +14,8 @@ namespace PuppetForm
 {
     class PuppetMaster
     {
-        private Dictionary<string, FileMetadataContainer> fileMetadataContainer = new Dictionary<string,FileMetadataContainer>();
-        private Dictionary<string, FileContentContainer> fileContentContainer = new Dictionary<string,FileContentContainer>();
+        //private Dictionary<string, FileMetadataContainer> fileMetadataContainer = new Dictionary<string,FileMetadataContainer>();
+        //private Dictionary<string, FileContentContainer> fileContentContainer = new Dictionary<string,FileContentContainer>();
         private Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public System.IO.StreamReader LoadedScriptReader { get; set; }
