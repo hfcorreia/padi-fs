@@ -187,7 +187,7 @@
             this.mdIdTextBox.Name = "mdIdTextBox";
             this.mdIdTextBox.Size = new System.Drawing.Size(120, 20);
             this.mdIdTextBox.TabIndex = 2;
-            this.mdIdTextBox.Text = "md-1";
+            this.mdIdTextBox.Text = "m-1";
             // 
             // label4
             // 
@@ -803,7 +803,7 @@
             this.dataServerIdTextBox.Name = "dataServerIdTextBox";
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
-            this.dataServerIdTextBox.Text = "ds-1";
+            this.dataServerIdTextBox.Text = "d-1";
             // 
             // ControlBoard
             // 
