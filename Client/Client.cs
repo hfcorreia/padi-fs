@@ -64,9 +64,13 @@ namespace Client
 
         public void write(string filename, byte[] fileContent)
         {
-            Console.WriteLine("#Client: writing file '" + filename + "' with content: '" + fileContent + "'");
             int fileVersion = readFileVersion(filename);
+
+            Console.WriteLine("#Client: writing file '" + filename + "' with content: '" + fileContent + "', as string: " + System.Text.Encoding.UTF8.GetString(fileContent));
             File file = new File(filename, fileVersion, fileContent);
+
+            fileContentContainer.addFileContent(file);
+
             if (fileMetadataContainer.containsFileMetadata(file.FileName))
             {
                 foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
@@ -92,8 +96,18 @@ namespace Client
         }
 
 
-        public void read(string filename) {
+        public File read(string filename) {
             Console.WriteLine("#Client: reading file '" + filename + "' -> NOT DONE!");
+            File file = null;
+            if (fileMetadataContainer.containsFileMetadata(filename))
+            {
+                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(filename).FileServers)
+                {
+                    file = dataServerWrapper.getObject<IDataServer>().read(filename);
+                }
+            }
+
+            return file;
         }
 
         public void open(String clientId, string filename)
@@ -163,8 +177,8 @@ namespace Client
         {
             return fileMetadataContainer.getAllFileNames();
         }
-        public List<string> getAllStringRegisters() { 
-            return fileContentContainer.getAllFileNames(); 
+        public List<string> getAllStringRegisters() {
+            return fileContentContainer.getAllFileContentAsString();
         }
 
         public void exit()
