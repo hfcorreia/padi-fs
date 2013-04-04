@@ -109,5 +109,10 @@ namespace CommonTypes
             }
             return result;
         }
+
+        public void setFileContent(int position, File fileContent)
+        {
+            Files[position] = fileContent;
+        }
     }
 }

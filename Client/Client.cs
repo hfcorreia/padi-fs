@@ -136,16 +136,24 @@ namespace Client
         }
 
 
-        public File read(string filename) {
-            Console.WriteLine("#Client: reading file '" + filename + "' -> NOT DONE!");
+        public File read(string process, int fileRegisterId, string semantics, int stringRegisterId)
+        {
+            Console.WriteLine("#Client: reading file. fileRegister: " + fileRegisterId + ", sringRegister: " + stringRegisterId + ", semantics: " + semantics);
             File file = null;
-            if (fileMetadataContainer.containsFileMetadata(filename))
+            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
+            if (fileMetadata != null && fileMetadata.FileServers!=null)
             {
-                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(filename).FileServers)
+                foreach (ServerObjectWrapper dataServerWrapper in fileMetadata.FileServers)
                 {
-                    file = dataServerWrapper.getObject<IDataServer>().read(filename);
+                    file = dataServerWrapper.getObject<IDataServer>().read(fileMetadata.FileName);
                 }
             }
+            else
+            {
+                throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + fileRegisterId);
+            }
+
+            fileContentContainer.setFileContent(stringRegisterId, file);
 
             return file;
         }

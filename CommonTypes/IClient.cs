@@ -15,7 +15,7 @@ namespace CommonTypes
 
         void write(int fileRegisterId, byte[] content);
 
-        File read(string filename);
+        File read(string process, int fileRegister, string semantics, int stringRegister);
         
         void open(string clientId, string filename);
 

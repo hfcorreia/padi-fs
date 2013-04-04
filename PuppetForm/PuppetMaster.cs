@@ -137,7 +137,7 @@ namespace PuppetForm
             startProcess(process);
             System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
 
-        public void read(string process, string fileRegister, string semantics, string stringRegister)
+        public void read(string process, int fileRegister, string semantics, int stringRegister)
         {
            /* startProcess(process);
             System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
@@ -259,7 +259,7 @@ namespace PuppetForm
                     }
                     break;
                 case "read":
-                    read(input[1], input[2], input[3], input[4]);
+                    read(input[1], Int32.Parse(input[2]), input[3], Int32.Parse(input[4]));
                     break;
                 case "copy":
                     copy(input[1], input[2], input[3], input[4], input[5]);

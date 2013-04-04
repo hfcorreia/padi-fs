@@ -468,7 +468,39 @@ namespace PuppetForm
 
         private void readFileButton_Click(object sender, EventArgs e)
         {
-            //TODO
+            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0) 
+            {
+                System.Windows.Forms.MessageBox.Show("Please specify a client");
+                return;
+            }
+
+            if (clientFileRegisterlistBox.Items.Count == 0 || clientFileRegisterlistBox.SelectedIndex < 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Please specify a file register");
+                return;
+            }
+
+            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0)
+            {
+                if (clientStringRegisterListBox.Items.Count > 9)
+                {
+                    System.Windows.Forms.MessageBox.Show("Please specify a string register");
+                    return;
+                }
+                else
+                {
+                    clientStringRegisterListBox.SelectedIndex = clientStringRegisterListBox.Items.Count + 1;
+                }
+                
+            }
+
+            string processId = getSelectedClient() ;
+            int fileRegisterId = clientFileRegisterlistBox.SelectedIndex;
+            int stringRegisterId = clientStringRegisterListBox.SelectedIndex;
+            string readSemantics = "NOT DONE" ;
+            
+            puppetMaster.read(processId, fileRegisterId, readSemantics, stringRegisterId);
+            updateClientStringRegister(processId);
         }
 
         private void writeFileButton_Click(object sender, EventArgs e)

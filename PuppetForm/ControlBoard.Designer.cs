@@ -78,6 +78,7 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.newContentCheckBox = new System.Windows.Forms.CheckBox();
             this.writeFileButton = new System.Windows.Forms.Button();
             this.byteArrayTextBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -88,11 +89,9 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.readFileButton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.dataServersListBox = new System.Windows.Forms.ListBox();
             this.RecoverDSButton = new System.Windows.Forms.Button();
@@ -101,7 +100,6 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.newContentCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -618,6 +616,16 @@
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "WriteFile";
             // 
+            // newContentCheckBox
+            // 
+            this.newContentCheckBox.AutoSize = true;
+            this.newContentCheckBox.Location = new System.Drawing.Point(97, 81);
+            this.newContentCheckBox.Name = "newContentCheckBox";
+            this.newContentCheckBox.Size = new System.Drawing.Size(88, 17);
+            this.newContentCheckBox.TabIndex = 33;
+            this.newContentCheckBox.Text = "New Content";
+            this.newContentCheckBox.UseVisualStyleBackColor = true;
+            // 
             // writeFileButton
             // 
             this.writeFileButton.Location = new System.Drawing.Point(5, 124);
@@ -690,11 +698,9 @@
             // 
             this.groupBox1.Controls.Add(this.readFileButton);
             this.groupBox1.Controls.Add(this.comboBox2);
-            this.groupBox1.Controls.Add(this.textBox7);
             this.groupBox1.Controls.Add(this.textBox6);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Location = new System.Drawing.Point(374, 128);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(204, 161);
@@ -704,7 +710,6 @@
             // 
             // readFileButton
             // 
-            this.readFileButton.Enabled = false;
             this.readFileButton.Location = new System.Drawing.Point(6, 124);
             this.readFileButton.Name = "readFileButton";
             this.readFileButton.Size = new System.Drawing.Size(192, 31);
@@ -716,6 +721,7 @@
             // comboBox2
             // 
             this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox2.Enabled = false;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
             "Default",
@@ -725,15 +731,6 @@
             this.comboBox2.Size = new System.Drawing.Size(109, 21);
             this.comboBox2.Sorted = true;
             this.comboBox2.TabIndex = 26;
-            // 
-            // textBox7
-            // 
-            this.textBox7.Enabled = false;
-            this.textBox7.Location = new System.Drawing.Point(89, 19);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(109, 20);
-            this.textBox7.TabIndex = 25;
-            this.textBox7.Visible = false;
             // 
             // textBox6
             // 
@@ -755,22 +752,12 @@
             // label10
             // 
             this.label10.AutoSize = true;
+            this.label10.Enabled = false;
             this.label10.Location = new System.Drawing.Point(7, 47);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(56, 13);
             this.label10.TabIndex = 2;
             this.label10.Text = "Semantics";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Enabled = false;
-            this.label9.Location = new System.Drawing.Point(7, 22);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(65, 13);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "File Register";
-            this.label9.Visible = false;
             // 
             // groupBox6
             // 
@@ -784,7 +771,7 @@
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
             this.groupBox6.Location = new System.Drawing.Point(328, 12);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(454, 141);
+            this.groupBox6.Size = new System.Drawing.Size(482, 141);
             this.groupBox6.TabIndex = 7;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data Server Control";
@@ -794,7 +781,7 @@
             this.dataServersListBox.FormattingEnabled = true;
             this.dataServersListBox.Location = new System.Drawing.Point(343, 14);
             this.dataServersListBox.Name = "dataServersListBox";
-            this.dataServersListBox.Size = new System.Drawing.Size(95, 121);
+            this.dataServersListBox.Size = new System.Drawing.Size(130, 121);
             this.dataServersListBox.TabIndex = 46;
             // 
             // RecoverDSButton
@@ -853,16 +840,6 @@
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
-            // 
-            // newContentCheckBox
-            // 
-            this.newContentCheckBox.AutoSize = true;
-            this.newContentCheckBox.Location = new System.Drawing.Point(97, 81);
-            this.newContentCheckBox.Name = "newContentCheckBox";
-            this.newContentCheckBox.Size = new System.Drawing.Size(88, 17);
-            this.newContentCheckBox.TabIndex = 33;
-            this.newContentCheckBox.Text = "New Content";
-            this.newContentCheckBox.UseVisualStyleBackColor = true;
             // 
             // ControlBoard
             // 
@@ -926,10 +903,8 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button readFileButton;
         private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button failMetaDataButton;
