@@ -13,11 +13,13 @@ namespace CommonTypes
 
         File read(string filename);
         
-        void open(string clientId, string filename);
+        void open(string filename);
 
-        void close(string clientId, string filename);
+        void close(string filename);
 
         void delete(string filename);
+
+        void exeScript(string filename);
 
         FileMetadata create(string filename, int numberOfServers, int readQuorum, int writeQuorum);
 

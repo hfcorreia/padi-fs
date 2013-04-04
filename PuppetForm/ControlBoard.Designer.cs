@@ -441,7 +441,7 @@
             this.runScriptButton.TabIndex = 42;
             this.runScriptButton.Text = "Run Script";
             this.runScriptButton.UseVisualStyleBackColor = true;
-            this.runScriptButton.Click += new System.EventHandler(this.button4_Click);
+            this.runScriptButton.Click += new System.EventHandler(this.runScript_Click);
             // 
             // loadScriptButton
             // 
@@ -451,7 +451,7 @@
             this.loadScriptButton.TabIndex = 41;
             this.loadScriptButton.Text = "Load Script";
             this.loadScriptButton.UseVisualStyleBackColor = true;
-            this.loadScriptButton.Click += new System.EventHandler(this.button3_Click);
+            this.loadScriptButton.Click += new System.EventHandler(this.loadScript_Click);
             // 
             // groupBox11
             // 

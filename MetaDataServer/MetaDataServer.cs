@@ -20,7 +20,7 @@ namespace MetaDataServer
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
         //private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
         private Dictionary<String, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
-
+       
         static void Main(string[] args)
         {
             Console.SetWindowSize(80, 15);

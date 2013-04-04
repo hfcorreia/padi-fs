@@ -133,7 +133,7 @@ namespace PuppetForm
 
 
 
-        private void button3_Click(object sender, EventArgs e)
+        private void loadScript_Click(object sender, EventArgs e)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace PuppetForm
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void runScript_Click(object sender, EventArgs e)
         {
             if (puppetMaster.LoadedScriptReader != null)
             {
