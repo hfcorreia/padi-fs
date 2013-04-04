@@ -95,5 +95,19 @@ namespace CommonTypes
             }
             return result;
         }
+
+        public List<string> getAllFileContentAsString()
+        {
+            List<string> result = new List<string>();
+            foreach (File file in Files)
+            {
+                if (file != null)
+                {
+                    string fileContentAsString = System.Text.Encoding.UTF8.GetString(file.Content);
+                    result.Add(fileContentAsString);
+                }
+            }
+            return result;
+        }
     }
 }

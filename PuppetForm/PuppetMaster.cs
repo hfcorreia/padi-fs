@@ -146,6 +146,9 @@ namespace PuppetForm
         public void write(string process, string fileRegister, string contents)
         {
             byte[] byteArrayRegister = System.Text.Encoding.UTF8.GetBytes(contents);
+
+            //System.Windows.Forms.MessageBox.Show("WRITE: " + "process: " + process + ", fileRegister: " + fileRegister + ", content: " + contents + ", as bytes: " + byteArrayRegister);
+
             createClient(process);
 
             ServerObjectWrapper sow = clients[process];

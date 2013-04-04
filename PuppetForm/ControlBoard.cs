@@ -366,19 +366,22 @@ namespace PuppetForm
 
         private void updateClientFileRegister(string clientId) 
         {
+            int index = 0;
             clientFileRegisterlistBox.Items.Clear();
             foreach (string register in puppetMaster.fileRegistersForClient(clientId))
             {
-                clientFileRegisterlistBox.Items.Add(register);
+                clientFileRegisterlistBox.Items.Add("#" + index++ + " - " + register);
             }
         }
 
         private void updateClientStringRegister(string clientId)
         {
+            int index = 0;
             clientStringRegisterListBox.Items.Clear();
             foreach (string register in puppetMaster.stringRegistersForClient(clientId))
             {
-                clientStringRegisterListBox.Items.Add(register);
+
+                clientStringRegisterListBox.Items.Add("#" + index++ + " - " + register);
             }
         }
 

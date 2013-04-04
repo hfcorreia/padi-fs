@@ -51,6 +51,11 @@
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
             this.CreateFileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.clientStringRegisterListBox = new System.Windows.Forms.ListBox();
+            this.clientFileRegisterlistBox = new System.Windows.Forms.ListBox();
             this.ClientsListBox = new System.Windows.Forms.ListBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.nextStepButton = new System.Windows.Forms.Button();
@@ -96,11 +101,6 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.clientFileRegisterlistBox = new System.Windows.Forms.ListBox();
-            this.clientStringRegisterListBox = new System.Windows.Forms.ListBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -214,7 +214,7 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(7, 33);
+            this.button11.Location = new System.Drawing.Point(6, 42);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(163, 44);
             this.button11.TabIndex = 45;
@@ -223,7 +223,7 @@
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(6, 80);
+            this.exitButton.Location = new System.Drawing.Point(5, 89);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(164, 43);
             this.exitButton.TabIndex = 47;
@@ -353,6 +353,54 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
             this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(630, 0);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(159, 16);
+            this.label19.TabIndex = 52;
+            this.label19.Text = "Client - StringRegister";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(479, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(145, 16);
+            this.label7.TabIndex = 51;
+            this.label7.Text = "Client - FileRegister";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(366, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(55, 16);
+            this.label5.TabIndex = 50;
+            this.label5.Text = "Clients";
+            // 
+            // clientStringRegisterListBox
+            // 
+            this.clientStringRegisterListBox.FormattingEnabled = true;
+            this.clientStringRegisterListBox.Location = new System.Drawing.Point(637, 19);
+            this.clientStringRegisterListBox.Name = "clientStringRegisterListBox";
+            this.clientStringRegisterListBox.Size = new System.Drawing.Size(133, 95);
+            this.clientStringRegisterListBox.TabIndex = 49;
+            this.clientStringRegisterListBox.SelectedIndexChanged += new System.EventHandler(this.clientStringRegisterListBox_SelectedIndexChanged);
+            // 
+            // clientFileRegisterlistBox
+            // 
+            this.clientFileRegisterlistBox.FormattingEnabled = true;
+            this.clientFileRegisterlistBox.Location = new System.Drawing.Point(482, 19);
+            this.clientFileRegisterlistBox.Name = "clientFileRegisterlistBox";
+            this.clientFileRegisterlistBox.Size = new System.Drawing.Size(133, 95);
+            this.clientFileRegisterlistBox.TabIndex = 48;
+            this.clientFileRegisterlistBox.SelectedIndexChanged += new System.EventHandler(this.clientFileRegisterlistBox_SelectedIndexChanged);
             // 
             // ClientsListBox
             // 
@@ -803,54 +851,6 @@
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
-            // 
-            // clientFileRegisterlistBox
-            // 
-            this.clientFileRegisterlistBox.FormattingEnabled = true;
-            this.clientFileRegisterlistBox.Location = new System.Drawing.Point(482, 19);
-            this.clientFileRegisterlistBox.Name = "clientFileRegisterlistBox";
-            this.clientFileRegisterlistBox.Size = new System.Drawing.Size(133, 95);
-            this.clientFileRegisterlistBox.TabIndex = 48;
-            this.clientFileRegisterlistBox.SelectedIndexChanged += new System.EventHandler(this.clientFileRegisterlistBox_SelectedIndexChanged);
-            // 
-            // clientStringRegisterListBox
-            // 
-            this.clientStringRegisterListBox.FormattingEnabled = true;
-            this.clientStringRegisterListBox.Location = new System.Drawing.Point(637, 19);
-            this.clientStringRegisterListBox.Name = "clientStringRegisterListBox";
-            this.clientStringRegisterListBox.Size = new System.Drawing.Size(133, 95);
-            this.clientStringRegisterListBox.TabIndex = 49;
-            this.clientStringRegisterListBox.SelectedIndexChanged += new System.EventHandler(this.clientStringRegisterListBox_SelectedIndexChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(366, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(55, 16);
-            this.label5.TabIndex = 50;
-            this.label5.Text = "Clients";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(479, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(145, 16);
-            this.label7.TabIndex = 51;
-            this.label7.Text = "Client - FileRegister";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(630, 0);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(159, 16);
-            this.label19.TabIndex = 52;
-            this.label19.Text = "Client - StringRegister";
             // 
             // ControlBoard
             // 
