@@ -8,6 +8,7 @@ using System.Runtime.Remoting;
 using CommonTypes;
 using System.Collections;
 using System.Runtime.Serialization.Formatters;
+using CommonTypes.Exceptions;
 
 namespace DataServer
 {
@@ -70,7 +71,7 @@ namespace DataServer
             Console.WriteLine("#DS: writing file '" + file.FileName +"', version: " + file.Version + ", content: " + file.Content );
             if (file == null)
             {
-                return;
+                throw new WriteFileException("Trying to write a null file.");
             }
 
             if (files.ContainsKey(file.FileName))
@@ -90,7 +91,7 @@ namespace DataServer
             Console.WriteLine("#DS: reading file '" + filename + "'");
             if (filename == null || !files.ContainsKey(filename))
             {
-                return null; //throw exception because the file does not exist
+                throw new WriteFileException("Trying to read an invalid file named '" + filename + "'");
             }
 
             return Util.readFileFromDisk(Id, filename, files[filename].Version);

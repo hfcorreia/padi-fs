@@ -139,17 +139,10 @@ namespace PuppetForm
 
         public void read(string process, string fileRegister, string semantics, string stringRegister)
         {
-            startProcess(process);
+           /* startProcess(process);
             System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
-        }
-        
-        public void write(string process, string fileRegister, string contents)
-        {
-            byte[] byteArrayRegister = System.Text.Encoding.UTF8.GetBytes(contents);
 
             //System.Windows.Forms.MessageBox.Show("WRITE: " + "process: " + process + ", fileRegister: " + fileRegister + ", content: " + contents + ", as bytes: " + byteArrayRegister);
-
-            createClient(process);
 
             ServerObjectWrapper sow = clients[process];
 
@@ -158,6 +151,45 @@ namespace PuppetForm
             try
             {
                 client.write(fileRegister, byteArrayRegister);
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+            */
+        }
+
+        public void write(string process, int fileRegisterId, string contents)
+        {
+            byte[] byteArrayRegisterContent = System.Text.Encoding.UTF8.GetBytes(contents);
+
+            startProcess(process);
+
+            ServerObjectWrapper sow = clients[process];
+
+            IClient client = sow.getObject<IClient>();
+
+            try
+            {
+                client.write(fileRegisterId, byteArrayRegisterContent);
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+        }
+
+        public void write(string process, int fileRegisterId, int stringRegisterId)
+        {
+            startProcess(process);
+
+            ServerObjectWrapper sow = clients[process];
+
+            IClient client = sow.getObject<IClient>();
+
+            try
+            {
+                client.write(fileRegisterId, stringRegisterId);
             }
             catch (Exception e)
             {
@@ -214,7 +246,17 @@ namespace PuppetForm
                     delete(input[1], input[2]);
                     break;
                 case "write":
-                    write(input[1], input[2], input[3]);
+                    int stringRegisterId;
+                    if (Int32.TryParse(input[3], out stringRegisterId))
+                    {
+                        //is write by string register
+                        write(input[1], Int32.Parse(input[2]), stringRegisterId);
+                    }
+                    else
+                    {
+                        //is write with new content
+                        write(input[1], Int32.Parse(input[2]), input[3]);
+                    }
                     break;
                 case "read":
                     read(input[1], input[2], input[3], input[4]);

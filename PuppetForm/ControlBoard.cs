@@ -88,6 +88,18 @@ namespace PuppetForm
 
         private void openFileButton_Click(object sender, EventArgs e)
         {
+            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0) 
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a client");
+                return;
+            }
+
+            if (clientFileRegisterlistBox.Items.Count == 0 || clientFileRegisterlistBox.SelectedIndex < 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a file register");
+                return;
+            }
+
             try {
                 puppetMaster.open(getSelectedClient(), getSelectedFileRegister());
             }
@@ -99,6 +111,18 @@ namespace PuppetForm
 
         private void closeFileButton_Click(object sender, EventArgs e)
         {
+            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a client");
+                return;
+            }
+
+            if (clientFileRegisterlistBox.Items.Count == 0 || clientFileRegisterlistBox.SelectedIndex < 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a file register");
+                return;
+            }
+
             try{
                 puppetMaster.close(getSelectedClient(), getSelectedFileRegister());
                 updateClientFileRegister(getSelectedClient());
@@ -111,7 +135,32 @@ namespace PuppetForm
 
         private void createFileButton_Click(object sender, EventArgs e)
         {
-            try{
+            if (ClientsListBox.Items.Count == 0 || ClientsListBox.SelectedIndex < 0) 
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a client");
+                return;
+            }
+
+            if (String.IsNullOrEmpty(CreateFileNameTextBox.Text))
+            {
+                System.Windows.Forms.MessageBox.Show("Please specify a valid name for the file");
+                return;
+            }
+            int tempValue;
+            if (String.IsNullOrEmpty(NumDsTextBox.Text) || 
+                String.IsNullOrEmpty(ReadQuorumTextBox.Text) || 
+                String.IsNullOrEmpty(WriteQuorumTextBox.Text) ||
+                !Int32.TryParse(NumDsTextBox.Text, out tempValue) ||
+                !Int32.TryParse(ReadQuorumTextBox.Text, out tempValue) ||
+                !Int32.TryParse(WriteQuorumTextBox.Text, out tempValue))
+            {
+                System.Windows.Forms.MessageBox.Show("Please specify valid values for the quoruns." + "\n"  +
+                    "Given - #DS: " + NumDsTextBox.Text + ", #readQ: " + ReadQuorumTextBox.Text + ", #writeQ: " + WriteQuorum.Text);
+                return;
+            }
+
+            try 
+            {
                 string clientId = getSelectedClient();
                 string fileName = CreateFileNameTextBox.Text;
                 int nDS = Int32.Parse(NumDsTextBox.Text);
@@ -121,6 +170,7 @@ namespace PuppetForm
                 puppetMaster.create(clientId, fileName, nDS, rQ, wQ);
 
                 updateClientFileRegister(clientId);
+                updateClientStringRegister(clientId);
                 selectFileRegister(fileName);
             }
             catch (Exception exception)
@@ -131,7 +181,7 @@ namespace PuppetForm
 
 
 
-        private void button3_Click(object sender, EventArgs e)
+        private void loadscript_Click(object sender, EventArgs e)
         {
             try{
                 OpenFileDialog fileDialog = new OpenFileDialog();
@@ -148,6 +198,18 @@ namespace PuppetForm
 
         private void client_deleteFile(object sender, EventArgs e)
         {
+            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a client");
+                return;
+            }
+
+            if (clientFileRegisterlistBox.Items.Count == 0 || clientFileRegisterlistBox.SelectedIndex < 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Please select a file register");
+                return;
+            }
+
             try
             {
                 puppetMaster.delete(getSelectedClient(), getSelectedFileRegister());
@@ -380,8 +442,8 @@ namespace PuppetForm
             clientStringRegisterListBox.Items.Clear();
             foreach (string register in puppetMaster.stringRegistersForClient(clientId))
             {
-
-                clientStringRegisterListBox.Items.Add("#" + index++ + " - " + register);
+                String registerValue = String.IsNullOrEmpty(register) ? "Empty" : register;
+                clientStringRegisterListBox.Items.Add("#" + index++ + " - " + registerValue);
             }
         }
 
@@ -411,14 +473,41 @@ namespace PuppetForm
 
         private void writeFileButton_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(byteArrayTextBox.Text))
+            if (clientFileRegisterlistBox.Items.Count == 0 || clientFileRegisterlistBox.SelectedIndex < 0)
             {
-                puppetMaster.write(getSelectedClient(), getSelectedFileRegister(), byteArrayTextBox.Text);
-                //updateClientFileRegister(getSelectedClient());
-                updateClientStringRegister(getSelectedClient());
+                System.Windows.Forms.MessageBox.Show("Error: Please specify a valid file register.");
+                return;
             }
-            else {
-                System.Windows.Forms.MessageBox.Show("Error: Please enter the content you want to write in the file.");
+
+            if (newContentCheckBox.Checked)
+            {
+                if(!String.IsNullOrEmpty(byteArrayTextBox.Text))
+                {
+                    int selectedFileRegisterId = clientFileRegisterlistBox.SelectedIndex;
+                    puppetMaster.write(getSelectedClient(), selectedFileRegisterId, byteArrayTextBox.Text);
+                    updateClientStringRegister(getSelectedClient());
+                }
+                else {
+                    System.Windows.Forms.MessageBox.Show("Error: Please enter the content you want to write in the file.");
+                }
+            }
+            else
+            {
+
+                if (clientStringRegisterListBox.Items.Count != 0 && clientStringRegisterListBox.SelectedIndex > 0)
+                {
+
+                    int selectedFileRegisterId = clientFileRegisterlistBox.SelectedIndex;
+                    int selectedStringRegisterId = clientStringRegisterListBox.SelectedIndex;
+
+                    puppetMaster.write(getSelectedClient(), selectedFileRegisterId, selectedStringRegisterId);
+                    updateClientStringRegister(getSelectedClient());
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Error: Please specify a valid string register.");
+                    return;
+                }
             }
         }
 

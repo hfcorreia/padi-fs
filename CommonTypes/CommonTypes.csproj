@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="exception\PadiFsException.cs" />
+    <Compile Include="exception\ReadFileException.cs" />
+    <Compile Include="exception\WriteFileException.cs" />
     <Compile Include="FileContentContainer.cs" />
     <Compile Include="exception\CloseFileException.cs" />
     <Compile Include="exception\OpenFileException.cs" />

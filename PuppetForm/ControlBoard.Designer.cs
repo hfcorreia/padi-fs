@@ -101,6 +101,7 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
+            this.newContentCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -451,7 +452,7 @@
             this.loadScriptButton.TabIndex = 41;
             this.loadScriptButton.Text = "Load Script";
             this.loadScriptButton.UseVisualStyleBackColor = true;
-            this.loadScriptButton.Click += new System.EventHandler(this.button3_Click);
+            this.loadScriptButton.Click += new System.EventHandler(this.loadscript_Click);
             // 
             // groupBox11
             // 
@@ -606,6 +607,7 @@
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.newContentCheckBox);
             this.groupBox9.Controls.Add(this.writeFileButton);
             this.groupBox9.Controls.Add(this.byteArrayTextBox);
             this.groupBox9.Controls.Add(this.label12);
@@ -852,6 +854,16 @@
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
             // 
+            // newContentCheckBox
+            // 
+            this.newContentCheckBox.AutoSize = true;
+            this.newContentCheckBox.Location = new System.Drawing.Point(97, 81);
+            this.newContentCheckBox.Name = "newContentCheckBox";
+            this.newContentCheckBox.Size = new System.Drawing.Size(88, 17);
+            this.newContentCheckBox.TabIndex = 33;
+            this.newContentCheckBox.Text = "New Content";
+            this.newContentCheckBox.UseVisualStyleBackColor = true;
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -962,6 +974,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListBox clientStringRegisterListBox;
         private System.Windows.Forms.ListBox clientFileRegisterlistBox;
+        private System.Windows.Forms.CheckBox newContentCheckBox;
     }
 }
 

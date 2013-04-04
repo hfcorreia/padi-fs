@@ -9,7 +9,11 @@ namespace CommonTypes
     {
         //void write(File file);
 
-        void write(string filename, byte[] content);
+        //void write(string filename, byte[] content);
+
+        void write(int fileRegisterId, int stringRegisterId);
+
+        void write(int fileRegisterId, byte[] content);
 
         File read(string filename);
         

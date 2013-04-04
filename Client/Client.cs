@@ -50,7 +50,7 @@ namespace Client
             Id = id;
         }
 
-        void startConnection(Client client)
+        public void startConnection(Client client)
         {
             Console.WriteLine("#Client: starting connection..");
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
@@ -61,23 +61,63 @@ namespace Client
             ChannelServices.RegisterChannel(channel, true);
             RemotingServices.Marshal(client, Id, typeof(Client));
         }
-
+        /*
         public void write(string filename, byte[] fileContent)
         {
-            int fileVersion = readFileVersion(filename);
+            File file = new File(filename, -1, fileContent);
+            write(file);
+        }
+         */
 
-            Console.WriteLine("#Client: writing file '" + filename + "' with content: '" + fileContent + "', as string: " + System.Text.Encoding.UTF8.GetString(fileContent));
-            File file = new File(filename, fileVersion, fileContent);
+        public void write(int fileRegisterId, byte[] content) 
+        { 
+            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
+            int stringRegisterId = fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
+            write(fileRegisterId, stringRegisterId);
+        }
 
-            fileContentContainer.addFileContent(file);
-
-            if (fileMetadataContainer.containsFileMetadata(file.FileName))
+        public void write(int fileRegisterId, int stringRegisterId)
+        {
+            if (fileMetadataContainer.getFileMetadata(fileRegisterId) == null)
             {
-                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
-                {
-                    dataServerWrapper.getObject<IDataServer>().write(file);
-                }
+                throw new WriteFileException("Client - Does not exist metadata at file register " + fileRegisterId);
             }
+
+            if (fileContentContainer.getFileContent(stringRegisterId) == null)
+            {
+                throw new WriteFileException("Client - Does not exist content at string register " + stringRegisterId);
+            }
+
+            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
+            byte[] fileContent = fileContentContainer.getFileContent(stringRegisterId).Content;
+
+            File file = new File(fileMetadata.FileName, -1, fileContent);
+            write(file);
+        }
+
+        private void write(File file)
+        {
+            if (file == null || file.Content == null || file.FileName == null)
+            {
+                throw new WriteFileException("Client - trying to write null file " + file);
+            }
+
+            if (!fileMetadataContainer.containsFileMetadata(file.FileName))
+            {
+                throw new WriteFileException("Client - tryng to write a file that is not open");
+            }
+
+            file.Version = readFileVersion(file.FileName);
+
+            Console.WriteLine("#Client: writing file '" + file.FileName + "' with content: '" + file.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(file.Content));
+
+//            if (fileMetadataContainer.containsFileMetadata(file.FileName))
+  //          {
+            foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
+            {
+                dataServerWrapper.getObject<IDataServer>().write(file);
+            }
+    //        }
         }
 
         private int readFileVersion(string filename)
@@ -165,10 +205,10 @@ namespace Client
             }
 
             //cacheServersForFile(filename, fileMetadata);
-            fileMetadataContainer.addFileMetadata(fileMetadata);
+            int fileRegisterId = fileMetadataContainer.addFileMetadata(fileMetadata);
 
             //File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
-            write(filename, INITIAL_FILE_CONTENT); //writes an empty file
+            write(fileRegisterId, INITIAL_FILE_CONTENT); //writes an empty file
 
             return fileMetadata;
         }

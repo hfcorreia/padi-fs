@@ -119,10 +119,10 @@ namespace MetaDataServer
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            if (!(readQuorum <= numberOfDataServers) || !(writeQuorum <= numberOfDataServers))
+            if ((readQuorum > numberOfDataServers) || (writeQuorum > numberOfDataServers) || (numberOfDataServers > dataServers.Count))
                 throw new CommonTypes.Exceptions.CreateFileException("Invalid quorums values in create " + filename);
 
-            if (!fileMetadata.ContainsKey(filename) && numberOfDataServers <= dataServers.Count)
+            if (!fileMetadata.ContainsKey(filename))
             {
                 List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
