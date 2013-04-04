@@ -220,6 +220,7 @@
             this.button11.TabIndex = 45;
             this.button11.Text = "Dump MDs";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.dumpAllMds_Click);
             // 
             // exitButton
             // 

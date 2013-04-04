@@ -115,7 +115,7 @@ namespace DataServer
 
         public void exit()
         {
-            Console.WriteLine("#DS: bye ='( ");
+            Console.WriteLine("#DS: Exiting!");
             System.Environment.Exit(0);
         }
 
@@ -151,5 +151,9 @@ namespace DataServer
             return dataServer;
         }
 
+        public void dump()
+        {
+            Console.WriteLine("#DS: Dumping!");
+        }
     }
 }

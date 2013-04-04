@@ -177,7 +177,29 @@ namespace PuppetForm
         {
             startProcess(process);
 
-            System.Windows.Forms.MessageBox.Show("DUMP: Not Done Yet");
+            ServerObjectWrapper sow = getRemoteObjectWrapper(process);
+
+            IRemote obj = sow.getObject<IClient>();
+
+            obj.dump();
+        }
+
+        private ServerObjectWrapper getRemoteObjectWrapper(string process)
+        {
+            if (process.StartsWith("c-"))
+            {
+                return clients[process];
+            }
+            else if (process.StartsWith("d-"))
+            {
+                return dataServers[process];
+            }
+            else if (process.StartsWith("m-"))
+            {
+                return  MetaInformationReader.Instance.getMetadataById(process);
+            }
+            //change this
+            return null;
         }
 
         private void startProcess(string process)
@@ -355,6 +377,14 @@ namespace PuppetForm
            }
 
            return new List<string>();
+       }
+
+       public void dumpAllMds()
+       {
+           foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
+           {
+               dump(metaDataWrapper.Id);
+           }
        }
     }
 }

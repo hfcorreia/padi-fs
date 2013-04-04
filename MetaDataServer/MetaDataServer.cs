@@ -128,7 +128,6 @@ namespace MetaDataServer
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
                 //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
-
                 fileMetadata.Add(filename, newFileMetadata);
                 Console.WriteLine("#MDS: Created " + filename);
                 makeCheckpoint();
@@ -162,6 +161,7 @@ namespace MetaDataServer
 
         public void exit()
         {
+            Console.WriteLine("#MDS: Exiting!");
             System.Environment.Exit(0);
         }
 
@@ -193,6 +193,11 @@ namespace MetaDataServer
             metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
 
             return metadaServer;
+        }
+
+        public void dump()
+        {
+            Console.WriteLine("#MDS: Dumping!");
         }
     }
 

@@ -220,7 +220,7 @@ namespace Client
                     // read(input[1], input[2], input[3], input[4]);
                     break;
                 case "dump":
-                    //  dump(input[1]);
+                    // dump(input[1]);
                     break;
                 case "#":
                     break;
@@ -240,8 +240,13 @@ namespace Client
 
         public void exit()
         {
-            Console.WriteLine("#Client: bye ='( ");
+            Console.WriteLine("#Client: Exiting!");
             System.Environment.Exit(0);
+        }
+
+        public void dump()
+        {
+            Console.WriteLine("#Client: Dumping!");
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommonTypes
 {
-    public interface IMetaDataServer
+    public interface IMetaDataServer : IRemote
     {
         /**
          * Create
@@ -48,7 +48,5 @@ namespace CommonTypes
         void recover();
 
         void registDataServer(string id, string host, int port);
-        void exit();
-
     }
 }

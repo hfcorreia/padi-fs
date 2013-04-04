@@ -458,5 +458,10 @@ namespace PuppetForm
             }
         }
 
+        private void dumpAllMds_Click(object sender, EventArgs e)
+        {
+            puppetMaster.dumpAllMds();
+        }
+
     }
 }
