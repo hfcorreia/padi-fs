@@ -149,8 +149,31 @@ namespace PuppetForm
 
         private void button4_Click(object sender, EventArgs e)
         {
-
-            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
+            if (puppetMaster.LoadedScriptReader != null)
+            {
+                String line = puppetMaster.LoadedScriptReader.ReadLine();
+                while (line != null)
+                {
+                    if (line.StartsWith("#"))
+                    {
+                        line = puppetMaster.LoadedScriptReader.ReadLine();
+                        continue;
+                    }
+                    else
+                    {
+                        puppetMaster.exeScriptCommand(line);
+                        line = puppetMaster.LoadedScriptReader.ReadLine();
+                    }
+                }
+                System.Windows.Forms.MessageBox.Show("End of file!");
+                puppetMaster.LoadedScriptReader.Close();
+                puppetMaster.LoadedScriptReader = null;
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Script file not loaded");
+            }
+            
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
