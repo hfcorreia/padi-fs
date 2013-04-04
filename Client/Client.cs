@@ -174,7 +174,7 @@ namespace Client
 
         public void exeScript(string filename)
         {
-            Console.WriteLine("#Client: Running Script " + filename);
+            Console.WriteLine("\r\n#Client: Running Script " + filename);
             System.IO.StreamReader fileReader = new System.IO.StreamReader(filename);
             
 
@@ -192,7 +192,7 @@ namespace Client
                     line = fileReader.ReadLine();
                 }
             }
-            Console.WriteLine("#Client: End of Script " + filename);
+            Console.WriteLine("#Client: End of Script " + filename + "\r\n");
             fileReader.Close();
         }
 
