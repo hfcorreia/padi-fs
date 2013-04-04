@@ -57,7 +57,8 @@ namespace PuppetForm
 
         private void exitButton_Click(object sender, EventArgs e)
         {
-            try{
+            try
+            {
                 puppetMaster.exitAll();
             }
             catch (Exception exception)
@@ -78,7 +79,8 @@ namespace PuppetForm
 
         private void openFileButton_Click(object sender, EventArgs e)
         {
-            try {
+            try
+            {
                 puppetMaster.open(clientNameTextBox.Text, FileNameTextBox.Text);
             }
             catch (Exception exception)
@@ -89,8 +91,9 @@ namespace PuppetForm
 
         private void closeFileButton_Click(object sender, EventArgs e)
         {
-            try{
-            puppetMaster.close(clientNameTextBox.Text, FileNameTextBox.Text);
+            try
+            {
+                puppetMaster.close(clientNameTextBox.Text, FileNameTextBox.Text);
             }
             catch (Exception exception)
             {
@@ -100,13 +103,14 @@ namespace PuppetForm
 
         private void createFileButton_Click(object sender, EventArgs e)
         {
-            try{
-            string clientId = clientNameTextBox.Text;
-            int nDS = Int32.Parse(NumDsTextBox.Text);
-            int rQ = Int32.Parse(ReadQuorumTextBox.Text);
-            int wQ = Int32.Parse(WriteQuorumTextBox.Text);
+            try
+            {
+                string clientId = clientNameTextBox.Text;
+                int nDS = Int32.Parse(NumDsTextBox.Text);
+                int rQ = Int32.Parse(ReadQuorumTextBox.Text);
+                int wQ = Int32.Parse(WriteQuorumTextBox.Text);
 
-            puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
+                puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
             }
             catch (Exception exception)
             {
@@ -116,7 +120,8 @@ namespace PuppetForm
 
         private void button3_Click(object sender, EventArgs e)
         {
-            try{
+            try
+            {
                 OpenFileDialog fileDialog = new OpenFileDialog();
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -144,42 +149,49 @@ namespace PuppetForm
 
         private void button4_Click(object sender, EventArgs e)
         {
-           
-           System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
+
+            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing!");
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
         {
-            try{
-                if (puppetMaster.LoadedScriptReader != null)
-                {
-                    String line = puppetMaster.LoadedScriptReader.ReadLine();
+            if (puppetMaster.LoadedScriptReader != null)
+            {
+                String line = puppetMaster.LoadedScriptReader.ReadLine();
 
-                    if (line != null)
+
+                while (line != null)
+                {
+                    if (line.StartsWith("#"))
                     {
-                        puppetMaster.exeScriptCommand(line);
+                        line = puppetMaster.LoadedScriptReader.ReadLine();
+                        continue;
                     }
                     else
                     {
-                        System.Windows.Forms.MessageBox.Show("End of file!");
-                        puppetMaster.LoadedScriptReader.Close();
-                        puppetMaster.LoadedScriptReader = null;
+                        puppetMaster.exeScriptCommand(line);
+                        break;
                     }
                 }
-                else
+                if (line == null)
                 {
-                    System.Windows.Forms.MessageBox.Show("Script file not loaded");
+                    System.Windows.Forms.MessageBox.Show("End of file!");
+                    puppetMaster.LoadedScriptReader.Close();
+                    puppetMaster.LoadedScriptReader = null;
                 }
+
+
             }
-            catch (Exception exception)
+            else
             {
-                System.Windows.Forms.MessageBox.Show("Error executing next step of script" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Script file not loaded");
             }
         }
 
         private void failMetaDataButton_Click(object sender, EventArgs e)
         {
-            try{
+            try
+            {
                 puppetMaster.fail(mdIdTextBox.Text);
             }
             catch (Exception exception)
@@ -190,7 +202,8 @@ namespace PuppetForm
 
         private void recoverMetadataButton_Click(object sender, EventArgs e)
         {
-            try{
+            try
+            {
                 puppetMaster.recover(mdIdTextBox.Text);
             }
             catch (Exception exception)
@@ -213,7 +226,8 @@ namespace PuppetForm
 
         private void UnfreezeDSButton_Click(object sender, EventArgs e)
         {
-            try{
+            try
+            {
                 puppetMaster.unfreeze(dataServerIdTextBox.Text);
             }
             catch (Exception exception)
@@ -222,9 +236,10 @@ namespace PuppetForm
             }
         }
 
-        private void FailDSButton_Click(object sender, EventArgs e) 
+        private void FailDSButton_Click(object sender, EventArgs e)
         {
-            try{
+            try
+            {
                 puppetMaster.fail(dataServerIdTextBox.Text);
             }
             catch (Exception exception)
@@ -246,7 +261,7 @@ namespace PuppetForm
         }
 
 
-        private void updateDataServersList() 
+        private void updateDataServersList()
         {
             //dataServersListBox. puppetMaster.dataServers.Keys;
         }
