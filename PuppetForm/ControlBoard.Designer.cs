@@ -100,6 +100,7 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
+            this.replaceStringRegisterCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -696,6 +697,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.replaceStringRegisterCheckBox);
             this.groupBox1.Controls.Add(this.readFileButton);
             this.groupBox1.Controls.Add(this.comboBox2);
             this.groupBox1.Controls.Add(this.textBox6);
@@ -841,6 +843,16 @@
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
             // 
+            // replaceStringRegisterCheckBox
+            // 
+            this.replaceStringRegisterCheckBox.AutoSize = true;
+            this.replaceStringRegisterCheckBox.Location = new System.Drawing.Point(17, 96);
+            this.replaceStringRegisterCheckBox.Name = "replaceStringRegisterCheckBox";
+            this.replaceStringRegisterCheckBox.Size = new System.Drawing.Size(181, 17);
+            this.replaceStringRegisterCheckBox.TabIndex = 34;
+            this.replaceStringRegisterCheckBox.Text = "Replace selected String Register";
+            this.replaceStringRegisterCheckBox.UseVisualStyleBackColor = true;
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -950,6 +962,7 @@
         private System.Windows.Forms.ListBox clientStringRegisterListBox;
         private System.Windows.Forms.ListBox clientFileRegisterlistBox;
         private System.Windows.Forms.CheckBox newContentCheckBox;
+        private System.Windows.Forms.CheckBox replaceStringRegisterCheckBox;
     }
 }
 

@@ -137,12 +137,9 @@ namespace PuppetForm
             startProcess(process);
             System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
 
-        public void read(string process, int fileRegister, string semantics, int stringRegister)
+        public void read(string process, int fileRegisterId, string semantics, int stringRegisterId)
         {
-           /* startProcess(process);
-            System.Windows.Forms.MessageBox.Show("READ: Not Done Yet");
-
-            //System.Windows.Forms.MessageBox.Show("WRITE: " + "process: " + process + ", fileRegister: " + fileRegister + ", content: " + contents + ", as bytes: " + byteArrayRegister);
+            startProcess(process);
 
             ServerObjectWrapper sow = clients[process];
 
@@ -150,13 +147,12 @@ namespace PuppetForm
 
             try
             {
-                client.write(fileRegister, byteArrayRegister);
+                client.read(process, fileRegisterId, semantics, stringRegisterId);
             }
             catch (Exception e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
-            */
         }
 
         public void write(string process, int fileRegisterId, string contents)

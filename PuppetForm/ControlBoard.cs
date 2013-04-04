@@ -468,7 +468,8 @@ namespace PuppetForm
 
         private void readFileButton_Click(object sender, EventArgs e)
         {
-            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0) 
+            int stringRegisterId = clientStringRegisterListBox.SelectedIndex;
+            if (ClientsListBox.Items.Count == 0 || ClientsListBox.SelectedIndex < 0) 
             {
                 System.Windows.Forms.MessageBox.Show("Please specify a client");
                 return;
@@ -480,23 +481,32 @@ namespace PuppetForm
                 return;
             }
 
-            if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0)
+            if (replaceStringRegisterCheckBox.Checked)
             {
-                if (clientStringRegisterListBox.Items.Count > 9)
+                if (clientStringRegisterListBox.SelectedIndex < 0)
                 {
                     System.Windows.Forms.MessageBox.Show("Please specify a string register");
                     return;
                 }
+
+            }
+            else
+            {
+                if (clientStringRegisterListBox.Items.Count > 9)
+                {
+                    System.Windows.Forms.MessageBox.Show("The string registers are all full, please specify one to be replaced");
+                    return;
+                }
                 else
                 {
-                    clientStringRegisterListBox.SelectedIndex = clientStringRegisterListBox.Items.Count + 1;
+                    //the string register is not full and we dont want to replace, so write on the next free position
+                    stringRegisterId++;
                 }
-                
             }
 
             string processId = getSelectedClient() ;
             int fileRegisterId = clientFileRegisterlistBox.SelectedIndex;
-            int stringRegisterId = clientStringRegisterListBox.SelectedIndex;
+            
             string readSemantics = "NOT DONE" ;
             
             puppetMaster.read(processId, fileRegisterId, readSemantics, stringRegisterId);

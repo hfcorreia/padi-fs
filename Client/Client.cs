@@ -154,7 +154,7 @@ namespace Client
             }
 
             fileContentContainer.setFileContent(stringRegisterId, file);
-
+            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + fileContentContainer.getAllFileContentAsString());
             return file;
         }
 
