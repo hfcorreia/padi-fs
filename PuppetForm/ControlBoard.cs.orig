@@ -89,9 +89,14 @@ namespace PuppetForm
 
         private void openFileButton_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             try
             {
+                puppetMaster.open(clientNameTextBox.Text, FileNameTextBox.Text);
+=======
+            try {
                 puppetMaster.open(getSelectedClient(), getSelectedFileRegister());
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
             }
             catch (Exception exception)
             {
@@ -101,9 +106,15 @@ namespace PuppetForm
 
         private void closeFileButton_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
+            try
+            {
+                puppetMaster.close(clientNameTextBox.Text, FileNameTextBox.Text);
+=======
             try{
                 puppetMaster.close(getSelectedClient(), getSelectedFileRegister());
                 updateClientFileRegister(getSelectedClient());
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
             }
             catch (Exception exception)
             {
@@ -113,6 +124,16 @@ namespace PuppetForm
 
         private void createFileButton_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
+            try
+            {
+                string clientId = clientNameTextBox.Text;
+                int nDS = Int32.Parse(NumDsTextBox.Text);
+                int rQ = Int32.Parse(ReadQuorumTextBox.Text);
+                int wQ = Int32.Parse(WriteQuorumTextBox.Text);
+
+                puppetMaster.create(clientId, CreateFileNameTextBox.Text, nDS, rQ, wQ);
+=======
             try{
                 string clientId = getSelectedClient();
                 string fileName = CreateFileNameTextBox.Text;
@@ -124,6 +145,7 @@ namespace PuppetForm
 
                 updateClientFileRegister(clientId);
                 selectFileRegister(fileName);
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
             }
             catch (Exception exception)
             {
@@ -164,6 +186,7 @@ namespace PuppetForm
 
         private void button4_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             if (puppetMaster.LoadedScriptReader != null)
             {
                 String line = puppetMaster.LoadedScriptReader.ReadLine();
@@ -189,6 +212,10 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show("Script file not loaded");
             }
             
+=======
+
+            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing! :\n");
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
@@ -207,22 +234,36 @@ namespace PuppetForm
                     }
                     else
                     {
+<<<<<<< HEAD
                         puppetMaster.exeScriptCommand(line);
                         break;
+=======
+                        System.Windows.Forms.MessageBox.Show("End of file! :\n");
+                        puppetMaster.LoadedScriptReader.Close();
+                        puppetMaster.LoadedScriptReader = null;
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
                     }
                 }
                 if (line == null)
                 {
+<<<<<<< HEAD
                     System.Windows.Forms.MessageBox.Show("End of file!");
                     puppetMaster.LoadedScriptReader.Close();
                     puppetMaster.LoadedScriptReader = null;
+=======
+                    System.Windows.Forms.MessageBox.Show("Script file not loaded :\n");
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
                 }
 
 
             }
             else
             {
+<<<<<<< HEAD
                 System.Windows.Forms.MessageBox.Show("Script file not loaded");
+=======
+                System.Windows.Forms.MessageBox.Show("Error executing next step of script :\n" + exception.Message);
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
             }
         }
 
@@ -264,9 +305,14 @@ namespace PuppetForm
 
         private void UnfreezeDSButton_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             try
             {
+                puppetMaster.unfreeze(dataServerIdTextBox.Text);
+=======
+            try{
                 puppetMaster.unfreeze(getSelectedDS());
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
             }
             catch (Exception exception)
             {
@@ -276,9 +322,14 @@ namespace PuppetForm
 
         private void FailDSButton_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             try
             {
+                puppetMaster.fail(dataServerIdTextBox.Text);
+=======
+            try{
                 puppetMaster.fail(getSelectedDS());
+>>>>>>> a6b6cb68c9b31209ce68da79233b447ba9f57ff6
             }
             catch (Exception exception)
             {

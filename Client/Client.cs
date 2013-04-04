@@ -52,6 +52,7 @@ namespace Client
 
         void startConnection(Client client)
         {
+            Console.WriteLine("#Client: starting connection..");
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = TypeFilterLevel.Full;
             IDictionary props = new Hashtable();
@@ -64,12 +65,24 @@ namespace Client
         public void write(string filename, byte[] fileContent)
         {
             int fileVersion = readFileVersion(filename);
+
+            Console.WriteLine("#Client: writing file '" + filename + "' with content: '" + fileContent + "', as string: " + System.Text.Encoding.UTF8.GetString(fileContent));
             File file = new File(filename, fileVersion, fileContent);
-            write(file);
+
+            fileContentContainer.addFileContent(file);
+
+            if (fileMetadataContainer.containsFileMetadata(file.FileName))
+            {
+                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
+                {
+                    dataServerWrapper.getObject<IDataServer>().write(file);
+                }
+            }
         }
 
         private int readFileVersion(string filename)
         {
+            Console.WriteLine("#Client: reading file version for file '" + filename + "'");
             int fileVersion = 0;
             if (fileMetadataContainer.containsFileMetadata(filename))
             {
@@ -82,21 +95,24 @@ namespace Client
             return fileVersion;
         }
 
-        public void write(File file)
-        {
-            if (fileMetadataContainer.containsFileMetadata(file.FileName))
+
+        public File read(string filename) {
+            Console.WriteLine("#Client: reading file '" + filename + "' -> NOT DONE!");
+            File file = null;
+            if (fileMetadataContainer.containsFileMetadata(filename))
             {
-                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
+                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(filename).FileServers)
                 {
-                    dataServerWrapper.getObject<IDataServer>().write(file);
+                    file = dataServerWrapper.getObject<IDataServer>().read(filename);
                 }
             }
-        }
 
-        public void read(string filename) { Console.WriteLine("Not done"); }
+            return file;
+        }
 
         public void open(String clientId, string filename)
         {
+            Console.WriteLine("#Client: opening file '" + filename + "'");
             FileMetadata fileMetadata = null;
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
@@ -140,7 +156,7 @@ namespace Client
 
         public FileMetadata create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            Console.WriteLine("#Client: creating file " + filename);
+            Console.WriteLine("#Client: creating file '" + filename + "' in " + numberOfDataServers + " servers. ReadQ: " + readQuorum + ", WriteQ:" + writeQuorum);
             //List<ServerObjectWrapper> dataserverForFile = null;
             FileMetadata fileMetadata = null;
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
@@ -151,34 +167,23 @@ namespace Client
             //cacheServersForFile(filename, fileMetadata);
             fileMetadataContainer.addFileMetadata(fileMetadata);
 
-            File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
-            write(emptyFile); //writes an empty file
+            //File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
+            write(filename, INITIAL_FILE_CONTENT); //writes an empty file
 
             return fileMetadata;
         }
 
-        /*
-        private void removeCacheServersForFile(string filename)
+        public List<string> getAllFileRegisters() 
         {
-            if (fileServers.ContainsKey(filename))
-            {
-                fileServers.Remove(filename);
-            }
-
-        }*/
-
-        /*
-         * private void cacheServersForFile(string filename, List<ServerObjectWrapper> dataserverForFile)
-        {
-            if (!fileServers.ContainsKey(filename))
-            {
-                fileServers.Add(filename, dataserverForFile);
-            }
+            return fileMetadataContainer.getAllFileNames();
         }
-         * */
+        public List<string> getAllStringRegisters() {
+            return fileContentContainer.getAllFileContentAsString();
+        }
 
         public void exit()
         {
+            Console.WriteLine("#Client: bye ='( ");
             System.Environment.Exit(0);
         }
     }

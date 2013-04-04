@@ -51,7 +51,7 @@ namespace DataServer
 
         public void startConnection(DataServer dataServer)
         {
-
+            Console.WriteLine("#DS: starting connection " + Id);
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = TypeFilterLevel.Full;
             IDictionary props = new Hashtable();
@@ -67,6 +67,7 @@ namespace DataServer
 
         public void write(File file)
         {
+            Console.WriteLine("#DS: writing file '" + file.FileName +"', version: " + file.Version + ", content: " + file.Content );
             if (file == null)
             {
                 return;
@@ -86,6 +87,7 @@ namespace DataServer
 
         public File read(string filename)
         {
+            Console.WriteLine("#DS: reading file '" + filename + "'");
             if (filename == null || !files.ContainsKey(filename))
             {
                 return null; //throw exception because the file does not exist
@@ -97,6 +99,7 @@ namespace DataServer
 
         public void registInMetadataServers()
         {
+            Console.WriteLine("#DS: registering in MetadataServers");
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
                 metadataServerWrapper.getObject<IMetaDataServer>().registDataServer(Id, Host, Port);
@@ -105,11 +108,13 @@ namespace DataServer
 
         public int readFileVersion(string filename)
         {
+            Console.WriteLine("#DS: reading file version for file'" + filename + "'");
             return files.ContainsKey(filename) ? files[filename].Version : -1;
         }
 
         public void exit()
         {
+            Console.WriteLine("#DS: bye ='( ");
             System.Environment.Exit(0);
         }
 
@@ -132,6 +137,7 @@ namespace DataServer
 
         public static DataServer getCheckpoint(String dataServerId)
         {
+            Console.WriteLine("#DS: getting checkpoint");
             System.Xml.Serialization.XmlSerializer reader =
                       new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
