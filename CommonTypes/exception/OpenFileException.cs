@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace CommonTypes
 {
@@ -9,14 +10,11 @@ namespace CommonTypes
     {
 
         [Serializable]
-        public class OpenFileException : ApplicationException
+        public class OpenFileException : PadiFsException
         {
 
             public OpenFileException(String message) : base(message) { }
-            public OpenFileException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext contex)
-                : base(info, contex)
-            {
-            }
+            public OpenFileException(SerializationInfo info, StreamingContext contex) : base(info, contex) { }
         }
     }
 }
