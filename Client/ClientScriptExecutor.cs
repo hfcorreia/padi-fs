@@ -80,7 +80,6 @@ namespace Client
             }
         }
 
-
         private void dump(string[] input)
         {
             ClientEntity.dump();

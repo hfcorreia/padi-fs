@@ -8,6 +8,7 @@ using System.Runtime.Remoting;
 using System.Diagnostics;
 using System.ComponentModel;
 using CommonTypes;
+using CommonTypes.Exceptions;
 
 
 namespace PuppetForm
@@ -16,8 +17,7 @@ namespace PuppetForm
     {
         public Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         public Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
-        public System.IO.StreamReader LoadedScriptReader { get; set; }
-
+        public PuppetScriptExecutor ScriptExecutor { get; set; }
         public void createClient(String clientId)
         {
             if (!clients.ContainsKey(clientId))
@@ -267,65 +267,14 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
         }
-        public void exeScriptCommand(String line)
+
+        public void exeScript(Boolean oneStep)
         {
-            String[] input = line.Split(' ');
-            switch (input[0])
+            if (ScriptExecutor != null)
             {
-                case "open":
-                    open(input[1], input[2]);
-                    break;
-                case "close":
-                    close(input[1], input[2]);
-                    break;
-                case "create":
-                    create(input[1], input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
-                    break;
-                case "delete":
-                    delete(input[1], input[2]);
-                    break;
-                case "write":
-                    int stringRegisterId;
-                    if (Int32.TryParse(input[3], out stringRegisterId))
-                    {
-                        //is write by string register
-                        write(input[1], Int32.Parse(input[2]), stringRegisterId);
-                    }
-                    else
-                    {
-                        //is write with new content
-                        write(input[1], Int32.Parse(input[2]), input[3]);
-                    }
-                    break;
-                case "read":
-                    read(input[1], Int32.Parse(input[2]), input[3], Int32.Parse(input[4]));
-                    break;
-                case "copy":
-                    copy(input[1], input[2], input[3], input[4], input[5]);
-                    break;
-                case "dump":
-                    dump(input[1]);
-                    break;
-                case "fail":
-                    fail(input[1]);
-                    break;
-                case "recover":
-                    recover(input[1]);
-                    break;
-                case "freeze":
-                    freeze(input[1]);
-                    break;
-                case "unfreeze":
-                    break;
-                case "exeScript":
-                    exeClientScript(input[1], input[2]);
-                    break;
-                case "#":
-                    break;
-                default:
-                    System.Windows.Forms.MessageBox.Show("No such command: " + input[0] + "!");
-                    break;
+                ScriptExecutor.runScript(oneStep);
             }
+            else throw new PadiFsException("Load Script First");
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace PuppetForm
     public partial class ControlBoard : Form
     {
         #region variables
-        
+
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the variables                      ///
         ////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ namespace PuppetForm
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the initialization                 ///
         ////////////////////////////////////////////////////////////////////////////
-        
+
         public ControlBoard()
         {
             InitializeComponent();
@@ -39,7 +39,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show("Error starting Metadata servers :\n" + exception.Message);
             }
         }
-        
+
         #endregion initialization
 
         #region verifications
@@ -47,8 +47,8 @@ namespace PuppetForm
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the verfications                   ///
         ////////////////////////////////////////////////////////////////////////////
-        
-        private void verifyStringRegisterIdSelection() 
+
+        private void verifyStringRegisterIdSelection()
         {
             if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0)
             {
@@ -91,14 +91,14 @@ namespace PuppetForm
         private void verifyNewFileQuorunsAndServers()
         {
             int tempValue;
-            if (String.IsNullOrEmpty(NumDsTextBox.Text) || 
-                String.IsNullOrEmpty(ReadQuorumTextBox.Text) || 
+            if (String.IsNullOrEmpty(NumDsTextBox.Text) ||
+                String.IsNullOrEmpty(ReadQuorumTextBox.Text) ||
                 String.IsNullOrEmpty(WriteQuorumTextBox.Text) ||
                 !Int32.TryParse(NumDsTextBox.Text, out tempValue) ||
                 !Int32.TryParse(ReadQuorumTextBox.Text, out tempValue) ||
                 !Int32.TryParse(WriteQuorumTextBox.Text, out tempValue))
             {
-                throw new Exception("Please specify valid values for the quoruns." + "\n"  +
+                throw new Exception("Please specify valid values for the quoruns." + "\n" +
                     "Given - #DS: " + NumDsTextBox.Text + ", #readQ: " + ReadQuorumTextBox.Text + ", #writeQ: " + WriteQuorum.Text);
             }
         }
@@ -139,13 +139,13 @@ namespace PuppetForm
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the events                        ///
         ////////////////////////////////////////////////////////////////////////////
-        
+
         private void clientFileRegisterlistBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             updateClientStringRegister(getSelectedClient());
         }
 
-        private void clientStringRegisterListBox_SelectedIndexChanged(object sender, EventArgs e) 
+        private void clientStringRegisterListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             //DO NOTHING
         }
@@ -169,10 +169,10 @@ namespace PuppetForm
                 int fileRegisterId = clientFileRegisterlistBox.SelectedIndex;
 
                 string readSemantics = "NOT DONE";
-                
+
                 if (replaceStringRegisterCheckBox.Checked)
                 {
-                    stringRegisterId =  clientStringRegisterListBox.SelectedIndex;
+                    stringRegisterId = clientStringRegisterListBox.SelectedIndex;
                     //we want to substitute the selected string register
                     verifyStringRegisterIdSelection();
                 }
@@ -323,7 +323,7 @@ namespace PuppetForm
                     verifyFileRegisterIdSelection();
                     puppetMaster.close(getSelectedClient(), getSelectedFileRegisterText());
                 }
-                
+
                 updateClientFileRegister(getSelectedClient());
                 updateClientStringRegister(getSelectedClient());
             }
@@ -361,22 +361,6 @@ namespace PuppetForm
 
 
 
-        private void loadScript_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                OpenFileDialog fileDialog = new OpenFileDialog();
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    puppetMaster.LoadedScriptReader = new System.IO.StreamReader(fileDialog.FileName);
-                }
-            }
-            catch (Exception exception)
-            {
-                System.Windows.Forms.MessageBox.Show("Error loading script:\n" + exception.Message);
-            }
-        }
-
         private void client_deleteFile(object sender, EventArgs e)
         {
             try
@@ -394,67 +378,45 @@ namespace PuppetForm
 
         }
 
+
+
+        private void loadScript_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    puppetMaster.ScriptExecutor = new PuppetScriptExecutor(puppetMaster, fileDialog.FileName);
+                }
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error loading script:\n" + exception.Message);
+            }
+        }
+
         private void runScript_Click(object sender, EventArgs e)
         {
-            if (puppetMaster.LoadedScriptReader != null)
+            try
             {
-                String line = puppetMaster.LoadedScriptReader.ReadLine();
-                while (line != null)
-                {
-                    if (line.StartsWith("#"))
-                    {
-                        line = puppetMaster.LoadedScriptReader.ReadLine();
-                        continue;
-                    }
-                    else
-                    {
-                        puppetMaster.exeScriptCommand(line);
-                        line = puppetMaster.LoadedScriptReader.ReadLine();
-                    }
-                }
-                System.Windows.Forms.MessageBox.Show("End of file!");
-                puppetMaster.LoadedScriptReader.Close();
-                puppetMaster.LoadedScriptReader = null;
+                puppetMaster.exeScript(false);
             }
-            else
+            catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Script file not loaded");
+                System.Windows.Forms.MessageBox.Show(exception.Message);
             }
-            
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
         {
-            if (puppetMaster.LoadedScriptReader != null)
+            try
             {
-                String line = puppetMaster.LoadedScriptReader.ReadLine();
-
-
-                while (line != null)
-                {
-                    if (line.StartsWith("#"))
-                    {
-                        line = puppetMaster.LoadedScriptReader.ReadLine();
-                        continue;
-                    }
-                    else
-                    {
-                        puppetMaster.exeScriptCommand(line);
-                        break;
-                    }
-                }
-                if (line == null)
-                {
-                    System.Windows.Forms.MessageBox.Show("End of file!");
-                    puppetMaster.LoadedScriptReader.Close();
-                    puppetMaster.LoadedScriptReader = null;
-                }
-
-
+                puppetMaster.exeScript(true);
             }
-            else
+            catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Script file not loaded");
+                System.Windows.Forms.MessageBox.Show(exception.Message);
             }
         }
 
@@ -548,7 +510,7 @@ namespace PuppetForm
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the getters                        ///
         ////////////////////////////////////////////////////////////////////////////
-        
+
         private string getSelectedFileName()
         {
             return fileNameTextBox.Text;
@@ -556,22 +518,22 @@ namespace PuppetForm
 
         private string getSelectedDS()
         {
-            return (string) dataServersListBox.Items[dataServersListBox.SelectedIndex];
+            return (string)dataServersListBox.Items[dataServersListBox.SelectedIndex];
         }
 
         private string getSelectedClient()
         {
-            return (string) ClientsListBox.Items[ClientsListBox.SelectedIndex];
+            return (string)ClientsListBox.Items[ClientsListBox.SelectedIndex];
         }
 
         private string getSelectedStringRegisterText()
         {
-            return (string) clientStringRegisterListBox.Items[getSelectedStringRegister()];
+            return (string)clientStringRegisterListBox.Items[getSelectedStringRegister()];
         }
 
         private string getSelectedFileRegisterText()
         {
-            return (string) clientFileRegisterlistBox.Items[getSelectedFileRegister()];
+            return (string)clientFileRegisterlistBox.Items[getSelectedFileRegister()];
         }
 
         private int getSelectedStringRegister()
@@ -591,7 +553,7 @@ namespace PuppetForm
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the setters                        ///
         ////////////////////////////////////////////////////////////////////////////
-        
+
         private void selectDataServer(string newDataserverId)
         {
             for (int index = 0; index < dataServersListBox.Items.Count; ++index)
@@ -661,7 +623,7 @@ namespace PuppetForm
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the updates                        ///
         ////////////////////////////////////////////////////////////////////////////
-        
+
         private void updateDataServersList()
         {
             dataServersListBox.Items.Clear();
@@ -671,7 +633,7 @@ namespace PuppetForm
             }
         }
 
-        private void updateClientFileRegister(string clientId) 
+        private void updateClientFileRegister(string clientId)
         {
             int index = 0;
             clientFileRegisterlistBox.Items.Clear();
