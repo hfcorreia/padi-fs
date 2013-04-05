@@ -122,28 +122,30 @@ namespace DataServer
 
         public void makeCheckpoint()
         {
-            
-            String dataServerId = Id;
-            Console.WriteLine("#DS: making checkpoint " + Id);
+            lock (this)
+            {
+                String dataServerId = Id;
+                Console.WriteLine("#DS: making checkpoint " + Id);
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
-            Util.createDir(dirName);
+                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
+                Util.createDir(dirName);
 
-            System.Xml.Serialization.XmlSerializer writer =
-            new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+                System.Xml.Serialization.XmlSerializer writer =
+                new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-            writer.Serialize(fileWriter, this);
-            fileWriter.Close();
+                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+                writer.Serialize(fileWriter, this);
+                fileWriter.Close();
+            }
         }
 
         public static DataServer getCheckpoint(String dataServerId)
         {
             Console.WriteLine("#DS: getting checkpoint");
             System.Xml.Serialization.XmlSerializer reader =
-                      new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+                        new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId + "\\checkpoint.xml"; 
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId + "\\checkpoint.xml";
             System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
 
             DataServer dataServer = new DataServer();

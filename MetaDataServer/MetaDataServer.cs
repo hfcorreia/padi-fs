@@ -123,11 +123,16 @@ namespace MetaDataServer
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
             if ((readQuorum > numberOfDataServers) || (writeQuorum > numberOfDataServers) || (numberOfDataServers > dataServers.Count))
-                throw new CommonTypes.Exceptions.CreateFileException("Invalid quorums values in create " + filename);
+                throw new CreateFileException("Invalid quorums values in create " + filename);
 
             if (!fileMetadata.ContainsKey(filename))
             {
                 List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
+
+                foreach(ServerObjectWrapper wrapper in newFileDataServers)
+                {
+                    Console.WriteLine("#MDS: atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
+                }
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
                 //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
@@ -171,17 +176,19 @@ namespace MetaDataServer
 
         public void makeCheckpoint()
         {
+            lock (this)
+            {
+                String metadataServerId = Id;
+                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
+                Util.createDir(dirName);
 
-            String metadataServerId = Id;
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
-            Util.createDir(dirName);
+                System.Xml.Serialization.XmlSerializer writer =
+                new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
 
-            System.Xml.Serialization.XmlSerializer writer =
-            new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
-
-            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-            writer.Serialize(fileWriter, this);
-            fileWriter.Close();
+                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+                writer.Serialize(fileWriter, this);
+                fileWriter.Close();
+            }
         }
 
         public static MetaDataServer getCheckpoint(String metadataServerId)
