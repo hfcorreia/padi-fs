@@ -1,4 +1,4 @@
 #Need to launch the ds!
 dump d-1
 #Run the client script
-exeScript c-1 Z:\Projects\padi-fs\Client\Scripts\Simple-Create.txt
+exeScript c-1 Simple-Create.txt
