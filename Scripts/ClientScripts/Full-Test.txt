@@ -1,3 +1,6 @@
 CREATE c-1, fullTest, 1, 1, 1
 WRITE c-1, 1, "hello"
+CLOSE c-1
+OPEN c-1
+DUMP c-1
 DELETE c-1, fullTest

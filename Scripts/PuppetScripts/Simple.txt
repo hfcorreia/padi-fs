@@ -6,3 +6,5 @@ CREATE c-1, test-1, 1, 1, 1
 DUMP c-1
 # Dump the server
 DUMP d-1
+# Dump the metadata
+DUMP m-1
