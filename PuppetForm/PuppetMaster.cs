@@ -121,21 +121,27 @@ namespace PuppetForm
 
         }
 
-        public void fail(string process) {
+        public void fail(string process)
+        {
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("FAIL: Not Done Yet"); }
+            System.Windows.Forms.MessageBox.Show("FAIL: Not Done Yet"); 
+        }
 
         public void recover(string process) {
             startProcess(process);
             System.Windows.Forms.MessageBox.Show("RECOVER: Not Done Yet"); }
 
-        public void freeze(string process) {
+        public void freeze(string process) 
+        {
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("FREEZE: Not Done Yet"); }
+            System.Windows.Forms.MessageBox.Show("FREEZE: Not Done Yet"); 
+        }
 
-        public void unfreeze(string process) {
+        public void unfreeze(string process) 
+        {
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); }
+            System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); 
+        }
 
         public void read(string process, int fileRegisterId, string semantics, int stringRegisterId)
         {

@@ -8,6 +8,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization.Formatters;
 using CommonTypes;
 using System.Collections;
+using CommonTypes.Exceptions;
 
 namespace MetaDataServer
 {
@@ -69,18 +70,20 @@ namespace MetaDataServer
 
         public FileMetadata open(String clientID, string filename)
         {
-            if (fileMetadata.ContainsKey(filename) && !fileMetadata[filename].Clients.Contains(clientID))
+            if (!fileMetadata.ContainsKey(filename))
             {
-                Console.WriteLine("#MDS: opened file: " + filename);
-                fileMetadata[filename].Clients.Add(clientID);
-                makeCheckpoint();
-                return fileMetadata[filename];
+                throw new OpenFileException("File " + filename + " does not exist");
+            }
+            else if (fileMetadata[filename].Clients.Contains(clientID))
+            {
+                throw new OpenFileException("File " + filename + " is already opend.");
             }
             else
             {
-                if (!fileMetadata.ContainsKey(filename))
-                    throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " does not exist");
-                else throw new CommonTypes.Exceptions.OpenFileException("File " + filename + " is already opend.");
+                Console.WriteLine("#MDS: opening file: " + filename);
+                fileMetadata[filename].Clients.Add(clientID);
+                makeCheckpoint();
+                return fileMetadata[filename];
             }
         }
 
@@ -128,7 +131,6 @@ namespace MetaDataServer
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
                 //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
-
                 fileMetadata.Add(filename, newFileMetadata);
                 Console.WriteLine("#MDS: Created " + filename);
                 makeCheckpoint();
@@ -137,7 +139,7 @@ namespace MetaDataServer
             }
             else
             {
-                throw new CommonTypes.Exceptions.CreateFileException("Not enough data servers for create " + filename);
+                throw new CreateFileException("Not enough data servers for create " + filename);
             }
 
         }

@@ -101,6 +101,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.replaceStringRegisterCheckBox = new System.Windows.Forms.CheckBox();
+            this.fileNameTextBox = new System.Windows.Forms.TextBox();
+            this.openFileByNameCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -352,7 +354,6 @@
             this.groupBox5.TabIndex = 14;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
-            this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
             // 
             // label19
             // 
@@ -655,6 +656,8 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.openFileByNameCheckbox);
+            this.groupBox7.Controls.Add(this.fileNameTextBox);
             this.groupBox7.Controls.Add(this.button10);
             this.groupBox7.Controls.Add(this.openFileButton);
             this.groupBox7.Controls.Add(this.closeFileButton);
@@ -667,7 +670,7 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(6, 103);
+            this.button10.Location = new System.Drawing.Point(5, 124);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(166, 26);
             this.button10.TabIndex = 20;
@@ -677,7 +680,7 @@
             // 
             // openFileButton
             // 
-            this.openFileButton.Location = new System.Drawing.Point(6, 40);
+            this.openFileButton.Location = new System.Drawing.Point(5, 61);
             this.openFileButton.Name = "openFileButton";
             this.openFileButton.Size = new System.Drawing.Size(166, 26);
             this.openFileButton.TabIndex = 18;
@@ -687,7 +690,7 @@
             // 
             // closeFileButton
             // 
-            this.closeFileButton.Location = new System.Drawing.Point(6, 72);
+            this.closeFileButton.Location = new System.Drawing.Point(5, 93);
             this.closeFileButton.Name = "closeFileButton";
             this.closeFileButton.Size = new System.Drawing.Size(166, 26);
             this.closeFileButton.TabIndex = 19;
@@ -853,6 +856,23 @@
             this.replaceStringRegisterCheckBox.Text = "Replace selected String Register";
             this.replaceStringRegisterCheckBox.UseVisualStyleBackColor = true;
             // 
+            // fileNameTextBox
+            // 
+            this.fileNameTextBox.Location = new System.Drawing.Point(10, 35);
+            this.fileNameTextBox.Name = "fileNameTextBox";
+            this.fileNameTextBox.Size = new System.Drawing.Size(140, 20);
+            this.fileNameTextBox.TabIndex = 32;
+            // 
+            // openFileByNameCheckbox
+            // 
+            this.openFileByNameCheckbox.AutoSize = true;
+            this.openFileByNameCheckbox.Location = new System.Drawing.Point(156, 38);
+            this.openFileByNameCheckbox.Name = "openFileByNameCheckbox";
+            this.openFileByNameCheckbox.Size = new System.Drawing.Size(15, 14);
+            this.openFileByNameCheckbox.TabIndex = 34;
+            this.openFileByNameCheckbox.UseVisualStyleBackColor = true;
+            this.openFileByNameCheckbox.CheckedChanged += new System.EventHandler(this.openFileByNameCheckbox_CheckedChanged);
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -880,6 +900,7 @@
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -963,6 +984,8 @@
         private System.Windows.Forms.ListBox clientFileRegisterlistBox;
         private System.Windows.Forms.CheckBox newContentCheckBox;
         private System.Windows.Forms.CheckBox replaceStringRegisterCheckBox;
+        private System.Windows.Forms.CheckBox openFileByNameCheckbox;
+        private System.Windows.Forms.TextBox fileNameTextBox;
     }
 }
 
