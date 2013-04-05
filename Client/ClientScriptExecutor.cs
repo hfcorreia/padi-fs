@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Client
 {
@@ -48,36 +49,50 @@ namespace Client
 
         private void exeScriptCommand(string line)
         {
-            String[] input = line.Split(' ');
+            String newLine = parseLine(line);
+    
+            String[] input = newLine.Split(' ');
+
             String[] newInput = input.Skip(2).ToArray<String>();
 
            switch (input[0])
             {
-                case "open":
+                case "OPEN":
                     open(newInput);
                     break;
-                case "close":
+                case "CLOSE":
                     close(newInput);
                     break;
-                case "create":
+                case "CREATE":
                     create(newInput);
                     break;
-                case "delete":
+                case "DELETE":
                     delete(newInput);
                     break;
-                case "write":
+                case "WRITE":
                     write(newInput);
                     break;
-                case "read":
+                case "READ":
                     read(newInput);
                     break;
-                case "dump":
+                case "DUMP":
                     dump(newInput);
                     break;
                 default:
                     Console.WriteLine("#Client: No such command: " + input[0] + "!");
                     break;
             }
+        }
+
+        private String parseLine(string line)
+        {
+            Match mp = Regex.Match(line, "\"(.*)\"");
+            String newLine = line.Replace(",", "");
+            if (mp.Success)
+            {
+                newLine = Regex.Replace(newLine, "\"(.*)\"", "\"" + mp.Groups[1].Value + "\"");
+            }
+            return newLine;
         }
 
         private void dump(string[] input)
@@ -93,16 +108,15 @@ namespace Client
         private void write(string[] input)
         {
           int fileRegisterId = Int32.Parse(input[0]);
-          int stringRegisterId = 0;
-          if (Int32.TryParse(input[1], out stringRegisterId))
+          Match mp = Regex.Match(input[1], "\"(.*)\"");
+          if (mp.Success)
           {
-              ClientEntity.write(fileRegisterId, stringRegisterId);
+              byte[] content = System.Text.Encoding.UTF8.GetBytes(mp.Groups[1].Value);
+              ClientEntity.write(fileRegisterId, content);
           }
           else
           {
-              byte[] content = new byte[input[1].Length * sizeof(char)];
-              System.Buffer.BlockCopy(input[1].ToCharArray(), 0, content, 0, content.Length);
-              ClientEntity.write(fileRegisterId, content);
+              ClientEntity.write(fileRegisterId, Int32.Parse(input[1]));
           }
         }
 
