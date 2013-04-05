@@ -216,8 +216,9 @@ namespace Client
 
         public void exeScript(string filename)
         {
+            String fileLocation = Environment.CurrentDirectory + Properties.Resources.CLIENT_SCRIPT_DIR + filename;
             Console.WriteLine("\r\n#Client: Running Script " + filename);
-            System.IO.StreamReader fileReader = new System.IO.StreamReader(filename);
+            System.IO.StreamReader fileReader = new System.IO.StreamReader(fileLocation);
 
 
             String line = fileReader.ReadLine();
