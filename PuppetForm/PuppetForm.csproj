@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="PuppetMaster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PuppetScriptExecutor.cs" />
     <EmbeddedResource Include="ControlBoard.resx">
       <DependentUpon>ControlBoard.cs</DependentUpon>
     </EmbeddedResource>

@@ -216,8 +216,7 @@ namespace Client
 
         public void exeScript(string filename)
         {
-            ClientScriptExecutor scriptExecutor = new ClientScriptExecutor(this, filename);
-            scriptExecutor.runScriptFile();
+            new ClientScriptExecutor(this, filename).runScriptFile();
         }
 
         public List<string> getAllFileRegisters()
