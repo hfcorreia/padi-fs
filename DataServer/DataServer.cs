@@ -153,7 +153,14 @@ namespace DataServer
 
         public void dump()
         {
-            Console.WriteLine("#DS: Dumping!");
+            Console.WriteLine("#DS: Dumping!\r\n");
+            Console.WriteLine(" URL: " + Url);
+            Console.WriteLine(" Opened Files:");
+            foreach (KeyValuePair<String, File> name in files)
+            {
+                Console.WriteLine("\t " + name.Key);
+            }
+            Console.WriteLine();
         }
     }
 }

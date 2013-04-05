@@ -197,14 +197,14 @@ namespace MetaDataServer
 
         public void dump()
         {
-            Console.WriteLine("#MDS: Dumping!");
+            Console.WriteLine("#MDS: Dumping!\r\n");
             Console.WriteLine(" URL: " + Url);
             Console.WriteLine(" Registered Data Servers:");
             foreach (KeyValuePair<String, ServerObjectWrapper> dataServer in dataServers)
             {
                 Console.WriteLine("\t" + dataServer.Key);
             }
-            Console.WriteLine(" Known Files: ");
+            Console.WriteLine(" Opened Files: ");
             foreach (KeyValuePair<String, FileMetadata> files in fileMetadata)
             {
                 Console.Write("\t" + files.Key + " - Clients[ ");
@@ -214,6 +214,7 @@ namespace MetaDataServer
                 }
                 Console.WriteLine("]");
             }
+            Console.WriteLine();
 
         }
     }
