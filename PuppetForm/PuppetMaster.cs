@@ -61,7 +61,7 @@ namespace PuppetForm
             {
                 client.open(filename);
             }
-            catch (CommonTypes.Exceptions.OpenFileException e)
+            catch (OpenFileException e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
@@ -78,7 +78,7 @@ namespace PuppetForm
             {
                 client.close(filename);
             }
-            catch (CommonTypes.Exceptions.CloseFileException e)
+            catch (CloseFileException e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
@@ -96,7 +96,7 @@ namespace PuppetForm
             {
                 FileMetadata metadata = client.create(filename, numberDataServers, readQuorum, writeQuorum);
             }
-            catch (CommonTypes.Exceptions.CreateFileException e)
+            catch (CreateFileException e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
@@ -114,7 +114,7 @@ namespace PuppetForm
             {
                 client.delete(filename);
             }
-            catch (CommonTypes.Exceptions.DeleteFileException e)
+            catch (DeleteFileException e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
@@ -155,7 +155,7 @@ namespace PuppetForm
             {
                 client.read(fileRegisterId, semantics, stringRegisterId);
             }
-            catch (Exception e)
+            catch (PadiFsException e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
@@ -175,8 +175,9 @@ namespace PuppetForm
             {
                 client.write(fileRegisterId, byteArrayRegisterContent);
             }
-            catch (Exception e)
+            catch (PadiFsException e)
             {
+
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
         }
@@ -193,9 +194,9 @@ namespace PuppetForm
             {
                 client.write(fileRegisterId, stringRegisterId);
             }
-            catch (Exception e)
+            catch (PadiFsException e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show(e.StackTrace);
             }
         }
         

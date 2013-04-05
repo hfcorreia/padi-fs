@@ -66,6 +66,7 @@ namespace Client
             FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
             int stringRegisterId = fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
             write(fileRegisterId, stringRegisterId);
+
         }
 
         public void write(int fileRegisterId, int stringRegisterId)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CommonTypes.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace PuppetForm
 {
@@ -43,51 +44,62 @@ namespace PuppetForm
 
         private void runCommand(String line)
         {
-            String[] input = line.Split(' ');
+            String newLine = parseLine(line);
+            String[] input = newLine.Split(' ');
             String[] newInput = input.Skip(1).ToArray<String>();
             switch (input[0])
             {
-                case "open":
+                case "OPEN":
                     open(newInput);
                     break;
-                case "close":
+                case "CLOSE":
                     close(newInput);
                     break;
-                case "create":
+                case "CREATE":
                     create(newInput);
                     break;
-                case "delete":
+                case "DELETE":
                     delete(newInput);
                     break;
-                case "write":
+                case "WRITE":
                     write(newInput);
                     break;
-                case "read":
+                case "READ":
                     read(newInput);
                     break;
-                case "copy":
+                case "COPY":
                     copy(newInput);
                     break;
-                case "dump":
+                case "DUMP":
                     dump(newInput);
                     break;
-                case "fail":
+                case "FAIL":
                     fail(newInput);
                     break;
-                case "recover":
+                case "RECOVER":
                     recover(newInput);
                     break;
-                case "freeze":
+                case "FREEZE":
                     freeze(newInput);
                     break;
-                case "unfreeze":
+                case "UNFREEZE":
                     break;
-                case "exeScript":
+                case "EXESCRIPT":
                     exeClientScript(newInput);
                     break;
                 default:
                     throw new PadiFsException("No such command: " + input[0] + "!");
             }
+        }
+        private String parseLine(string line)
+        {
+            Match mp = Regex.Match(line, "\"(.*)\"");
+            String newLine = line.Replace(",", "");
+            if (mp.Success)
+            {
+                newLine = Regex.Replace(newLine, "\"(.*)\"", "\"" + mp.Groups[1].Value + "\"");
+            }
+            return newLine;
         }
 
         private void exeClientScript(string[] input)
@@ -127,7 +139,16 @@ namespace PuppetForm
 
         private void write(string[] input)
         {
-            PuppetMasterEntity.write(input[0], Int32.Parse(input[1]), Int32.Parse(input[2]));
+            int fileRegisterId = Int32.Parse(input[1]);
+            Match mp = Regex.Match(input[2], "\"(.*)\"");
+            if (mp.Success)
+            {
+                PuppetMasterEntity.write(input[0], fileRegisterId, mp.Groups[1].Value);
+            }
+            else
+            {
+                PuppetMasterEntity.write(input[0],fileRegisterId, Int32.Parse(input[1]));
+            }
         }
 
         private void delete(string[] input)
