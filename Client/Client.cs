@@ -128,7 +128,7 @@ namespace Client
         }
 
 
-        public File read(string process, int fileRegisterId, string semantics, int stringRegisterId)
+        public File read(int fileRegisterId, string semantics, int stringRegisterId)
         {
             Console.WriteLine("#Client: reading file. fileRegister: " + fileRegisterId + ", sringRegister: " + stringRegisterId + ", semantics: " + semantics);
             File file = null;
@@ -216,61 +216,8 @@ namespace Client
 
         public void exeScript(string filename)
         {
-            String fileLocation = Environment.CurrentDirectory + Properties.Resources.CLIENT_SCRIPT_DIR + filename;
-            Console.WriteLine("\r\n#Client: Running Script " + filename);
-            System.IO.StreamReader fileReader = new System.IO.StreamReader(fileLocation);
-
-
-            String line = fileReader.ReadLine();
-            while (line != null)
-            {
-                if (line.StartsWith("#"))
-                {
-                    line = fileReader.ReadLine();
-                    continue;
-                }
-                else
-                {
-                    exeScriptCommand(line);
-                    line = fileReader.ReadLine();
-                }
-            }
-            Console.WriteLine("#Client: End of Script " + filename + "\r\n");
-            fileReader.Close();
-        }
-
-        private void exeScriptCommand(string line)
-        {
-            String[] input = line.Split(' ');
-            switch (input[0])
-            {
-                case "open":
-                    open(input[2]);
-                    break;
-                case "close":
-                    close(input[2]);
-                    break;
-                case "create":
-                    create(input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
-                    break;
-                case "delete":
-                    delete(input[2]);
-                    break;
-                case "write":
-                    //write(input[2], input[3]);
-                    break;
-                case "read":
-                    // read(input[1], input[2], input[3], input[4]);
-                    break;
-                case "dump":
-                    // dump(input[1]);
-                    break;
-                case "#":
-                    break;
-                default:
-                    Console.WriteLine("#Client: No such command: " + input[0] + "!");
-                    break;
-            }
+            ClientScriptExecutor scriptExecutor = new ClientScriptExecutor(this, filename);
+            scriptExecutor.runScriptFile();
         }
 
         public List<string> getAllFileRegisters()

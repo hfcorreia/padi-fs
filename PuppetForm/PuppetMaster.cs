@@ -153,7 +153,7 @@ namespace PuppetForm
 
             try
             {
-                client.read(process, fileRegisterId, semantics, stringRegisterId);
+                client.read(fileRegisterId, semantics, stringRegisterId);
             }
             catch (Exception e)
             {

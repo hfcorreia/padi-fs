@@ -1,0 +1,12 @@
+# Create The File
+create c-1 fullTest 1 1 1
+# Close File
+close c-1 fullTest
+# Open File
+open c-1 fullTest
+# Read File
+read c-1 1 default 1
+# Write File
+write c-1 1 hello
+# Delete the file
+delete c-1 fullTest
