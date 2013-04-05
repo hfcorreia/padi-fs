@@ -110,7 +110,7 @@ namespace Client
           int fileRegisterId = Int32.Parse(input[0]);
           Match mp = Regex.Match(input[1], "\"(.*)\"");
           if (mp.Success)
-          {
+          { 
               byte[] content = System.Text.Encoding.UTF8.GetBytes(mp.Groups[1].Value);
               ClientEntity.write(fileRegisterId, content);
           }
