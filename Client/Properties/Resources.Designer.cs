@@ -61,6 +61,15 @@ namespace Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to \\..\\Scripts\\ClientScripts\\.
+        /// </summary>
+        internal static string CLIENT_SCRIPT_DIR {
+            get {
+                return ResourceManager.GetString("CLIENT_SCRIPT_DIR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 10.
         /// </summary>
         internal static string FILE_REGISTER_CAPACITY {

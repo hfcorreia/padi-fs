@@ -23,7 +23,7 @@ namespace Client
         //private Dictionary<String, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>();
         FileMetadataContainer fileMetadataContainer = new FileMetadataContainer(Int32.Parse(Properties.Resources.FILE_REGISTER_CAPACITY));
         FileContentContainer fileContentContainer = new FileContentContainer(Int32.Parse(Properties.Resources.FILE_STRING_CAPACITY));
-        
+
         static void Main(string[] args)
         {
             Console.SetWindowSize(80, 15);
@@ -60,16 +60,9 @@ namespace Client
             ChannelServices.RegisterChannel(channel, true);
             RemotingServices.Marshal(client, Id, typeof(Client));
         }
-        /*
-        public void write(string filename, byte[] fileContent)
-        {
-            File file = new File(filename, -1, fileContent);
-            write(file);
-        }
-         */
 
-        public void write(int fileRegisterId, byte[] content) 
-        { 
+        public void write(int fileRegisterId, byte[] content)
+        {
             FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
             int stringRegisterId = fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
             write(fileRegisterId, stringRegisterId);
@@ -110,13 +103,13 @@ namespace Client
 
             Console.WriteLine("#Client: writing file '" + file.FileName + "' with content: '" + file.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(file.Content));
 
-//            if (fileMetadataContainer.containsFileMetadata(file.FileName))
-  //          {
+            //            if (fileMetadataContainer.containsFileMetadata(file.FileName))
+            //          {
             foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
             {
                 dataServerWrapper.getObject<IDataServer>().write(file);
             }
-    //        }
+            //        }
         }
 
         private int readFileVersion(string filename)
@@ -140,7 +133,7 @@ namespace Client
             Console.WriteLine("#Client: reading file. fileRegister: " + fileRegisterId + ", sringRegister: " + stringRegisterId + ", semantics: " + semantics);
             File file = null;
             FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
-            if (fileMetadata != null && fileMetadata.FileServers!=null)
+            if (fileMetadata != null && fileMetadata.FileServers != null)
             {
                 foreach (ServerObjectWrapper dataServerWrapper in fileMetadata.FileServers)
                 {
@@ -165,7 +158,7 @@ namespace Client
             {
                 fileMetadata = metadataServerWrapper.getObject<IMetaDataServer>().open(Id, filename);
                 //cacheServersForFile(filename, servers);
-               
+
             }
             fileMetadataContainer.addFileMetadata(fileMetadata);
         }
@@ -196,7 +189,8 @@ namespace Client
                 fileMetadataContainer.removeFileMetadata(filename);
                 fileContentContainer.removeFileContent(filename);
             }
-            else {
+            else
+            {
                 throw new DeleteFileException("Trying to delete a file that is not in the file-register.");
             }
         }
@@ -222,9 +216,10 @@ namespace Client
 
         public void exeScript(string filename)
         {
+            String fileLocation = Environment.CurrentDirectory + Properties.Resources.CLIENT_SCRIPT_DIR + filename;
             Console.WriteLine("\r\n#Client: Running Script " + filename);
-            System.IO.StreamReader fileReader = new System.IO.StreamReader(filename);
-            
+            System.IO.StreamReader fileReader = new System.IO.StreamReader(fileLocation);
+
 
             String line = fileReader.ReadLine();
             while (line != null)
@@ -278,11 +273,12 @@ namespace Client
             }
         }
 
-        public List<string> getAllFileRegisters() 
+        public List<string> getAllFileRegisters()
         {
             return fileMetadataContainer.getAllFileNames();
         }
-        public List<string> getAllStringRegisters() {
+        public List<string> getAllStringRegisters()
+        {
             return fileContentContainer.getAllFileContentAsString();
         }
 
