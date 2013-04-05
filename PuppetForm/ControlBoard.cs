@@ -12,11 +12,19 @@ namespace PuppetForm
     public partial class ControlBoard : Form
     {
         #region variables
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the variables                      ///
+        ////////////////////////////////////////////////////////////////////////////
         private PuppetMaster puppetMaster = new PuppetMaster();
         private static int NUM_METADATA_SERVERS = 3;
         #endregion variables
 
         #region initialization
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the initialization                 ///
+        ////////////////////////////////////////////////////////////////////////////
+        
         public ControlBoard()
         {
             InitializeComponent();
@@ -33,6 +41,10 @@ namespace PuppetForm
 
         #region verifications
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the verfications                   ///
+        ////////////////////////////////////////////////////////////////////////////
+        
         private void verifyStringRegisterIdSelection() 
         {
             if (clientStringRegisterListBox.Items.Count == 0 || clientStringRegisterListBox.SelectedIndex < 0)
@@ -51,7 +63,7 @@ namespace PuppetForm
 
         private void verifyNewClientName()
         {
-            if (String.IsNullOrEmpty(CreateFileNameTextBox.Text))
+            if (String.IsNullOrEmpty(clientNameTextBox.Text))
             {
                 throw new Exception("Please enter a file name");
             }
@@ -67,7 +79,7 @@ namespace PuppetForm
 
         private void verifyNewFileName()
         {
-            if (String.IsNullOrEmpty(CreateFileNameTextBox.Text))
+            if (String.IsNullOrEmpty(fileNameTextBox.Text))
             {
                 throw new Exception("Please specify a valid name for the file");
             }
@@ -121,6 +133,10 @@ namespace PuppetForm
 
         #region events
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the events                        ///
+        ////////////////////////////////////////////////////////////////////////////
+        
         private void clientFileRegisterlistBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             updateClientStringRegister(getSelectedClient());
@@ -176,23 +192,29 @@ namespace PuppetForm
 
         private void writeFileButton_Click(object sender, EventArgs e)
         {
-            verifyFileRegisterIdSelection();
-
-            if (newContentCheckBox.Checked)
+            try
             {
-                verifyNewByteArrayText();
-                int selectedFileRegisterId = clientFileRegisterlistBox.SelectedIndex;
-                puppetMaster.write(getSelectedClient(), selectedFileRegisterId, byteArrayTextBox.Text);
-                updateClientStringRegister(getSelectedClient());
+                verifyFileRegisterIdSelection();
+                if (newContentCheckBox.Checked)
+                {
+                    verifyNewByteArrayText();
+                    int selectedFileRegisterId = clientFileRegisterlistBox.SelectedIndex;
+                    puppetMaster.write(getSelectedClient(), selectedFileRegisterId, byteArrayTextBox.Text);
+                    updateClientStringRegister(getSelectedClient());
+                }
+                else
+                {
+                    verifyStringRegisterIdSelection();
+                    int selectedFileRegisterId = clientFileRegisterlistBox.SelectedIndex;
+                    int selectedStringRegisterId = clientStringRegisterListBox.SelectedIndex;
+
+                    puppetMaster.write(getSelectedClient(), selectedFileRegisterId, selectedStringRegisterId);
+                    updateClientStringRegister(getSelectedClient());
+                }
             }
-            else
+            catch (Exception exception)
             {
-                verifyStringRegisterIdSelection();
-                int selectedFileRegisterId = clientFileRegisterlistBox.SelectedIndex;
-                int selectedStringRegisterId = clientStringRegisterListBox.SelectedIndex;
-
-                puppetMaster.write(getSelectedClient(), selectedFileRegisterId, selectedStringRegisterId);
-                updateClientStringRegister(getSelectedClient());
+                System.Windows.Forms.MessageBox.Show("Error writing file: \n" + exception.Message);
             }
         }
 
@@ -266,13 +288,15 @@ namespace PuppetForm
                 if (openFileByNameCheckbox.Checked)
                 {
                     verifyNewClientName();
-                    puppetMaster.open(getSelectedClient(), CreateFileNameTextBox.Text);
+                    puppetMaster.open(getSelectedClient(), fileNameTextBox.Text);
                 }
                 else
                 {
                     verifyFileRegisterIdSelection();
                     puppetMaster.open(getSelectedClient(), getSelectedFileRegisterText());
                 }
+                updateClientFileRegister(getSelectedClient());
+                updateClientStringRegister(getSelectedClient());
             }
             catch (Exception exception)
             {
@@ -289,6 +313,7 @@ namespace PuppetForm
                 verifyFileRegisterIdSelection();
                 puppetMaster.close(getSelectedClient(), getSelectedFileRegisterText());
                 updateClientFileRegister(getSelectedClient());
+                updateClientStringRegister(getSelectedClient());
             }
             catch (Exception exception)
             {
@@ -347,6 +372,8 @@ namespace PuppetForm
                 verifyStringRegisterIdSelection();
                 verifyFileRegisterIdSelection();
                 puppetMaster.delete(getSelectedClient(), getSelectedFileRegisterText());
+                updateClientFileRegister(getSelectedClient());
+                updateClientStringRegister(getSelectedClient());
             }
             catch (Exception exception)
             {
@@ -462,13 +489,22 @@ namespace PuppetForm
             }
         }
 
+        private void newContentCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            byteArrayTextBox.Enabled = newContentCheckBox.Checked;
+        }
+
         #endregion events
 
         #region getters
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the getters                        ///
+        ////////////////////////////////////////////////////////////////////////////
         
         private string getSelectedFileName()
         {
-            return CreateFileNameTextBox.Text;
+            return fileNameTextBox.Text;
         }
 
         private string getSelectedDS()
@@ -500,10 +536,15 @@ namespace PuppetForm
         {
             return clientFileRegisterlistBox.SelectedIndex;
         }
+
         #endregion getters
 
         #region setters
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the setters                        ///
+        ////////////////////////////////////////////////////////////////////////////
+        
         private void selectDataServer(string newDataserverId)
         {
             for (int index = 0; index < dataServersListBox.Items.Count; ++index)
@@ -570,6 +611,10 @@ namespace PuppetForm
 
         #region updates
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///                        region for the updates                        ///
+        ////////////////////////////////////////////////////////////////////////////
+        
         private void updateDataServersList()
         {
             dataServersListBox.Items.Clear();

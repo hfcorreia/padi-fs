@@ -49,7 +49,6 @@
             this.NumDsTextBox = new System.Windows.Forms.TextBox();
             this.ReadQuorumTextBox = new System.Windows.Forms.TextBox();
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
-            this.CreateFileNameTextBox = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -71,22 +70,19 @@
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.newContentCheckBox = new System.Windows.Forms.CheckBox();
             this.writeFileButton = new System.Windows.Forms.Button();
             this.byteArrayTextBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.openFileByNameCheckbox = new System.Windows.Forms.CheckBox();
+            this.fileNameTextBox = new System.Windows.Forms.TextBox();
             this.button10 = new System.Windows.Forms.Button();
             this.openFileButton = new System.Windows.Forms.Button();
             this.closeFileButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.replaceStringRegisterCheckBox = new System.Windows.Forms.CheckBox();
             this.readFileButton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
@@ -100,16 +96,12 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
-            this.replaceStringRegisterCheckBox = new System.Windows.Forms.CheckBox();
-            this.fileNameTextBox = new System.Windows.Forms.TextBox();
-            this.openFileByNameCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox12.SuspendLayout();
             this.groupBox11.SuspendLayout();
-            this.groupBox10.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -152,7 +144,7 @@
             this.groupBox2.Controls.Add(this.mdIdTextBox);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(310, 141);
+            this.groupBox2.Size = new System.Drawing.Size(184, 141);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Metadata Server Control";
@@ -235,7 +227,6 @@
             // 
             // CreateFile
             // 
-            this.CreateFile.Controls.Add(this.label2);
             this.CreateFile.Controls.Add(this.createFileButton);
             this.CreateFile.Controls.Add(this.WriteQuorum);
             this.CreateFile.Controls.Add(this.ReadQuorum);
@@ -243,7 +234,6 @@
             this.CreateFile.Controls.Add(this.NumDsTextBox);
             this.CreateFile.Controls.Add(this.ReadQuorumTextBox);
             this.CreateFile.Controls.Add(this.WriteQuorumTextBox);
-            this.CreateFile.Controls.Add(this.CreateFileNameTextBox);
             this.CreateFile.Location = new System.Drawing.Point(190, 128);
             this.CreateFile.Name = "CreateFile";
             this.CreateFile.Size = new System.Drawing.Size(178, 159);
@@ -254,7 +244,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(62, 19);
+            this.label2.Location = new System.Drawing.Point(6, 35);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 13);
             this.label2.TabIndex = 9;
@@ -321,14 +311,6 @@
             this.WriteQuorumTextBox.TabIndex = 23;
             this.WriteQuorumTextBox.Text = "1";
             // 
-            // CreateFileNameTextBox
-            // 
-            this.CreateFileNameTextBox.Location = new System.Drawing.Point(122, 19);
-            this.CreateFileNameTextBox.Name = "CreateFileNameTextBox";
-            this.CreateFileNameTextBox.Size = new System.Drawing.Size(50, 20);
-            this.CreateFileNameTextBox.TabIndex = 20;
-            this.CreateFileNameTextBox.Text = "test1";
-            // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.label19);
@@ -340,7 +322,6 @@
             this.groupBox5.Controls.Add(this.createClientButton);
             this.groupBox5.Controls.Add(this.groupBox12);
             this.groupBox5.Controls.Add(this.groupBox11);
-            this.groupBox5.Controls.Add(this.groupBox10);
             this.groupBox5.Controls.Add(this.groupBox4);
             this.groupBox5.Controls.Add(this.groupBox9);
             this.groupBox5.Controls.Add(this.groupBox7);
@@ -550,61 +531,6 @@
             this.label15.TabIndex = 4;
             this.label15.Text = "File Register1";
             // 
-            // groupBox10
-            // 
-            this.groupBox10.Controls.Add(this.label14);
-            this.groupBox10.Controls.Add(this.button2);
-            this.groupBox10.Controls.Add(this.textBox5);
-            this.groupBox10.Controls.Add(this.textBox4);
-            this.groupBox10.Controls.Add(this.label13);
-            this.groupBox10.Location = new System.Drawing.Point(8, 293);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(175, 165);
-            this.groupBox10.TabIndex = 33;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "Write File";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(5, 57);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(49, 13);
-            this.label14.TabIndex = 32;
-            this.label14.Text = "Contents";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 134);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(164, 25);
-            this.button2.TabIndex = 35;
-            this.button2.Text = "Write File";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(76, 54);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(93, 20);
-            this.textBox5.TabIndex = 34;
-            // 
-            // textBox4
-            // 
-            this.textBox4.Location = new System.Drawing.Point(76, 28);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(93, 20);
-            this.textBox4.TabIndex = 33;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(5, 28);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(65, 13);
-            this.label13.TabIndex = 3;
-            this.label13.Text = "File Register";
-            // 
             // groupBox9
             // 
             this.groupBox9.Controls.Add(this.newContentCheckBox);
@@ -621,12 +547,15 @@
             // newContentCheckBox
             // 
             this.newContentCheckBox.AutoSize = true;
+            this.newContentCheckBox.Checked = true;
+            this.newContentCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.newContentCheckBox.Location = new System.Drawing.Point(97, 81);
             this.newContentCheckBox.Name = "newContentCheckBox";
             this.newContentCheckBox.Size = new System.Drawing.Size(88, 17);
             this.newContentCheckBox.TabIndex = 33;
             this.newContentCheckBox.Text = "New Content";
             this.newContentCheckBox.UseVisualStyleBackColor = true;
+            this.newContentCheckBox.CheckedChanged += new System.EventHandler(this.newContentCheckBox_CheckedChanged);
             // 
             // writeFileButton
             // 
@@ -656,6 +585,7 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label2);
             this.groupBox7.Controls.Add(this.openFileByNameCheckbox);
             this.groupBox7.Controls.Add(this.fileNameTextBox);
             this.groupBox7.Controls.Add(this.button10);
@@ -667,6 +597,25 @@
             this.groupBox7.TabIndex = 17;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Open/Close File";
+            // 
+            // openFileByNameCheckbox
+            // 
+            this.openFileByNameCheckbox.AutoSize = true;
+            this.openFileByNameCheckbox.Checked = true;
+            this.openFileByNameCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.openFileByNameCheckbox.Location = new System.Drawing.Point(156, 38);
+            this.openFileByNameCheckbox.Name = "openFileByNameCheckbox";
+            this.openFileByNameCheckbox.Size = new System.Drawing.Size(15, 14);
+            this.openFileByNameCheckbox.TabIndex = 34;
+            this.openFileByNameCheckbox.UseVisualStyleBackColor = true;
+            this.openFileByNameCheckbox.CheckedChanged += new System.EventHandler(this.openFileByNameCheckbox_CheckedChanged);
+            // 
+            // fileNameTextBox
+            // 
+            this.fileNameTextBox.Location = new System.Drawing.Point(66, 35);
+            this.fileNameTextBox.Name = "fileNameTextBox";
+            this.fileNameTextBox.Size = new System.Drawing.Size(84, 20);
+            this.fileNameTextBox.TabIndex = 32;
             // 
             // button10
             // 
@@ -712,6 +661,16 @@
             this.groupBox1.TabIndex = 25;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Read File";
+            // 
+            // replaceStringRegisterCheckBox
+            // 
+            this.replaceStringRegisterCheckBox.AutoSize = true;
+            this.replaceStringRegisterCheckBox.Location = new System.Drawing.Point(17, 96);
+            this.replaceStringRegisterCheckBox.Name = "replaceStringRegisterCheckBox";
+            this.replaceStringRegisterCheckBox.Size = new System.Drawing.Size(181, 17);
+            this.replaceStringRegisterCheckBox.TabIndex = 34;
+            this.replaceStringRegisterCheckBox.Text = "Replace selected String Register";
+            this.replaceStringRegisterCheckBox.UseVisualStyleBackColor = true;
             // 
             // readFileButton
             // 
@@ -846,33 +805,6 @@
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
             // 
-            // replaceStringRegisterCheckBox
-            // 
-            this.replaceStringRegisterCheckBox.AutoSize = true;
-            this.replaceStringRegisterCheckBox.Location = new System.Drawing.Point(17, 96);
-            this.replaceStringRegisterCheckBox.Name = "replaceStringRegisterCheckBox";
-            this.replaceStringRegisterCheckBox.Size = new System.Drawing.Size(181, 17);
-            this.replaceStringRegisterCheckBox.TabIndex = 34;
-            this.replaceStringRegisterCheckBox.Text = "Replace selected String Register";
-            this.replaceStringRegisterCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // fileNameTextBox
-            // 
-            this.fileNameTextBox.Location = new System.Drawing.Point(10, 35);
-            this.fileNameTextBox.Name = "fileNameTextBox";
-            this.fileNameTextBox.Size = new System.Drawing.Size(140, 20);
-            this.fileNameTextBox.TabIndex = 32;
-            // 
-            // openFileByNameCheckbox
-            // 
-            this.openFileByNameCheckbox.AutoSize = true;
-            this.openFileByNameCheckbox.Location = new System.Drawing.Point(156, 38);
-            this.openFileByNameCheckbox.Name = "openFileByNameCheckbox";
-            this.openFileByNameCheckbox.Size = new System.Drawing.Size(15, 14);
-            this.openFileByNameCheckbox.TabIndex = 34;
-            this.openFileByNameCheckbox.UseVisualStyleBackColor = true;
-            this.openFileByNameCheckbox.CheckedChanged += new System.EventHandler(this.openFileByNameCheckbox_CheckedChanged);
-            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -895,8 +827,6 @@
             this.groupBox12.ResumeLayout(false);
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
-            this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -921,7 +851,6 @@
         private System.Windows.Forms.TextBox NumDsTextBox;
         private System.Windows.Forms.TextBox ReadQuorumTextBox;
         private System.Windows.Forms.TextBox WriteQuorumTextBox;
-        private System.Windows.Forms.TextBox CreateFileNameTextBox;
         private System.Windows.Forms.Label NumDataServers;
         private System.Windows.Forms.Label ReadQuorum;
         private System.Windows.Forms.Label WriteQuorum;
@@ -964,12 +893,6 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.GroupBox groupBox10;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Label label13;
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.Button runScriptButton;
         private System.Windows.Forms.Button loadScriptButton;
