@@ -12,9 +12,11 @@ namespace PuppetForm
     public partial class ControlBoard : Form
     {
         #region variables
+        
         ////////////////////////////////////////////////////////////////////////////
         ///                        region for the variables                      ///
         ////////////////////////////////////////////////////////////////////////////
+
         private PuppetMaster puppetMaster = new PuppetMaster();
         private static int NUM_METADATA_SERVERS = 3;
         #endregion variables
@@ -37,6 +39,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show("Error starting Metadata servers :\n" + exception.Message);
             }
         }
+        
         #endregion initialization
 
         #region verifications
@@ -309,9 +312,17 @@ namespace PuppetForm
             try
             {
                 verifyClientSelection();
-                verifyStringRegisterIdSelection();
-                verifyFileRegisterIdSelection();
-                puppetMaster.close(getSelectedClient(), getSelectedFileRegisterText());
+                if (openFileByNameCheckbox.Checked)
+                {
+                    verifyNewFileName();
+                    puppetMaster.close(getSelectedClient(), getSelectedFileRegisterText());
+                }
+                else
+                {
+                    verifyFileRegisterIdSelection();
+                    puppetMaster.close(getSelectedClient(), getSelectedFileRegisterText());
+                }
+                
                 updateClientFileRegister(getSelectedClient());
                 updateClientStringRegister(getSelectedClient());
             }
@@ -349,7 +360,7 @@ namespace PuppetForm
 
 
 
-        private void loadscript_Click(object sender, EventArgs e)
+        private void loadScript_Click(object sender, EventArgs e)
         {
             try
             {
@@ -382,38 +393,67 @@ namespace PuppetForm
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void runScript_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("This is a stub, does nothing! :\n");
+            if (puppetMaster.LoadedScriptReader != null)
+            {
+                String line = puppetMaster.LoadedScriptReader.ReadLine();
+                while (line != null)
+                {
+                    if (line.StartsWith("#"))
+                    {
+                        line = puppetMaster.LoadedScriptReader.ReadLine();
+                        continue;
+                    }
+                    else
+                    {
+                        puppetMaster.exeScriptCommand(line);
+                        line = puppetMaster.LoadedScriptReader.ReadLine();
+                    }
+                }
+                System.Windows.Forms.MessageBox.Show("End of file!");
+                puppetMaster.LoadedScriptReader.Close();
+                puppetMaster.LoadedScriptReader = null;
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Script file not loaded");
+            }
+            
         }
 
         private void nextStepButton_Click(object sender, EventArgs e)
         {
-            try
+            if (puppetMaster.LoadedScriptReader != null)
             {
-                if (puppetMaster.LoadedScriptReader != null)
-                {
-                    String line = puppetMaster.LoadedScriptReader.ReadLine();
+                String line = puppetMaster.LoadedScriptReader.ReadLine();
 
-                    if (line != null)
+
+                while (line != null)
+                {
+                    if (line.StartsWith("#"))
                     {
-                        puppetMaster.exeScriptCommand(line);
+                        line = puppetMaster.LoadedScriptReader.ReadLine();
+                        continue;
                     }
                     else
                     {
-                        System.Windows.Forms.MessageBox.Show("End of file! :\n");
-                        puppetMaster.LoadedScriptReader.Close();
-                        puppetMaster.LoadedScriptReader = null;
+                        puppetMaster.exeScriptCommand(line);
+                        break;
                     }
                 }
-                else
+                if (line == null)
                 {
-                    System.Windows.Forms.MessageBox.Show("Script file not loaded :\n");
+                    System.Windows.Forms.MessageBox.Show("End of file!");
+                    puppetMaster.LoadedScriptReader.Close();
+                    puppetMaster.LoadedScriptReader = null;
                 }
+
+
             }
-            catch (Exception exception)
+            else
             {
-                System.Windows.Forms.MessageBox.Show("Error executing next step of script :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Script file not loaded");
             }
         }
 
@@ -493,6 +533,12 @@ namespace PuppetForm
         {
             byteArrayTextBox.Enabled = newContentCheckBox.Checked;
         }
+
+        private void dumpAllMds_Click(object sender, EventArgs e)
+        {
+            puppetMaster.dumpAllMds();
+        }
+
 
         #endregion events
 
@@ -654,7 +700,10 @@ namespace PuppetForm
             }
         }
 
+
         #endregion updates
-        
+
+
+
     }
 }

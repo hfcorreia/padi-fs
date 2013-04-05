@@ -15,7 +15,6 @@ namespace Client
     [Serializable]
     public class Client : MarshalByRefObject, IClient
     {
-        private static int INITIAL_FILE_VERSION = 0;
         private static byte[] INITIAL_FILE_CONTENT = new byte[] { };
 
         private int Port { get; set; }
@@ -158,25 +157,25 @@ namespace Client
             return file;
         }
 
-        public void open(String clientId, string filename)
+        public void open(string filename)
         {
             Console.WriteLine("#Client: opening file '" + filename + "'");
             FileMetadata fileMetadata = null;
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                fileMetadata = metadataServerWrapper.getObject<IMetaDataServer>().open(clientId, filename);
+                fileMetadata = metadataServerWrapper.getObject<IMetaDataServer>().open(Id, filename);
                 //cacheServersForFile(filename, servers);
                
             }
             fileMetadataContainer.addFileMetadata(fileMetadata);
         }
 
-        public void close(String clientId, string filename)
+        public void close(string filename)
         {
             Console.WriteLine("#Client: closing file " + filename);
             foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                metadataServerWrapper.getObject<IMetaDataServer>().close(clientId, filename);
+                metadataServerWrapper.getObject<IMetaDataServer>().close(Id, filename);
                 //removeCacheServersForFile(filename);
                 fileMetadataContainer.removeFileMetadata(filename);
                 fileContentContainer.removeFileContent(filename);
@@ -221,6 +220,64 @@ namespace Client
             return fileMetadata;
         }
 
+        public void exeScript(string filename)
+        {
+            Console.WriteLine("\r\n#Client: Running Script " + filename);
+            System.IO.StreamReader fileReader = new System.IO.StreamReader(filename);
+            
+
+            String line = fileReader.ReadLine();
+            while (line != null)
+            {
+                if (line.StartsWith("#"))
+                {
+                    line = fileReader.ReadLine();
+                    continue;
+                }
+                else
+                {
+                    exeScriptCommand(line);
+                    line = fileReader.ReadLine();
+                }
+            }
+            Console.WriteLine("#Client: End of Script " + filename + "\r\n");
+            fileReader.Close();
+        }
+
+        private void exeScriptCommand(string line)
+        {
+            String[] input = line.Split(' ');
+            switch (input[0])
+            {
+                case "open":
+                    open(input[2]);
+                    break;
+                case "close":
+                    close(input[2]);
+                    break;
+                case "create":
+                    create(input[2], Int32.Parse(input[3]), Int32.Parse(input[4]), Int32.Parse(input[5]));
+                    break;
+                case "delete":
+                    delete(input[2]);
+                    break;
+                case "write":
+                    //write(input[2], input[3]);
+                    break;
+                case "read":
+                    // read(input[1], input[2], input[3], input[4]);
+                    break;
+                case "dump":
+                    // dump(input[1]);
+                    break;
+                case "#":
+                    break;
+                default:
+                    Console.WriteLine("#Client: No such command: " + input[0] + "!");
+                    break;
+            }
+        }
+
         public List<string> getAllFileRegisters() 
         {
             return fileMetadataContainer.getAllFileNames();
@@ -231,8 +288,21 @@ namespace Client
 
         public void exit()
         {
-            Console.WriteLine("#Client: bye ='( ");
+            Console.WriteLine("#Client: Exiting!");
             System.Environment.Exit(0);
+        }
+
+        public void dump()
+        {
+            Console.WriteLine("#Client: Dumping!\r\n");
+            Console.WriteLine(" URL: " + Url);
+            Console.WriteLine(" Opened Files:");
+            foreach (String name in fileMetadataContainer.getAllFileNames())
+            {
+                Console.WriteLine("\t" + name);
+            }
+            Console.WriteLine();
+
         }
     }
 }

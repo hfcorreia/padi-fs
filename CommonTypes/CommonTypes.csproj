@@ -49,6 +49,7 @@
     <Compile Include="exception\DeleteFileException.cs" />
     <Compile Include="exception\CreateFileException.cs" />
     <Compile Include="FileMetadataContainer.cs" />
+    <Compile Include="IRemote.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="FileMetadata.cs" />
     <Compile Include="MetaInformationReader.cs" />

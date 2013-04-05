@@ -37,5 +37,16 @@ namespace CommonTypes
                 MetaDataServers.Add( mds3wrapper );
         }
 
+        public ServerObjectWrapper getMetadataById(String id)
+        {
+            foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                if (metaDataWrapper.Id.Equals(id))
+                {
+                    return metaDataWrapper;
+                }
+            }
+            return null;
+        }
     }
 }

@@ -1,0 +1,4 @@
+#Create a new test-file
+create c-1 teste-file 1 1 1
+#delete the test file
+delete c-1 teste-file

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommonTypes
 {
-    public interface IClient
+    public interface IClient : IRemote
     {
         //void write(File file);
 
@@ -17,15 +17,15 @@ namespace CommonTypes
 
         File read(string process, int fileRegister, string semantics, int stringRegister);
         
-        void open(string clientId, string filename);
+        void open(string filename);
 
-        void close(string clientId, string filename);
+        void close(string filename);
 
         void delete(string filename);
 
-        FileMetadata create(string filename, int numberOfServers, int readQuorum, int writeQuorum);
+        void exeScript(string filename);
 
-        void exit();
+        FileMetadata create(string filename, int numberOfServers, int readQuorum, int writeQuorum);
 
         List<string> getAllStringRegisters();
 

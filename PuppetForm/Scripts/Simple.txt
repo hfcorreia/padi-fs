@@ -1,2 +1,8 @@
-# This is a simple script file
-# That does nothing
+# The needed ds
+dump d-1
+# Create a new file
+create c-1 test-1 1 1 1
+# Dump the client
+dump c-1
+# Dump the server
+dump d-1

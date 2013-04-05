@@ -24,6 +24,7 @@ namespace DataServer
 
         private Dictionary<string, File> files = new Dictionary<string, File>();
 
+
         static void Main(string[] args)
         {
             Console.SetWindowSize(80, 15);
@@ -115,7 +116,7 @@ namespace DataServer
 
         public void exit()
         {
-            Console.WriteLine("#DS: bye ='( ");
+            Console.WriteLine("#DS: Exiting!");
             System.Environment.Exit(0);
         }
 
@@ -151,5 +152,16 @@ namespace DataServer
             return dataServer;
         }
 
+        public void dump()
+        {
+            Console.WriteLine("#DS: Dumping!\r\n");
+            Console.WriteLine(" URL: " + Url);
+            Console.WriteLine(" Opened Files:");
+            foreach (KeyValuePair<String, File> name in files)
+            {
+                Console.WriteLine("\t " + name.Key);
+            }
+            Console.WriteLine();
+        }
     }
 }

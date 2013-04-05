@@ -59,7 +59,7 @@ namespace PuppetForm
             IClient client = sow.getObject<IClient>();
             try
             {
-                client.open(clientId, filename);
+                client.open(filename);
             }
             catch (CommonTypes.Exceptions.OpenFileException e)
             {
@@ -76,7 +76,7 @@ namespace PuppetForm
             IClient client = sow.getObject<IClient>();
             try
             {
-                client.close(clientId, filename);
+                client.close(filename);
             }
             catch (CommonTypes.Exceptions.CloseFileException e)
             {
@@ -211,7 +211,29 @@ namespace PuppetForm
         {
             startProcess(process);
 
-            System.Windows.Forms.MessageBox.Show("DUMP: Not Done Yet");
+            ServerObjectWrapper sow = getRemoteObjectWrapper(process);
+
+            IRemote obj = sow.getObject<IClient>();
+
+            obj.dump();
+        }
+
+        private ServerObjectWrapper getRemoteObjectWrapper(string process)
+        {
+            if (process.StartsWith("c-"))
+            {
+                return clients[process];
+            }
+            else if (process.StartsWith("d-"))
+            {
+                return dataServers[process];
+            }
+            else if (process.StartsWith("m-"))
+            {
+                return  MetaInformationReader.Instance.getMetadataById(process);
+            }
+            //change this
+            return null;
         }
 
         private void startProcess(string process)
@@ -229,7 +251,22 @@ namespace PuppetForm
                 /** not implemented only need when mds fail **/
             }
         }
+        public void exeClientScript(string process, string filename)
+        {
+            startProcess(process);
 
+            ServerObjectWrapper sow = clients[process];
+
+            IClient client = sow.getObject<IClient>();
+            try
+            {
+                client.exeScript(filename);
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+        }
         public void exeScriptCommand(String line)
         {
             String[] input = line.Split(' ');
@@ -279,6 +316,9 @@ namespace PuppetForm
                     freeze(input[1]);
                     break;
                 case "unfreeze":
+                    break;
+                case "exeScript":
+                    exeClientScript(input[1], input[2]);
                     break;
                 case "#":
                     break;
@@ -342,27 +382,7 @@ namespace PuppetForm
             }
             catch (Exception e) { Console.WriteLine("Error exiting."); }
         }
-        /*
-        internal IEnumerable<string> fileRegistersForClient(string clientId)
-        {
-            List<string> fileRegisters = new List<string>();
-            if (clients.ContainsKey(clientId)) 
-            {
-                fileRegisters = clients[clientId].getObject<IClient>().getAllFileRegisters();
-            }
-            return fileRegisters;
-        }*/
-
-        /*
-        {
-            List<string> stringRegisters = new List<string>();
-            if (clients.ContainsKey(clientId))
-            {
-                stringRegisters  = clients[clientId].getObject<IClient>().getAllStringRegisters();
-            }
-            return stringRegisters;
-        }*/
-
+        
        public List<string> stringRegistersForClient(string clientId)
         {
             createClient(clientId);
@@ -401,6 +421,14 @@ namespace PuppetForm
            }
 
            return new List<string>();
+       }
+
+       public void dumpAllMds()
+       {
+           foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
+           {
+               dump(metaDataWrapper.Id);
+           }
        }
     }
 }
