@@ -19,7 +19,7 @@ namespace MetaDataServer
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
         //private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
-        private Dictionary<String, FileMetadata> fileMetadata = new Dictionary<string, FileMetadata>();
+        private Dictionary<String, FileMetadata> fileMetadata = new Dictionary<String, FileMetadata>();
        
         static void Main(string[] args)
         {
@@ -198,6 +198,23 @@ namespace MetaDataServer
         public void dump()
         {
             Console.WriteLine("#MDS: Dumping!");
+            Console.WriteLine(" URL: " + Url);
+            Console.WriteLine(" Registered Data Servers:");
+            foreach (KeyValuePair<String, ServerObjectWrapper> dataServer in dataServers)
+            {
+                Console.WriteLine("\t" + dataServer.Key);
+            }
+            Console.WriteLine(" Known Files: ");
+            foreach (KeyValuePair<String, FileMetadata> files in fileMetadata)
+            {
+                Console.Write("\t" + files.Key + " - Clients[ ");
+                foreach (String name in files.Value.Clients)
+                {
+                    Console.Write(name + " ");
+                }
+                Console.WriteLine("]");
+            }
+
         }
     }
 
