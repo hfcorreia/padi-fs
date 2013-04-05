@@ -246,7 +246,15 @@ namespace Client
 
         public void dump()
         {
-            Console.WriteLine("#Client: Dumping!");
+            Console.WriteLine("#Client: Dumping!\r\n");
+            Console.WriteLine(" URL: " + Url);
+            Console.WriteLine(" Opened Files:");
+            foreach (String name in fileMetadataContainer.getAllFileNames())
+            {
+                Console.WriteLine("\t" + name);
+            }
+            Console.WriteLine();
+
         }
     }
 }

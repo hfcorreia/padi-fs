@@ -2,7 +2,11 @@
 dump d-1
 # Create a new file
 create c-1 test-1 1 1 1
+# Dump the client
+dump c-1
 # delete the file
 delete c-1 test-1
 # test if it was closed
 close c-1 test-1
+# Dump the client again
+dump c-1
