@@ -37,7 +37,9 @@ namespace Client.services
                 tasks[ds] = Task.Factory.StartNew(() => { return dataServer.readFileVersion(FileName); });
             }
 
-            waitQuorum<int>(tasks, tasks.Length);
+            int readQuorum = fileMetadata.ReadQuorum;
+
+            waitQuorum<int>(tasks, readQuorum);
 
             FileVersion = fileVersion;
         }

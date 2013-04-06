@@ -44,7 +44,9 @@ namespace Client.services
                     tasks[ds] = Task.Factory.StartNew(() => { return dataServer.read(fileMetadata.FileName); });
                 }
 
-                file = waitQuorum<File>(tasks, tasks.Length);
+                int readQuorum = fileMetadata.ReadQuorum;
+
+                file = waitQuorum<File>(tasks, readQuorum);
 
             }
             else

@@ -42,7 +42,8 @@ namespace Client.services
                 tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum); });
             }
 
-            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, tasks.Length);
+
+            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, WriteQuorum);
 
             FileRegisterId = State.fileMetadataContainer.addFileMetadata(fileMetadata);
 

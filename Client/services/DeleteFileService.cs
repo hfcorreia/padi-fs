@@ -38,8 +38,10 @@ namespace Client.services
 
                 State.fileMetadataContainer.removeFileMetadata(FileName);
                 State.fileContentContainer.removeFileContent(FileName);
+                
+                int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
 
-                waitVoidQuorum(tasks, tasks.Length);
+                waitVoidQuorum(tasks, writeQuorum);
             }
             else
             {

@@ -47,7 +47,9 @@ namespace Client.services
 
             State.fileContentContainer.addFileContent(NewFile);
 
-            waitVoidQuorum(tasks, tasks.Length);
+            int writeQuorum = fileMetadata.ReadQuorum;
+
+            waitVoidQuorum(tasks, writeQuorum);
 
         }
     }

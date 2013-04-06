@@ -34,8 +34,7 @@ namespace Client.services
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(State.Id, FileName); });
             }
 
-            //int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
-            int writeQuorum = tasks.Length;
+            int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
 
             State.fileMetadataContainer.removeFileMetadata(FileName);
             State.fileContentContainer.removeFileContent(FileName);
