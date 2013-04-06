@@ -112,9 +112,9 @@
             // 
             // createClientButton
             // 
-            this.createClientButton.Location = new System.Drawing.Point(131, 30);
+            this.createClientButton.Location = new System.Drawing.Point(190, 47);
             this.createClientButton.Name = "createClientButton";
-            this.createClientButton.Size = new System.Drawing.Size(101, 24);
+            this.createClientButton.Size = new System.Drawing.Size(112, 38);
             this.createClientButton.TabIndex = 16;
             this.createClientButton.Text = "Create Client";
             this.createClientButton.UseVisualStyleBackColor = true;
@@ -122,17 +122,17 @@
             // 
             // clientNameTextBox
             // 
-            this.clientNameTextBox.Location = new System.Drawing.Point(73, 33);
+            this.clientNameTextBox.Location = new System.Drawing.Point(110, 57);
             this.clientNameTextBox.Name = "clientNameTextBox";
-            this.clientNameTextBox.Size = new System.Drawing.Size(50, 20);
+            this.clientNameTextBox.Size = new System.Drawing.Size(69, 20);
             this.clientNameTextBox.TabIndex = 14;
             this.clientNameTextBox.Text = "c-1";
             // 
             // createDataServerButton
             // 
-            this.createDataServerButton.Location = new System.Drawing.Point(166, 34);
+            this.createDataServerButton.Location = new System.Drawing.Point(117, 34);
             this.createDataServerButton.Name = "createDataServerButton";
-            this.createDataServerButton.Size = new System.Drawing.Size(164, 36);
+            this.createDataServerButton.Size = new System.Drawing.Size(109, 36);
             this.createDataServerButton.TabIndex = 9;
             this.createDataServerButton.Text = "Create DS";
             this.createDataServerButton.UseVisualStyleBackColor = true;
@@ -191,7 +191,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(22, 36);
+            this.label4.Location = new System.Drawing.Point(56, 60);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 13);
             this.label4.TabIndex = 4;
@@ -344,27 +344,27 @@
             // 
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(630, 0);
+            this.label19.Location = new System.Drawing.Point(522, 0);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(159, 16);
+            this.label19.Size = new System.Drawing.Size(107, 16);
             this.label19.TabIndex = 52;
-            this.label19.Text = "Client - StringRegister";
+            this.label19.Text = "StringRegister";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(479, 0);
+            this.label7.Location = new System.Drawing.Point(426, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(145, 16);
+            this.label7.Size = new System.Drawing.Size(93, 16);
             this.label7.TabIndex = 51;
-            this.label7.Text = "Client - FileRegister";
+            this.label7.Text = "FileRegister";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(366, 0);
+            this.label5.Location = new System.Drawing.Point(336, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(55, 16);
             this.label5.TabIndex = 50;
@@ -373,27 +373,27 @@
             // clientStringRegisterListBox
             // 
             this.clientStringRegisterListBox.FormattingEnabled = true;
-            this.clientStringRegisterListBox.Location = new System.Drawing.Point(637, 19);
+            this.clientStringRegisterListBox.Location = new System.Drawing.Point(525, 19);
             this.clientStringRegisterListBox.Name = "clientStringRegisterListBox";
-            this.clientStringRegisterListBox.Size = new System.Drawing.Size(133, 95);
+            this.clientStringRegisterListBox.Size = new System.Drawing.Size(97, 95);
             this.clientStringRegisterListBox.TabIndex = 49;
             this.clientStringRegisterListBox.SelectedIndexChanged += new System.EventHandler(this.clientStringRegisterListBox_SelectedIndexChanged);
             // 
             // clientFileRegisterlistBox
             // 
             this.clientFileRegisterlistBox.FormattingEnabled = true;
-            this.clientFileRegisterlistBox.Location = new System.Drawing.Point(482, 19);
+            this.clientFileRegisterlistBox.Location = new System.Drawing.Point(422, 19);
             this.clientFileRegisterlistBox.Name = "clientFileRegisterlistBox";
-            this.clientFileRegisterlistBox.Size = new System.Drawing.Size(133, 95);
+            this.clientFileRegisterlistBox.Size = new System.Drawing.Size(97, 95);
             this.clientFileRegisterlistBox.TabIndex = 48;
             this.clientFileRegisterlistBox.SelectedIndexChanged += new System.EventHandler(this.clientFileRegisterlistBox_SelectedIndexChanged);
             // 
             // ClientsListBox
             // 
             this.ClientsListBox.FormattingEnabled = true;
-            this.ClientsListBox.Location = new System.Drawing.Point(330, 19);
+            this.ClientsListBox.Location = new System.Drawing.Point(312, 19);
             this.ClientsListBox.Name = "ClientsListBox";
-            this.ClientsListBox.Size = new System.Drawing.Size(127, 95);
+            this.ClientsListBox.Size = new System.Drawing.Size(104, 95);
             this.ClientsListBox.TabIndex = 47;
             this.ClientsListBox.SelectedIndexChanged += new System.EventHandler(this.ClientsListBox_SelectedIndexChanged);
             // 
@@ -737,9 +737,9 @@
             this.groupBox6.Controls.Add(this.FailDSButton);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
-            this.groupBox6.Location = new System.Drawing.Point(324, 18);
+            this.groupBox6.Location = new System.Drawing.Point(249, 21);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(482, 200);
+            this.groupBox6.Size = new System.Drawing.Size(378, 200);
             this.groupBox6.TabIndex = 7;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data Server Control";
@@ -747,16 +747,16 @@
             // dataServersListBox
             // 
             this.dataServersListBox.FormattingEnabled = true;
-            this.dataServersListBox.Location = new System.Drawing.Point(343, 14);
+            this.dataServersListBox.Location = new System.Drawing.Point(232, 19);
             this.dataServersListBox.Name = "dataServersListBox";
             this.dataServersListBox.Size = new System.Drawing.Size(130, 173);
             this.dataServersListBox.TabIndex = 46;
             // 
             // RecoverDSButton
             // 
-            this.RecoverDSButton.Location = new System.Drawing.Point(166, 109);
+            this.RecoverDSButton.Location = new System.Drawing.Point(117, 109);
             this.RecoverDSButton.Name = "RecoverDSButton";
-            this.RecoverDSButton.Size = new System.Drawing.Size(164, 27);
+            this.RecoverDSButton.Size = new System.Drawing.Size(109, 27);
             this.RecoverDSButton.TabIndex = 13;
             this.RecoverDSButton.Text = "Recover";
             this.RecoverDSButton.UseVisualStyleBackColor = true;
@@ -766,7 +766,7 @@
             // 
             this.UnfreezeDSButton.Location = new System.Drawing.Point(6, 108);
             this.UnfreezeDSButton.Name = "UnfreezeDSButton";
-            this.UnfreezeDSButton.Size = new System.Drawing.Size(154, 27);
+            this.UnfreezeDSButton.Size = new System.Drawing.Size(105, 27);
             this.UnfreezeDSButton.TabIndex = 12;
             this.UnfreezeDSButton.Text = "Unfreeze";
             this.UnfreezeDSButton.UseVisualStyleBackColor = true;
@@ -776,7 +776,7 @@
             // 
             this.freezeDSButton.Location = new System.Drawing.Point(6, 76);
             this.freezeDSButton.Name = "freezeDSButton";
-            this.freezeDSButton.Size = new System.Drawing.Size(154, 27);
+            this.freezeDSButton.Size = new System.Drawing.Size(105, 27);
             this.freezeDSButton.TabIndex = 10;
             this.freezeDSButton.Text = "Freeze";
             this.freezeDSButton.UseVisualStyleBackColor = true;
@@ -784,9 +784,9 @@
             // 
             // FailDSButton
             // 
-            this.FailDSButton.Location = new System.Drawing.Point(166, 76);
+            this.FailDSButton.Location = new System.Drawing.Point(117, 76);
             this.FailDSButton.Name = "FailDSButton";
-            this.FailDSButton.Size = new System.Drawing.Size(164, 27);
+            this.FailDSButton.Size = new System.Drawing.Size(109, 27);
             this.FailDSButton.TabIndex = 11;
             this.FailDSButton.Text = "Fail";
             this.FailDSButton.UseVisualStyleBackColor = true;
@@ -795,7 +795,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(37, 46);
+            this.label3.Location = new System.Drawing.Point(8, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(36, 13);
             this.label3.TabIndex = 1;
@@ -803,7 +803,7 @@
             // 
             // dataServerIdTextBox
             // 
-            this.dataServerIdTextBox.Location = new System.Drawing.Point(79, 43);
+            this.dataServerIdTextBox.Location = new System.Drawing.Point(44, 43);
             this.dataServerIdTextBox.Name = "dataServerIdTextBox";
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
@@ -816,7 +816,7 @@
             this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(12, 18);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(299, 200);
+            this.pictureBox1.Size = new System.Drawing.Size(223, 125);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;

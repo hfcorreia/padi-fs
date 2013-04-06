@@ -664,7 +664,5 @@ namespace PuppetForm
 
         #endregion updates
 
-
-
     }
 }

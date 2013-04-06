@@ -21,7 +21,7 @@ namespace Client.services
         {
             FileName = fileName;
         }
-
+        /*
         override public void execute()
         {
             Console.WriteLine("#Client: opening file '" + FileName + "'");
@@ -50,8 +50,24 @@ namespace Client.services
             int postion = State.fileMetadataContainer.addFileMetadata(fileMetadata);
 
             Console.WriteLine("#Client: metadata saved in position " + postion);
-
+        }
+         * */
+        override public void execute()
+        {
+            Console.WriteLine("#Client: opening file '" + FileName + "'");
             
+            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
+            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
+                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.open(State.Id, FileName); });
+            }
+
+            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, tasks.Length);
+
+            int postion = State.fileMetadataContainer.addFileMetadata(fileMetadata);
+
+            Console.WriteLine("#Client: metadata saved in position " + postion);
         }
     }
 }

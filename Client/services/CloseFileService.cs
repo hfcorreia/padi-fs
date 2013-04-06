@@ -22,7 +22,7 @@ namespace Client.services
         {
             FileName = fileName;
         }
-
+        /*
         override public void execute()
         {
             Console.WriteLine("#Client: closing file " + FileName);
@@ -34,9 +34,6 @@ namespace Client.services
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(State.Id, FileName); });
             }
             
-
-            State.fileMetadataContainer.removeFileMetadata(FileName);
-            State.fileContentContainer.removeFileContent(FileName);
             try
             {
                 Task.WaitAll(tasks);
@@ -45,6 +42,30 @@ namespace Client.services
             {
                 throw aggregateException.Flatten().InnerException;
             }
+
+            State.fileMetadataContainer.removeFileMetadata(FileName);
+            State.fileContentContainer.removeFileContent(FileName);
+        }
+        */
+        override public void execute()
+        {
+            Console.WriteLine("#Client: closing file " + FileName);
+
+            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
+            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
+                tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(State.Id, FileName); });
+            }
+
+            //int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
+            int writeQuorum = tasks.Length;
+
+            State.fileMetadataContainer.removeFileMetadata(FileName);
+            State.fileContentContainer.removeFileContent(FileName);
+
+            waitVoidQuorum(tasks, writeQuorum);
+
         }
     }
 }
