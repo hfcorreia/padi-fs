@@ -41,7 +41,6 @@
             this.button11 = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.CreateFile = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.createFileButton = new System.Windows.Forms.Button();
             this.WriteQuorum = new System.Windows.Forms.Label();
             this.ReadQuorum = new System.Windows.Forms.Label();
@@ -49,6 +48,7 @@
             this.NumDsTextBox = new System.Windows.Forms.TextBox();
             this.ReadQuorumTextBox = new System.Windows.Forms.TextBox();
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -96,6 +96,7 @@
             this.FailDSButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -106,6 +107,7 @@
             this.groupBox7.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // createClientButton
@@ -128,9 +130,9 @@
             // 
             // createDataServerButton
             // 
-            this.createDataServerButton.Location = new System.Drawing.Point(136, 32);
+            this.createDataServerButton.Location = new System.Drawing.Point(166, 34);
             this.createDataServerButton.Name = "createDataServerButton";
-            this.createDataServerButton.Size = new System.Drawing.Size(112, 23);
+            this.createDataServerButton.Size = new System.Drawing.Size(164, 36);
             this.createDataServerButton.TabIndex = 9;
             this.createDataServerButton.Text = "Create DS";
             this.createDataServerButton.UseVisualStyleBackColor = true;
@@ -142,9 +144,9 @@
             this.groupBox2.Controls.Add(this.recoverMetadataButton);
             this.groupBox2.Controls.Add(this.failMetaDataButton);
             this.groupBox2.Controls.Add(this.mdIdTextBox);
-            this.groupBox2.Location = new System.Drawing.Point(12, 12);
+            this.groupBox2.Location = new System.Drawing.Point(2, 295);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(184, 141);
+            this.groupBox2.Size = new System.Drawing.Size(184, 162);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Metadata Server Control";
@@ -242,15 +244,6 @@
             this.CreateFile.TabStop = false;
             this.CreateFile.Text = "Create File";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 35);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "File Name";
-            // 
             // createFileButton
             // 
             this.createFileButton.Location = new System.Drawing.Point(6, 124);
@@ -312,11 +305,21 @@
             this.WriteQuorumTextBox.TabIndex = 23;
             this.WriteQuorumTextBox.Text = "1";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(54, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "File Name";
+            // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.label19);
             this.groupBox5.Controls.Add(this.label7);
             this.groupBox5.Controls.Add(this.label5);
+            this.groupBox5.Controls.Add(this.groupBox2);
             this.groupBox5.Controls.Add(this.clientStringRegisterListBox);
             this.groupBox5.Controls.Add(this.clientFileRegisterlistBox);
             this.groupBox5.Controls.Add(this.ClientsListBox);
@@ -330,7 +333,7 @@
             this.groupBox5.Controls.Add(this.label4);
             this.groupBox5.Controls.Add(this.clientNameTextBox);
             this.groupBox5.Controls.Add(this.CreateFile);
-            this.groupBox5.Location = new System.Drawing.Point(12, 159);
+            this.groupBox5.Location = new System.Drawing.Point(12, 224);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(798, 461);
             this.groupBox5.TabIndex = 14;
@@ -734,9 +737,9 @@
             this.groupBox6.Controls.Add(this.FailDSButton);
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.dataServerIdTextBox);
-            this.groupBox6.Location = new System.Drawing.Point(328, 12);
+            this.groupBox6.Location = new System.Drawing.Point(324, 18);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(482, 141);
+            this.groupBox6.Size = new System.Drawing.Size(482, 200);
             this.groupBox6.TabIndex = 7;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Data Server Control";
@@ -746,7 +749,7 @@
             this.dataServersListBox.FormattingEnabled = true;
             this.dataServersListBox.Location = new System.Drawing.Point(343, 14);
             this.dataServersListBox.Name = "dataServersListBox";
-            this.dataServersListBox.Size = new System.Drawing.Size(130, 121);
+            this.dataServersListBox.Size = new System.Drawing.Size(130, 173);
             this.dataServersListBox.TabIndex = 46;
             // 
             // RecoverDSButton
@@ -792,7 +795,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 37);
+            this.label3.Location = new System.Drawing.Point(37, 46);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(36, 13);
             this.label3.TabIndex = 1;
@@ -800,20 +803,33 @@
             // 
             // dataServerIdTextBox
             // 
-            this.dataServerIdTextBox.Location = new System.Drawing.Point(53, 34);
+            this.dataServerIdTextBox.Location = new System.Drawing.Point(79, 43);
             this.dataServerIdTextBox.Name = "dataServerIdTextBox";
             this.dataServerIdTextBox.Size = new System.Drawing.Size(67, 20);
             this.dataServerIdTextBox.TabIndex = 7;
             this.dataServerIdTextBox.Text = "d-1";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox1.Image = global::PuppetForm.Properties.Resources.PuppetMasterImage;
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 18);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(299, 200);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 21;
+            this.pictureBox1.TabStop = false;
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(833, 634);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(833, 697);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox2);
             this.Name = "ControlBoard";
             this.Text = "Puppet Master";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControlBoard_FormClosing);
@@ -836,6 +852,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -910,6 +927,7 @@
         private System.Windows.Forms.CheckBox replaceStringRegisterCheckBox;
         private System.Windows.Forms.CheckBox openFileByNameCheckbox;
         private System.Windows.Forms.TextBox fileNameTextBox;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

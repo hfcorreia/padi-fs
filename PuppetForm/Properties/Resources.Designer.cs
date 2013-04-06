@@ -77,5 +77,15 @@ namespace PuppetForm.Properties {
                 return ResourceManager.GetString("FILE_STRING_CAPACITY", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PuppetMasterImage {
+            get {
+                object obj = ResourceManager.GetObject("PuppetMasterImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

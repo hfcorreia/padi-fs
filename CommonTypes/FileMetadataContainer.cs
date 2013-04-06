@@ -75,6 +75,11 @@ namespace CommonTypes
             return -1;
         }
 
+        public bool hasNullContent(int position) 
+        {
+            return position < 0 || position > capacity || Metadata[position] == null;
+        }
+
         public List<string> getAllFileNames() {
             List<string> result = new List<string>();
             foreach (FileMetadata fileMetadata in Metadata)

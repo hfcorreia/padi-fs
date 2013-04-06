@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -128,5 +128,9 @@
   <data name="FILE_STRING_CAPACITY" xml:space="preserve">
     <value>10</value>
     <comment>Max number of elements that the file string container must have</comment>
+  </data>
+  <data name="RUN_IN_DEBUG_MODE" xml:space="preserve">
+    <value>false</value>
+    <comment>true if the app should run in debug mode.</comment>
   </data>
 </root>

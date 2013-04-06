@@ -316,7 +316,7 @@ namespace PuppetForm
                 if (openFileByNameCheckbox.Checked)
                 {
                     verifyNewFileName();
-                    puppetMaster.close(getSelectedClient(), getSelectedFileRegisterText());
+                    puppetMaster.close(getSelectedClient(), getSelectedFileName());
                 }
                 else
                 {
@@ -365,7 +365,6 @@ namespace PuppetForm
         {
             try
             {
-                verifyStringRegisterIdSelection();
                 verifyFileRegisterIdSelection();
                 puppetMaster.delete(getSelectedClient(), getSelectedFileRegisterText());
                 updateClientFileRegister(getSelectedClient());
@@ -635,22 +634,21 @@ namespace PuppetForm
 
         private void updateClientFileRegister(string clientId)
         {
-            int index = 0;
             clientFileRegisterlistBox.Items.Clear();
             foreach (string register in puppetMaster.fileRegistersForClient(clientId))
             {
-                clientFileRegisterlistBox.Items.Add("#" + index++ + " - " + register);
+                clientFileRegisterlistBox.Items.Add(register);
             }
         }
 
         private void updateClientStringRegister(string clientId)
         {
-            int index = 0;
             clientStringRegisterListBox.Items.Clear();
             foreach (string register in puppetMaster.stringRegistersForClient(clientId))
             {
+                //isto pode causar problemas quando formos ler o valor da lista
                 String registerValue = String.IsNullOrEmpty(register) ? "Empty" : register;
-                clientStringRegisterListBox.Items.Add("#" + index++ + " - " + registerValue);
+                clientStringRegisterListBox.Items.Add(registerValue);
             }
         }
 

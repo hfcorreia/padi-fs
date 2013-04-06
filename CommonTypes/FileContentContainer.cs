@@ -110,6 +110,11 @@ namespace CommonTypes
             return result;
         }
 
+        public bool hasNullContent(int position)
+        {
+            return position < 0 || position > capacity || Files[position] == null;
+        }
+
         public void setFileContent(int position, File fileContent)
         {
             Files[position] = fileContent;
