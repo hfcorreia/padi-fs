@@ -33,6 +33,7 @@ namespace Client.services
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(State.Id, FileName); });
             }
+            
 
             State.fileMetadataContainer.removeFileMetadata(FileName);
             State.fileContentContainer.removeFileContent(FileName);
