@@ -281,7 +281,7 @@ namespace PuppetForm
 
         private void ControlBoard_FormClosing(object sender, FormClosingEventArgs e)
         {
-            puppetMaster.exitAll();
+            //puppetMaster.exitAll();
         }
 
         private void openFileButton_Click(object sender, EventArgs e)

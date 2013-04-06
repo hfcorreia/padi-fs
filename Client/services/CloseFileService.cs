@@ -12,6 +12,7 @@ using CommonTypes;
 
 namespace Client.services
 {
+
     class CloseFileService : ClientService
     {
         private Client Client { get; set; }

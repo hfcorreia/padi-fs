@@ -332,7 +332,7 @@ namespace PuppetForm
             }
             catch (Exception e) {}
             
-            Application.Exit();
+            //Application.Exit();
         }
         
        public List<string> stringRegistersForClient(string clientId)
