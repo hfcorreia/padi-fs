@@ -22,31 +22,7 @@ namespace Client.services
         {
             FileName = fileName;
         }
-        /*
-        override public void execute()
-        {
-            Console.WriteLine("#Client: closing file " + FileName);
 
-            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(State.Id, FileName); });
-            }
-            
-            try
-            {
-                Task.WaitAll(tasks);
-            }
-            catch (AggregateException aggregateException) 
-            {
-                throw aggregateException.Flatten().InnerException;
-            }
-
-            State.fileMetadataContainer.removeFileMetadata(FileName);
-            State.fileContentContainer.removeFileContent(FileName);
-        }
-        */
         override public void execute()
         {
             Console.WriteLine("#Client: closing file " + FileName);

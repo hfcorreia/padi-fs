@@ -30,41 +30,7 @@ namespace Client.services
             ReadQuorum = readQuorum;
             WriteQuorum = writeQuorum;
         }
-        /*
-        override public void execute()
-        {
-            Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);
 
-            FileMetadata fileMetadata = null;
-
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum); });
-            }
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                try
-                {
-                    fileMetadata = tasks[i].Result;
-                }
-                catch (AggregateException aggregateException)
-                {
-                    foreach (var innetException in aggregateException.Flatten().InnerExceptions) 
-                    {
-                        throw innetException;
-                    }
-                }
-                Console.WriteLine("#Client: creating file in metadata " + i + " = " + fileMetadata);
-            }
-
-            FileRegisterId = State.fileMetadataContainer.addFileMetadata(fileMetadata);
-
-            CreatedFileMetadata = fileMetadata;
-        }
-         */
         override public void execute()
         {
             Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);

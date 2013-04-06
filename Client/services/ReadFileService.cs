@@ -29,46 +29,7 @@ namespace Client.services
             StringRegisterId = stringRegisterId;
             ReadedFile = null;
         }
-/*
-        override public void execute()
-        {
-            Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
-            File file = null;
-            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
-            if (fileMetadata != null && fileMetadata.FileServers != null)
-            {
-                Task<File>[] tasks = new Task<File>[fileMetadata.NumServers];
-                for (int ds = 0; ds < fileMetadata.NumServers; ds++)
-                {
-                    IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
-                    tasks[ds] = Task.Factory.StartNew(() => { return dataServer.read(fileMetadata.FileName); });
-                }
 
-                for (int i = 0; i < tasks.Length; i++)
-                {
-                    try
-                    {
-                        file = tasks[i].Result;
-                    }
-                    catch (AggregateException aggregateException) 
-                    {
-                        throw aggregateException.Flatten().InnerException;
-                    }
-
-                    Console.WriteLine("#Client: readFileVersion from server " + i + " = " + file);
-                }
-            }
-            else
-            {
-                throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
-            }
-
-            State.fileContentContainer.setFileContent(StringRegisterId, file);
-            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.fileContentContainer.getAllFileContentAsString());
-            
-            ReadedFile = file;
-        }
- * */
         override public void execute()
         {
             Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);

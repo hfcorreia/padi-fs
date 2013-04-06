@@ -23,36 +23,7 @@ namespace Client.services
         {
             FileName = fileName;
         }
-/*
-        override public void execute()
-        {
-            Console.WriteLine("#Client: Deleting file " + FileName);
-            if (State.fileMetadataContainer.containsFileMetadata(FileName))
-            {
-                Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
-                for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-                {
-                    IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                    tasks[md] = Task.Factory.StartNew(() => { metadataServer.delete(State.Id, FileName); });
-                }
 
-                State.fileMetadataContainer.removeFileMetadata(FileName);
-                State.fileContentContainer.removeFileContent(FileName);
-                try
-                {
-                    Task.WaitAll(tasks);
-                }
-                catch (AggregateException aggregateException)
-                {
-                    throw aggregateException.Flatten().InnerException;
-                }
-            }
-            else
-            {
-                throw new DeleteFileException("Trying to delete a file that is not in the file-register.");
-            }
-        }
- * */
         override public void execute()
         {
             Console.WriteLine("#Client: Deleting file " + FileName);
