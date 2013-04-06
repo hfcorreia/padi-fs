@@ -47,7 +47,11 @@ namespace Client.services
                 Console.WriteLine("#Client: readFileVersion from server " + i + " = " + fileMetadata);
             }
 
-            State.fileMetadataContainer.addFileMetadata(fileMetadata);
+            int postion = State.fileMetadataContainer.addFileMetadata(fileMetadata);
+
+            Console.WriteLine("#Client: metadata saved in position " + postion);
+
+            
         }
     }
 }

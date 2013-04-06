@@ -17,15 +17,13 @@ namespace Client.services
     {
         private Client Client { get; set; }
 
-        private string Process { get; set; }
         private int FileRegisterId { get; set; }
         private string Semantics { get; set; }
         private int StringRegisterId { get; set; }
         public File ReadedFile { get; set; }
 
-        public ReadFileService(ClientState clientState, string process, string semantics, int fileRegisterId, int stringRegisterId) : base(clientState) 
+        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId, int stringRegisterId) : base(clientState) 
         {
-            Process = process;
             FileRegisterId = fileRegisterId;
             Semantics = semantics;
             StringRegisterId = stringRegisterId;

@@ -8,14 +8,14 @@ namespace CommonTypes
     public class FileMetadataContainer
     {
         private List<FileMetadata> Metadata {get; set;}
-        private int nextFreePosition;
+        //private int nextFreePosition;
         private int capacity;
 
         //and the client in witch they are saved
         public FileMetadataContainer(int capacity)
         {
             this.capacity = capacity;
-            this.nextFreePosition = 0;
+            //this.nextFreePosition = 0;
             this.Metadata = new List<FileMetadata>();
             for (int i = 0; i < capacity; ++i) {
                 Metadata.Add(null);
@@ -27,13 +27,24 @@ namespace CommonTypes
         //the position in witch the fileMetadata was saved
         public int addFileMetadata(FileMetadata fileMetadata){
 
-            int fileMetadataPosition = nextFreePosition;
+            //int fileMetadataPosition = nextFreePosition;
+            int fileMetadataPosition = findFirstFreePosition();
 
             Metadata[fileMetadataPosition] = fileMetadata;
 
-            nextFreePosition = ( nextFreePosition + 1 ) % capacity;
-            
             return fileMetadataPosition;
+        }
+
+        private int findFirstFreePosition()
+        {
+            for (int i=0; i < Metadata.Count; ++i)
+            {
+                if (hasNullContent(i)) 
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         //receives a position in the structure and returns

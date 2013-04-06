@@ -118,9 +118,7 @@ namespace Client
 
         public File read(int fileRegisterId, string semantics, int stringRegisterId)
         {
-        public File read(string process, int fileRegisterId, string semantics, int stringRegisterId)
-        {
-            ReadFileService readFileService = new ReadFileService(ClientState, process, semantics, fileRegisterId, stringRegisterId);
+            ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId, stringRegisterId);
             readFileService.execute();
             return readFileService.ReadedFile;
         }

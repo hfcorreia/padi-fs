@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.ComponentModel;
 using CommonTypes;
 using CommonTypes.Exceptions;
+using System.Threading.Tasks;
+using System.IO;
 
 
 namespace PuppetForm
@@ -302,35 +304,35 @@ namespace PuppetForm
 
         public void exitAll()
         {
-            foreach (ServerObjectWrapper metadataWrapper in MetaInformationReader.Instance.MetaDataServers)
+            List<ServerObjectWrapper> allRemoteObjects = new List<ServerObjectWrapper>();
+            allRemoteObjects.AddRange(MetaInformationReader.Instance.MetaDataServers);
+            allRemoteObjects.AddRange(dataServers.Values);
+            allRemoteObjects.AddRange(clients.Values);
+
+            Task[] tasks = new Task[allRemoteObjects.Count];
+
+            for (int id = 0; id < allRemoteObjects.Count; id++)
             {
-                try
-                {
-                    metadataWrapper.getObject<IMetaDataServer>().exit();
-                }
-                catch (Exception e) { Console.WriteLine("Error Closing."); }
+
+                    IRemote remoteObject = allRemoteObjects[id].getObject<IRemote>();
+                    tasks[id] = Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            remoteObject.exit();
+                        }
+                        catch (IOException e) { /*DO NOTHING*/ }
+                        catch (Exception e) { /*DO NOTHING*/ }
+                    });
             }
-            foreach (ServerObjectWrapper dataServerWrapper in dataServers.Values)
-            {
-                try
-                {
-                    dataServerWrapper.getObject<IDataServer>().exit();
-                }
-                catch (Exception e) { Console.WriteLine("Error Closing."); }
-            }
-            foreach (ServerObjectWrapper clientWrapper in clients.Values)
-            {
-                try
-                {
-                    clientWrapper.getObject<IClient>().exit();
-                }
-                catch (Exception e) { Console.WriteLine("Error Closing."); }
-            }
+            
             try
             {
-                System.Environment.Exit(0);
+                Task.WaitAll(tasks);
             }
-            catch (Exception e) { Console.WriteLine("Error exiting."); }
+            catch (Exception e) {}
+            
+            Application.Exit();
         }
         
        public List<string> stringRegistersForClient(string clientId)
