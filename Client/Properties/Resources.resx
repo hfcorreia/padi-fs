@@ -125,4 +125,8 @@
     <value>10</value>
     <comment>Max number of elements that the file string container must have</comment>
   </data>
+  <data name="RUN_IN_DEBUG_MODE" xml:space="preserve">
+    <value>false</value>
+    <comment>true if the app should run in debug mode.</comment>
+  </data>
 </root>

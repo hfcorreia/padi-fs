@@ -10,20 +10,17 @@ using System.Runtime.Serialization.Formatters;
 using System.Collections;
 using CommonTypes.Exceptions;
 using System.Threading.Tasks;
+using Client.services;
+using System.Diagnostics;
 
 namespace Client
 {
     [Serializable]
     public class Client : MarshalByRefObject, IClient
     {
-        private static byte[] INITIAL_FILE_CONTENT = new byte[] { };
+        public ClientState ClientState { get; set; }
 
-        private int Port { get; set; }
-        private String Id { get; set; }
-        private String Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
-        //private Dictionary<String, List<ServerObjectWrapper>> fileServers = new Dictionary<string, List<ServerObjectWrapper>>();
-        FileMetadataContainer fileMetadataContainer = new FileMetadataContainer(Int32.Parse(Properties.Resources.FILE_REGISTER_CAPACITY));
-        FileContentContainer fileContentContainer = new FileContentContainer(Int32.Parse(Properties.Resources.FILE_STRING_CAPACITY));
+        #region INITIALIZATION
         
         static void Main(string[] args)
         {
@@ -39,336 +36,125 @@ namespace Client
                 client.initialize(Int32.Parse(args[0]), args[1]);
 
                 client.startConnection(client);
-                Console.WriteLine("#Client: Registered " + client.Id + " at " + client.Url);
+                Console.WriteLine("#Client: Registered " + client.ClientState.Id + " at " + client.ClientState.Url);
                 Console.ReadLine();
             }
         }
 
         public void initialize(int port, string id)
         {
-            Port = port;
-            Id = id;
+            ClientState = new ClientState(port, id);
+            
+            //atach a debugger - we should add some parameter to enable/disable this!
+            if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+
         }
 
         public void startConnection(Client client)
         {
-            Console.WriteLine("#Client: starting connection..");
-            BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-            provider.TypeFilterLevel = TypeFilterLevel.Full;
-            IDictionary props = new Hashtable();
-            props["port"] = Port;
-            TcpChannel channel = new TcpChannel(props, null, provider);
-            ChannelServices.RegisterChannel(channel, true);
-            RemotingServices.Marshal(client, Id, typeof(Client));
+            StartConnectionService startConnectionService = new StartConnectionService(ClientState, client);
+            startConnectionService.execute();
         }
+        
+        #endregion INITIALIZATION
+        
+        #region WRITE
 
         public void write(int fileRegisterId, byte[] content) 
         {
-            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
-            int stringRegisterId = fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
-            write(fileRegisterId, stringRegisterId);
+
+            if (ClientState.fileMetadataContainer.hasNullContent(fileRegisterId))
+            {
+                throw new WriteFileException("Client - The file is not open " + fileRegisterId);
+            }
+
+            FileMetadata fileMetadata = ClientState.fileMetadataContainer.getFileMetadata(fileRegisterId);
+            //int stringRegisterId = ClientState.fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
+
+            File file = new File(fileMetadata.FileName, -1, content);
+
+            write(file);
         }
 
         public void write(int fileRegisterId, int stringRegisterId)
         {
-            if (fileMetadataContainer.getFileMetadata(fileRegisterId) == null)
+            if (ClientState.fileMetadataContainer.hasNullContent(fileRegisterId))
             {
-                throw new WriteFileException("Client - Does not exist metadata at file register " + fileRegisterId);
+                throw new WriteFileException("Client - the file is not open " + fileRegisterId);
             }
 
-            if (fileContentContainer.getFileContent(stringRegisterId) == null)
+            if (ClientState.fileContentContainer.hasNullContent(stringRegisterId))
             {
-                throw new WriteFileException("Client - Does not exist content at string register " + stringRegisterId);
+                throw new WriteFileException("Client - We have no content at StringRegister " + stringRegisterId);
             }
 
-            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
-            byte[] fileContent = fileContentContainer.getFileContent(stringRegisterId).Content;
+            FileMetadata fileMetadata = ClientState.fileMetadataContainer.getFileMetadata(fileRegisterId);
+
+            byte[] fileContent = ClientState.fileContentContainer.getFileContent(stringRegisterId).Content;
 
             File file = new File(fileMetadata.FileName, -1, fileContent);
+
             write(file);
         }
 
         private void write(File file)
         {
-            /*if (file == null || file.Content == null || file.FileName == null)
-            {
-                throw new WriteFileException("Client - trying to write null file " + file);
-            }
-
-            if (!fileMetadataContainer.containsFileMetadata(file.FileName))
-            {
-                throw new WriteFileException("Client - tryng to write a file that is not open");
-            }
-
-            file.Version = readFileVersion(file.FileName);
-
-            Console.WriteLine("#Client: writing file '" + file.FileName + "' with content: '" + file.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(file.Content));
-
-            foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(file.FileName).FileServers)
-            {
-                dataServerWrapper.getObject<IDataServer>().write(file);
-            }*/
-
-            asyncWrite(file);
+            file.Version = readFileVersion(file.FileName) + 1;
+            WriteFileService writeFileService = new WriteFileService(ClientState, file);
+            writeFileService.execute();
         }
-
-        private void asyncWrite(File file)
-        {
-            if (file == null || file.Content == null || file.FileName == null)
-            {
-                throw new WriteFileException("Client - trying to write null file " + file);
-            }
-
-            if (!fileMetadataContainer.containsFileMetadata(file.FileName))
-            {
-                throw new WriteFileException("Client - tryng to write a file that is not open");
-            }
-
-            file.Version = readFileVersion(file.FileName);
-
-            Console.WriteLine("#Client: writing file '" + file.FileName + "' with content: '" + file.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(file.Content));
-
-            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(file.FileName);
-            Task[] tasks = new Task[fileMetadata.NumServers];
-            for (int ds = 0; ds < fileMetadata.NumServers; ds++)
-            {
-                IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
-                tasks[ds] = Task.Factory.StartNew(() => { dataServer.write(file); });
-            }
-
-            Task.WaitAll(tasks);
-        }
+        
+        #endregion WRITE
 
         private int readFileVersion(string filename)
         {
-            /*
-            Console.WriteLine("#Client: reading file version for file '" + filename + "'");
-            int fileVersion = 0;
-            if (fileMetadataContainer.containsFileMetadata(filename))
-            {
-                foreach (ServerObjectWrapper dataServerWrapper in fileMetadataContainer.getFileMetadata(filename).FileServers)
-                {
-                    fileVersion = dataServerWrapper.getObject<IDataServer>().readFileVersion(filename);
-                }
-            }
-
-            return fileVersion;
-             */
-            return readFileVersionAsync(filename);
-        }
-
-        private int readFileVersionAsync(string filename)
-        {
-            Console.WriteLine("#Client: reading async file version for file '" + filename + "'");
-            int fileVersion = 0;
-
-            Task<int>[] tasks = new Task<int>[fileMetadataContainer.getFileMetadata(filename).NumServers];
-            for (int ds = 0; ds < fileMetadataContainer.getFileMetadata(filename).NumServers; ds++)
-            {
-                IDataServer dataServer = fileMetadataContainer.getFileMetadata(filename).FileServers[ds].getObject<IDataServer>();
-                tasks[ds] = Task.Factory.StartNew(() => { return dataServer.readFileVersion(filename); });
-            }
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                fileVersion = tasks[i].Result;
-                Console.WriteLine("#Client: readFileVersion from server " + i + " = " + fileVersion);
-            }
-            
-            return fileVersion;
+            ReadFileVersionService readFileVersionService = new ReadFileVersionService(ClientState, filename);
+            readFileVersionService.execute();
+            return readFileVersionService.FileVersion;
         }
 
         public File read(string process, int fileRegisterId, string semantics, int stringRegisterId)
         {
-            /*
-            Console.WriteLine("#Client: reading file. fileRegister: " + fileRegisterId + ", sringRegister: " + stringRegisterId + ", semantics: " + semantics);
-            File file = null;
-            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
-            if (fileMetadata != null && fileMetadata.FileServers!=null)
-            {
-                foreach (ServerObjectWrapper dataServerWrapper in fileMetadata.FileServers)
-                {
-                    file = dataServerWrapper.getObject<IDataServer>().read(fileMetadata.FileName);
-                }
-            }
-            else
-            {
-                throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + fileRegisterId);
-            }
-
-            fileContentContainer.setFileContent(stringRegisterId, file);
-            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + fileContentContainer.getAllFileContentAsString());
-            return file;*/
-            
-            return readAsync(process, fileRegisterId, semantics, stringRegisterId);
-
-        }
-
-        public File readAsync(string process, int fileRegisterId, string semantics, int stringRegisterId)
-        {
-            Console.WriteLine("#Client: reading file. fileRegister: " + fileRegisterId + ", sringRegister: " + stringRegisterId + ", semantics: " + semantics);
-            File file = null;
-            FileMetadata fileMetadata = fileMetadataContainer.getFileMetadata(fileRegisterId);
-            if (fileMetadata != null && fileMetadata.FileServers != null)
-            {
-                Task<File>[] tasks = new Task<File>[fileMetadata.NumServers];
-                for (int ds = 0; ds < fileMetadata.NumServers; ds++)
-                {
-                    IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
-                    tasks[ds] = Task.Factory.StartNew(() => { return dataServer.read(fileMetadata.FileName); });
-                }
-
-                for (int i = 0; i < tasks.Length; i++)
-                {
-                    file = tasks[i].Result;
-                    Console.WriteLine("#Client: readFileVersion from server " + i + " = " + file);
-                }
-            }
-            else
-            {
-                throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + fileRegisterId);
-            }
-
-            fileContentContainer.setFileContent(stringRegisterId, file);
-            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + fileContentContainer.getAllFileContentAsString());
-            return file;
+            ReadFileService readFileService = new ReadFileService(ClientState, process, semantics, fileRegisterId, stringRegisterId);
+            readFileService.execute();
+            return readFileService.ReadedFile;
         }
 
         public void open(string filename)
         {
-            /*Console.WriteLine("#Client: opening file '" + filename + "'");
-            FileMetadata fileMetadata = null;
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                fileMetadata = metadataServerWrapper.getObject<IMetaDataServer>().open(Id, filename);
-                //cacheServersForFile(filename, servers);
-               
-            }
-            fileMetadataContainer.addFileMetadata(fileMetadata);*/
-
-            openAsync(filename);
+            OpenFileService openFileService = new OpenFileService(ClientState, filename);
+            openFileService.execute();
         }
 
-
-        public void openAsync(string filename)
-        {
-            Console.WriteLine("#Client: opening file '" + filename + "'");
-            FileMetadata fileMetadata = null;
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count ; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.open(Id, filename); });
-            }
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                fileMetadata = tasks[i].Result;
-                Console.WriteLine("#Client: readFileVersion from server " + i + " = " + fileMetadata);
-            }
-
-            fileMetadataContainer.addFileMetadata(fileMetadata);
-            
-        }
         public void close(string filename)
         {
-            /*Console.WriteLine("#Client: closing file " + filename);
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                metadataServerWrapper.getObject<IMetaDataServer>().close(Id, filename);
-            }
-
-            fileMetadataContainer.removeFileMetadata(filename);
-            fileContentContainer.removeFileContent(filename);*/
-            closeAsync(filename);
-        }
-
-        public void closeAsync(string filename)
-        {
-            Console.WriteLine("#Client: closing file " + filename);
-
-            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(Id, filename); });
-            }
-
-            fileMetadataContainer.removeFileMetadata(filename);
-            fileContentContainer.removeFileContent(filename);
-
-            Task.WaitAll(tasks);
-
+            CloseFileService closeFileService = new CloseFileService(ClientState, filename);
+            closeFileService.execute();
         }
 
         public void delete(string filename)
         {
-            Console.WriteLine("#Client: Deleting file " + filename);
-            if (fileMetadataContainer.containsFileMetadata(filename))
-            {
-                Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
-                for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-                {
-                    IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                    tasks[md] = Task.Factory.StartNew(() => { metadataServer.delete(Id, filename); });
-                }
-
-                fileMetadataContainer.removeFileMetadata(filename);
-                fileContentContainer.removeFileContent(filename);
-                
-                Task.WaitAll(tasks);
-            }
-            else {
-                throw new DeleteFileException("Trying to delete a file that is not in the file-register.");
-            }
+            DeleteFileService deleteFileService = new DeleteFileService(ClientState, filename);
+            deleteFileService.execute();
         }
 
         public FileMetadata create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            /*
-            Console.WriteLine("#Client: creating file '" + filename + "' in " + numberOfDataServers + " servers. ReadQ: " + readQuorum + ", WriteQ:" + writeQuorum);
-            //List<ServerObjectWrapper> dataserverForFile = null;
-            FileMetadata fileMetadata = null;
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
-            {
-                fileMetadata = metadataServerWrapper.getObject<IMetaDataServer>().create(Id, filename, numberOfDataServers, readQuorum, writeQuorum);
-            }
+            CreateFileService createFileService = new CreateFileService(ClientState, filename, numberOfDataServers, readQuorum, writeQuorum);
+            createFileService.execute();
 
-            //cacheServersForFile(filename, fileMetadata);
-            int fileRegisterId = fileMetadataContainer.addFileMetadata(fileMetadata);
+            write(createFileService.FileRegisterId, new byte[]{} ); //writes an empty file
 
-            //File emptyFile = new File(filename, INITIAL_FILE_VERSION, INITIAL_FILE_CONTENT);
-            write(fileRegisterId, INITIAL_FILE_CONTENT); //writes an empty file
+            Console.WriteLine("#Client - createFile - metadata - fileRegisterId:" + createFileService.FileRegisterId + " - fileName:" + createFileService.CreatedFileMetadata.FileName + ", numServers: " + createFileService.CreatedFileMetadata.NumServers + ", servers: " + createFileService.CreatedFileMetadata.FileServers);
 
-            return fileMetadata;*/
-            return createAsync(filename, numberOfDataServers, readQuorum, writeQuorum);
+            return createFileService.CreatedFileMetadata;
         }
-
-        public FileMetadata createAsync(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
-        {
-            Console.WriteLine("#Client: creating file '" + filename + "' in " + numberOfDataServers + " servers. ReadQ: " + readQuorum + ", WriteQ:" + writeQuorum);
-
-            FileMetadata fileMetadata = null;
-
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.create(Id, filename, numberOfDataServers, readQuorum, writeQuorum); });
-            }
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                fileMetadata = tasks[i].Result;
-                Console.WriteLine("#Client: readFileVersion from server " + i + " = " + fileMetadata);
-            }
-
-            int fileRegisterId = fileMetadataContainer.addFileMetadata(fileMetadata);
-            write(fileRegisterId, INITIAL_FILE_CONTENT); //writes an empty file
-
-            return fileMetadata;
-        }
-
+        
+        #region SCRIPT
+        
         public void exeScript(string filename)
         {
             Console.WriteLine("\r\n#Client: Running Script " + filename);
@@ -429,11 +215,13 @@ namespace Client
 
         public List<string> getAllFileRegisters() 
         {
-            return fileMetadataContainer.getAllFileNames();
+            return ClientState.fileMetadataContainer.getAllFileNames();
         }
         
+        #endregion SCRIPT
+
         public List<string> getAllStringRegisters() {
-            return fileContentContainer.getAllFileContentAsString();
+            return ClientState.fileContentContainer.getAllFileContentAsString();
         }
 
         public void exit()
@@ -445,9 +233,9 @@ namespace Client
         public void dump()
         {
             Console.WriteLine("#Client: Dumping!\r\n");
-            Console.WriteLine(" URL: " + Url);
+            Console.WriteLine(" URL: " + ClientState.Url);
             Console.WriteLine(" Opened Files:");
-            foreach (String name in fileMetadataContainer.getAllFileNames())
+            foreach (String name in ClientState.fileMetadataContainer.getAllFileNames())
             {
                 Console.WriteLine("\t" + name);
             }

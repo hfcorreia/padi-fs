@@ -72,11 +72,11 @@ namespace MetaDataServer
         {
             if (!fileMetadata.ContainsKey(filename))
             {
-                throw new OpenFileException("File " + filename + " does not exist");
+                throw new OpenFileException("#MDS.open - File " + filename + " does not exist");
             }
             else if (fileMetadata[filename].Clients.Contains(clientID))
             {
-                throw new OpenFileException("File " + filename + " is already opend.");
+                throw new OpenFileException("#MDS.open - File " + filename + " is already opend.");
             }
             else
             {
@@ -89,18 +89,20 @@ namespace MetaDataServer
 
         public void close(String clientID, string filename)
         {
-            if (fileMetadata.ContainsKey(filename) && fileMetadata[filename].Clients.Contains(clientID))
+           if (!fileMetadata.ContainsKey(filename))
             {
-                Console.WriteLine("#MDS: closed file: " + filename);
-                fileMetadata[filename].Clients.Remove(clientID);
-                makeCheckpoint();
+                throw new CloseFileException("#MDS.close - File " + filename + " does not exist");
             }
-            else
+
+            if (fileMetadata.ContainsKey(filename) && !fileMetadata[filename].Clients.Contains(clientID))
             {
-                if (!fileMetadata.ContainsKey(filename))
-                    throw new CommonTypes.Exceptions.CloseFileException("File " + filename + " does not exist");
-                else throw new CommonTypes.Exceptions.CloseFileException("File " + filename + " is already closed.");
+                throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
             }
+
+            Console.WriteLine("#MDS: closing file " + filename + "...");
+            fileMetadata[filename].Clients.Remove(clientID);
+            makeCheckpoint();
+
         }
 
         public void delete(string clientId, string filename)
@@ -115,8 +117,8 @@ namespace MetaDataServer
             else
             {
                 if (!fileMetadata.ContainsKey(filename))
-                    throw new CommonTypes.Exceptions.DeleteFileException("File " + filename + " does not exist");
-                else throw new CommonTypes.Exceptions.DeleteFileException("File " + filename + " is open.");
+                    throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
+                else throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " is open.");
             }
         }
 
@@ -131,7 +133,7 @@ namespace MetaDataServer
 
                 foreach(ServerObjectWrapper wrapper in newFileDataServers)
                 {
-                    Console.WriteLine("#MDS: atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
+                    Console.WriteLine("#MDS.create - atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
                 }
                 FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
                 //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
@@ -144,7 +146,7 @@ namespace MetaDataServer
             }
             else
             {
-                throw new CreateFileException("Not enough data servers for create " + filename);
+                throw new CreateFileException("#MDS.create - Not enough data servers for create " + filename);
             }
 
         }

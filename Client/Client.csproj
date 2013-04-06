@@ -60,12 +60,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="ClientState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="services\ClientService.cs" />
+    <Compile Include="services\CloseFileService.cs" />
+    <Compile Include="services\WriteFileService.cs" />
+    <Compile Include="services\DeleteFileService.cs" />
+    <Compile Include="services\CreateFileService.cs" />
+    <Compile Include="services\OpenFileService.cs" />
+    <Compile Include="services\ReadFileService.cs" />
+    <Compile Include="services\ReadFileVersionService.cs" />
+    <Compile Include="services\StartConnectionService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonTypes\CommonTypes.csproj">
