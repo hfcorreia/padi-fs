@@ -25,7 +25,8 @@ namespace PuppetForm
             if (!clients.ContainsKey(clientId))
             {
                 int clientPort = Util.getNewPort();
-                Process.Start("Client.exe", clientPort + " " + clientId);
+                string path = Environment.CurrentDirectory;
+                Process.Start(path + "\\Client.exe", clientPort + " " + clientId);
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
                 clients.Add(clientId, clientWrapper);
             }
@@ -36,7 +37,8 @@ namespace PuppetForm
             if (!dataServers.ContainsKey(id))
             {
                 int port = Util.getNewPort();
-                Process.Start("DataServer.exe", port + " " + id);
+                string path = Environment.CurrentDirectory;
+                Process.Start(path + "\\DataServer.exe", port + " " + id);
                 ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
 
                 dataServers.Add(id, dataServerWrapper);
@@ -48,7 +50,8 @@ namespace PuppetForm
             //MetadataServers are fixed and their proprieties are specified in CommonTypes project
             foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                Process.Start("MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id);
+                string path = Environment.CurrentDirectory;
+                Process.Start(path + "\\MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id);
             }
         }
 

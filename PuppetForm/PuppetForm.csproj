@@ -34,7 +34,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Executables\</OutputPath>
+    <OutputPath>..\Build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -48,16 +48,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>PuppetForm.PuppetMaster</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Client">
-      <HintPath>..\Client\bin\Debug\Client.exe</HintPath>
-    </Reference>
-    <Reference Include="DataServer">
-      <HintPath>..\DataServer\bin\Debug\DataServer.exe</HintPath>
-    </Reference>
-    <Reference Include="MetaDataServer">
-      <HintPath>..\MetaDataServer\bin\Debug\MetaDataServer.exe</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
