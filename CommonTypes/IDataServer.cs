@@ -12,5 +12,11 @@ namespace CommonTypes
         File read(string filename);
 
         int readFileVersion(string filename);
+        void exit();
+
+        void fail();
+        void recover();
+        void freeze();
+        void unfreeze();
     }
 }

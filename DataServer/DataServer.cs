@@ -9,6 +9,7 @@ using CommonTypes;
 using System.Collections;
 using System.Runtime.Serialization.Formatters;
 using CommonTypes.Exceptions;
+using System.Runtime.Serialization;
 
 namespace DataServer
 {
@@ -22,7 +23,12 @@ namespace DataServer
 
         public string Url { get { return "tcp://" + Host +":" + Port + "/" + Id; } }
 
-        private Dictionary<string, File> files = new Dictionary<string, File>();
+        public SerializableDictionary<string, File> Files { get; set; }
+
+        private DSstate state { get; set; }
+
+        //isto vai ter de levar um lock qualquer para quando esta a tratar dos pedidos na queue nao andar ng a mexer?
+        public List<BufferedRequest> requestsBuffer = new List<BufferedRequest>();
 
 
         static void Main(string[] args)
@@ -49,6 +55,8 @@ namespace DataServer
             Port = port;
             Id = id;
             Host = host;
+            Files = new SerializableDictionary<string, File>();
+            state = new DSstateFreezed(this);
         }
 
         public void startConnection(DataServer dataServer)
@@ -70,32 +78,15 @@ namespace DataServer
         public void write(File file)
         {
             Console.WriteLine("#DS: writing file '" + file.FileName +"', version: " + file.Version + ", content: " + file.Content );
-            if (file == null)
-            {
-                throw new WriteFileException("Trying to write a null file.");
-            }
 
-            if (files.ContainsKey(file.FileName))
-            {
-                //updates the file
-                files.Remove(file.FileName);
-            }
-            //creates a new file
-            files.Add(file.FileName, file);
+            state.write(file);
 
-            Util.writeFileToDisk(file, Id);
-            makeCheckpoint();
         }
 
         public File read(string filename)
         {
             Console.WriteLine("#DS: reading file '" + filename + "'");
-            if (filename == null || !files.ContainsKey(filename))
-            {
-                throw new WriteFileException("Trying to read an invalid file named '" + filename + "'");
-            }
-
-            return Util.readFileFromDisk(Id, filename, files[filename].Version);
+			return state.read(filename);
         }
 
 
@@ -111,7 +102,7 @@ namespace DataServer
         public int readFileVersion(string filename)
         {
             Console.WriteLine("#DS: reading file version for file'" + filename + "'");
-            return files.ContainsKey(filename) ? files[filename].Version : -1;
+            return state.readFileVersion(filename);
         }
 
         public void exit()
@@ -122,8 +113,7 @@ namespace DataServer
 
         public void makeCheckpoint()
         {
-            lock (this)
-            {
+            
                 String dataServerId = Id;
                 Console.WriteLine("#DS: making checkpoint " + Id);
 
@@ -133,10 +123,14 @@ namespace DataServer
                 System.Xml.Serialization.XmlSerializer writer =
                 new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-                writer.Serialize(fileWriter, this);
-                fileWriter.Close();
-            }
+            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+            writer.Serialize(fileWriter, this);
+
+           // DataContractSerializer w = new DataContractSerializer(typeof(DataServer));
+           // System.Xml.XmlDictionaryWriter xw = new System.Xml.DelegatingXmlDictionaryWriter(@dirName + "\\checkpoint.xml");
+           // w.WriteObject(fileWriter, this);
+
+            fileWriter.Close();
         }
 
         public static DataServer getCheckpoint(String dataServerId)
@@ -165,5 +159,43 @@ namespace DataServer
             }
             Console.WriteLine();
         }
+
+        public void queue(BufferedRequest request)
+        {
+            requestsBuffer.Add(request);
+
+            Console.WriteLine("QUEUE DEBUG");
+            foreach (BufferedRequest req in requestsBuffer)
+            {
+                Console.WriteLine("Buff: " + req.GetType());
+            }
+        }
+
+        public void fail()
+        {
+            state.fail();
+        }
+
+        public void recover()
+        {
+            state.recover();
+        }
+
+        public void freeze()
+        {
+            state.freeze();
+        }
+
+        public void unfreeze()
+        {
+            state.unfreeze();
+        }
+
+        //so existe porque nao consigo por state a public e a fazer checkpoints sem erros
+        public void setState(DSstate newState)
+        {
+            state = newState;
+        }
+
     }
 }
