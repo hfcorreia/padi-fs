@@ -44,6 +44,7 @@ namespace PuppetForm
 
         private void runCommand(String line)
         {
+            System.Windows.Forms.MessageBox.Show("Command: " + line);
             String newLine = parseLine(line);
             String[] input = newLine.Split(' ');
             String[] newInput = input.Skip(1).ToArray<String>();
@@ -114,12 +115,26 @@ namespace PuppetForm
 
         private void recover(string[] input)
         {
-            PuppetMasterEntity.recover(input[0]);
+            if(input[0].StartsWith("m")) 
+            {
+                PuppetMasterEntity.recoverMD(input[0]);
+            }
+            if (input[0].StartsWith("d"))
+            {
+                PuppetMasterEntity.recoverDS(input[0]);
+            }
         }
 
         private void fail(string[] input)
         {
-            PuppetMasterEntity.fail(input[0]);
+            if (input[0].StartsWith("m"))
+            {
+                PuppetMasterEntity.failMD(input[0]);
+            }
+            if (input[0].StartsWith("d"))
+            {
+                PuppetMasterEntity.failDS(input[0]);
+            }
         }
 
         private void dump(string[] input)

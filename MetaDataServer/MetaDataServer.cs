@@ -165,9 +165,15 @@ namespace MetaDataServer
             return firstDataServers;
         }
 
-        public void fail() { }
+        public void fail() 
+        {
+            Console.WriteLine("Fail not implemented in MD yet");
+        }
 
-        public void recover() { }
+        public void recover() 
+        {
+            Console.WriteLine("Recover not implemented in MD yet");
+        }
 
         public void exit()
         {

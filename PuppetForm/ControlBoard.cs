@@ -423,7 +423,7 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.fail(mdIdTextBox.Text);
+                puppetMaster.failMD(mdIdTextBox.Text);
             }
             catch (Exception exception)
             {
@@ -435,7 +435,7 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.recover(mdIdTextBox.Text);
+                puppetMaster.recoverMD(mdIdTextBox.Text);
             }
             catch (Exception exception)
             {
@@ -471,7 +471,7 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.fail(getSelectedDS());
+                puppetMaster.failDS(getSelectedDS());
             }
             catch (Exception exception)
             {
@@ -483,7 +483,7 @@ namespace PuppetForm
         {
             try
             {
-                puppetMaster.recover(getSelectedDS());
+                puppetMaster.recoverDS(getSelectedDS());
             }
             catch (Exception exception)
             {

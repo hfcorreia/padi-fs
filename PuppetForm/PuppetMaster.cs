@@ -20,15 +20,21 @@ namespace PuppetForm
         public Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         public Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public PuppetScriptExecutor ScriptExecutor { get; set; }
+       
         public void createClient(String clientId)
         {
+            System.Windows.Forms.MessageBox.Show("Create Client: entrei");
             if (!clients.ContainsKey(clientId))
             {
+                System.Windows.Forms.MessageBox.Show("Create Client: nao existe client " + clientId);
                 int clientPort = Util.getNewPort();
                 string path = Environment.CurrentDirectory;
                 Process.Start(path + "\\Client.exe", clientPort + " " + clientId);
+                System.Windows.Forms.MessageBox.Show("Create Client: process arrancado");
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
+                System.Windows.Forms.MessageBox.Show("Create Client: client wrapper");
                 clients.Add(clientId, clientWrapper);
+                System.Windows.Forms.MessageBox.Show("Create Client: client added");
             }
         }
 
@@ -91,15 +97,17 @@ namespace PuppetForm
 
         public void create(String clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
         {
+            System.Windows.Forms.MessageBox.Show("Create: entrei");
             startProcess(clientId);
-
+            System.Windows.Forms.MessageBox.Show("Create: process started");
             ServerObjectWrapper sow = clients[clientId];
-
+            System.Windows.Forms.MessageBox.Show("Create: tenho o wrapper");
             IClient client = sow.getObject<IClient>();
-
+            System.Windows.Forms.MessageBox.Show("Create: tenho o client");
             try
             {
                 FileMetadata metadata = client.create(filename, numberDataServers, readQuorum, writeQuorum);
+                System.Windows.Forms.MessageBox.Show("Create: file created at MD");
             }
             catch (CreateFileException e)
             {
@@ -126,7 +134,7 @@ namespace PuppetForm
 
         }
 
-        public void fail(string process)
+        public void failDS(string process)
         {
 
             startProcess(process);
@@ -139,7 +147,21 @@ namespace PuppetForm
 
         }
 
-        public void recover(string process)
+        public void failMD(string process)
+        {
+
+            //not tested
+            startProcess(process);
+
+            ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
+
+            IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
+
+            metaData.fail();
+
+        }
+
+        public void recoverDS(string process)
         {
             startProcess(process);
 
@@ -148,6 +170,18 @@ namespace PuppetForm
             IDataServer dataServer = sow.getObject<IDataServer>();
 
             dataServer.recover();
+        }
+
+        public void recoverMD(string process)
+        {
+            //not tested
+            startProcess(process);
+
+            ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
+
+            IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
+
+            metaData.recover();
         }
 
         public void freeze(string process) 

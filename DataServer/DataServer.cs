@@ -30,7 +30,7 @@ namespace DataServer
         private DSstate State { get; set; }
 
         //isto vai ter de levar um lock qualquer para quando esta a tratar dos pedidos na queue nao andar ng a mexer?
-        public List<BufferedRequest> requestsBuffer = new List<BufferedRequest>();
+        internal List<BufferedRequest> requestsBuffer = new List<BufferedRequest>();
 
 
         static void Main(string[] args)
