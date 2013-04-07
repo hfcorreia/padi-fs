@@ -15,6 +15,8 @@ namespace DataServer
 {
     public class DataServer : MarshalByRefObject, IDataServer
     {
+        public int CheckpointCounter { get; set; }
+
         public String Id { get; set; }
 
         public int Port { get; set; }
@@ -25,7 +27,7 @@ namespace DataServer
 
         public SerializableDictionary<string, File> Files { get; set; }
 
-        private DSstate state { get; set; }
+        private DSstate State { get; set; }
 
         //isto vai ter de levar um lock qualquer para quando esta a tratar dos pedidos na queue nao andar ng a mexer?
         public List<BufferedRequest> requestsBuffer = new List<BufferedRequest>();
@@ -56,7 +58,8 @@ namespace DataServer
             Id = id;
             Host = host;
             Files = new SerializableDictionary<string, File>();
-            state = new DSstateFreezed(this);
+            State = new DSstateNormal(this);
+            CheckpointCounter = 0;
         }
 
         public void startConnection(DataServer dataServer)
@@ -79,14 +82,14 @@ namespace DataServer
         {
             Console.WriteLine("#DS: writing file '" + file.FileName +"', version: " + file.Version + ", content: " + file.Content );
 
-            state.write(file);
+            State.write(file);
 
         }
 
         public File read(string filename)
         {
             Console.WriteLine("#DS: reading file '" + filename + "'");
-			return state.read(filename);
+			return State.read(filename);
         }
 
 
@@ -102,7 +105,7 @@ namespace DataServer
         public int readFileVersion(string filename)
         {
             Console.WriteLine("#DS: reading file version for file'" + filename + "'");
-            return state.readFileVersion(filename);
+            return State.readFileVersion(filename);
         }
 
         public void exit()
@@ -115,7 +118,7 @@ namespace DataServer
         {
             
                 String dataServerId = Id;
-                Console.WriteLine("#DS: making checkpoint " + Id);
+                Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ +  " from server " + Id);
 
                 string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
                 Util.createDir(dirName);
@@ -153,7 +156,7 @@ namespace DataServer
             Console.WriteLine("#DS: Dumping!\r\n");
             Console.WriteLine(" URL: " + Url);
             Console.WriteLine(" Opened Files:");
-            foreach (KeyValuePair<String, File> name in files)
+            foreach (KeyValuePair<String, File> name in Files)
             {
                 Console.WriteLine("\t " + name.Key);
             }
@@ -173,28 +176,28 @@ namespace DataServer
 
         public void fail()
         {
-            state.fail();
+            State.fail();
         }
 
         public void recover()
         {
-            state.recover();
+            State.recover();
         }
 
         public void freeze()
         {
-            state.freeze();
+            State.freeze();
         }
 
         public void unfreeze()
         {
-            state.unfreeze();
+            State.unfreeze();
         }
 
         //so existe porque nao consigo por state a public e a fazer checkpoints sem erros
         public void setState(DSstate newState)
         {
-            state = newState;
+            State = newState;
         }
 
     }

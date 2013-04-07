@@ -664,5 +664,10 @@ namespace PuppetForm
 
         #endregion updates
 
+        private void fileNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

@@ -125,24 +125,48 @@ namespace PuppetForm
 
         public void fail(string process)
         {
+
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("FAIL: Not Done Yet"); 
+
+            ServerObjectWrapper sow = dataServers[process];
+
+            IDataServer dataServer = sow.getObject<IDataServer>();
+
+            dataServer.fail();
+
         }
 
-        public void recover(string process) {
+        public void recover(string process)
+        {
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("RECOVER: Not Done Yet"); }
+
+            ServerObjectWrapper sow = dataServers[process];
+
+            IDataServer dataServer = sow.getObject<IDataServer>();
+
+            dataServer.recover();
+        }
 
         public void freeze(string process) 
         {
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("FREEZE: Not Done Yet"); 
+
+            ServerObjectWrapper sow = dataServers[process];
+
+            IDataServer dataServer = sow.getObject<IDataServer>();
+
+            dataServer.freeze();
         }
 
         public void unfreeze(string process) 
         {
             startProcess(process);
-            System.Windows.Forms.MessageBox.Show("UNFREEZE: Not Done Yet"); 
+
+            ServerObjectWrapper sow = dataServers[process];
+
+            IDataServer dataServer = sow.getObject<IDataServer>();
+
+            dataServer.unfreeze();
         }
 
         public void read(string process, int fileRegisterId, string semantics, int stringRegisterId)

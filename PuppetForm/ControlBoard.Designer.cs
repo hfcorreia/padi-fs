@@ -620,6 +620,8 @@
             this.fileNameTextBox.Name = "fileNameTextBox";
             this.fileNameTextBox.Size = new System.Drawing.Size(84, 20);
             this.fileNameTextBox.TabIndex = 32;
+            this.fileNameTextBox.Text = "TestFile";
+            this.fileNameTextBox.TextChanged += new System.EventHandler(this.fileNameTextBox_TextChanged);
             // 
             // button10
             // 
