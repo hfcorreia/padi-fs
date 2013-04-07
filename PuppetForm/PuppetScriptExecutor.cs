@@ -22,6 +22,7 @@ namespace PuppetForm
 
         public void runScript(Boolean oneStep)
         {
+
             String line = ScriptReader.ReadLine();
             while (line != null)
             {
@@ -84,6 +85,7 @@ namespace PuppetForm
                     freeze(newInput);
                     break;
                 case "UNFREEZE":
+                    unfreeze(newInput);
                     break;
                 case "EXESCRIPT":
                     exeClientScript(newInput);
@@ -111,6 +113,11 @@ namespace PuppetForm
         private void freeze(string[] input)
         {
             PuppetMasterEntity.freeze(input[0]);
+        }
+
+        private void unfreeze(string[] input)
+        {
+            PuppetMasterEntity.unfreeze(input[0]);
         }
 
         private void recover(string[] input)
@@ -173,6 +180,7 @@ namespace PuppetForm
 
         private void create(string[] input)
         {
+
             PuppetMasterEntity.create(input[0], input[1], Int32.Parse(input[2]), Int32.Parse(input[3]), Int32.Parse(input[4]));
         }
 

@@ -11,6 +11,7 @@ using CommonTypes;
 using CommonTypes.Exceptions;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 
 namespace PuppetForm
@@ -23,18 +24,23 @@ namespace PuppetForm
        
         public void createClient(String clientId)
         {
-            System.Windows.Forms.MessageBox.Show("Create Client: entrei");
             if (!clients.ContainsKey(clientId))
             {
-                System.Windows.Forms.MessageBox.Show("Create Client: nao existe client " + clientId);
                 int clientPort = Util.getNewPort();
-                string path = Environment.CurrentDirectory;
-                Process.Start(path + "\\Client.exe", clientPort + " " + clientId);
-                System.Windows.Forms.MessageBox.Show("Create Client: process arrancado");
+                //string path = Environment.CurrentDirectory;
+
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+                
+                try
+                {
+                    Process.Start(path + "\\Client.exe", clientPort + " " + clientId);
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                }
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
-                System.Windows.Forms.MessageBox.Show("Create Client: client wrapper");
                 clients.Add(clientId, clientWrapper);
-                System.Windows.Forms.MessageBox.Show("Create Client: client added");
             }
         }
 
@@ -43,7 +49,7 @@ namespace PuppetForm
             if (!dataServers.ContainsKey(id))
             {
                 int port = Util.getNewPort();
-                string path = Environment.CurrentDirectory;
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
                 Process.Start(path + "\\DataServer.exe", port + " " + id);
                 ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
 
@@ -56,7 +62,7 @@ namespace PuppetForm
             //MetadataServers are fixed and their proprieties are specified in CommonTypes project
             foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
             {
-                string path = Environment.CurrentDirectory;
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
                 Process.Start(path + "\\MetaDataServer.exe", metaDataWrapper.Port + " " + metaDataWrapper.Id);
             }
         }
@@ -97,17 +103,12 @@ namespace PuppetForm
 
         public void create(String clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
         {
-            System.Windows.Forms.MessageBox.Show("Create: entrei");
             startProcess(clientId);
-            System.Windows.Forms.MessageBox.Show("Create: process started");
             ServerObjectWrapper sow = clients[clientId];
-            System.Windows.Forms.MessageBox.Show("Create: tenho o wrapper");
             IClient client = sow.getObject<IClient>();
-            System.Windows.Forms.MessageBox.Show("Create: tenho o client");
             try
             {
                 FileMetadata metadata = client.create(filename, numberDataServers, readQuorum, writeQuorum);
-                System.Windows.Forms.MessageBox.Show("Create: file created at MD");
             }
             catch (CreateFileException e)
             {
