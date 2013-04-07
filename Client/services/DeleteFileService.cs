@@ -41,7 +41,7 @@ namespace Client.services
                 
                 int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
 
-                waitVoidQuorum(tasks, writeQuorum);
+                waitVoidQuorum(tasks, 1);
             }
             else
             {

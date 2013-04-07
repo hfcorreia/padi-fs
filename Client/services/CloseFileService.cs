@@ -40,7 +40,7 @@ namespace Client.services
             State.fileMetadataContainer.removeFileMetadata(FileName);
             State.fileContentContainer.removeFileContent(FileName);
 
-            waitVoidQuorum(tasks, writeQuorum);
+            waitVoidQuorum(tasks, 1);
 
         }
     }
