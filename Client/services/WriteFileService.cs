@@ -38,8 +38,8 @@ namespace Client.services
             Console.WriteLine("#Client: writing file '" + NewFile.FileName + "' with content: '" + NewFile.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(NewFile.Content));
 
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
-            Task[] tasks = new Task[fileMetadata.NumServers];
-            for (int ds = 0; ds < fileMetadata.NumServers; ds++)
+            Task[] tasks = new Task[fileMetadata.FileServers.Count];
+            for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {
                 IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
                 tasks[ds] = Task.Factory.StartNew(() => { dataServer.write(NewFile); });

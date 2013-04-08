@@ -37,8 +37,8 @@ namespace Client.services
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {
-                Task<File>[] tasks = new Task<File>[fileMetadata.NumServers];
-                for (int ds = 0; ds < fileMetadata.NumServers; ds++)
+                Task<File>[] tasks = new Task<File>[fileMetadata.FileServers.Count];
+                for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
                 {
                     IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
                     tasks[ds] = Task.Factory.StartNew(() => { return dataServer.read(fileMetadata.FileName); });

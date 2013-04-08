@@ -124,31 +124,30 @@ namespace MetaDataServer
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            if ((readQuorum > numberOfDataServers) || (writeQuorum > numberOfDataServers) || (numberOfDataServers > dataServers.Count))
+            if ((writeQuorum > numberOfDataServers) || (readQuorum > numberOfDataServers))
                 throw new CreateFileException("Invalid quorums values in create " + filename);
 
-            if (!fileMetadata.ContainsKey(filename))
+            if (fileMetadata.ContainsKey(filename))
             {
-                List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
-
-                foreach(ServerObjectWrapper wrapper in newFileDataServers)
-                {
-                    Console.WriteLine("#MDS.create - atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
-                }
-                FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
-                //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
-
-                fileMetadata.Add(filename, newFileMetadata);
-                Console.WriteLine("#MDS: Created " + filename);
-                makeCheckpoint();
-
-                return open(clientID, filename);
-            }
-            else
-            {
-                throw new CreateFileException("#MDS.create - Not enough data servers for create " + filename);
+                throw new CreateFileException("#MDS.create - The file " + filename + " allready exists ");
             }
 
+            List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
+
+            foreach(ServerObjectWrapper wrapper in newFileDataServers)
+            {
+                Console.WriteLine("#MDS.create - atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
+            }
+
+            FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
+            //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
+
+            fileMetadata.Add(filename, newFileMetadata);
+            Console.WriteLine("#MDS: Created " + filename);
+            makeCheckpoint();
+
+            //return open(clientID, filename);
+            return fileMetadata[filename];
         }
 
         private List<ServerObjectWrapper> getFirstServers(int numDataServers)

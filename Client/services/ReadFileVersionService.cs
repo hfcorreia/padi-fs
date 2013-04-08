@@ -30,8 +30,8 @@ namespace Client.services
             int fileVersion = 0;
 
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileName);
-            Task<int>[] tasks = new Task<int>[fileMetadata.NumServers];
-            for (int ds = 0; ds < fileMetadata.NumServers; ds++)
+            Task<int>[] tasks = new Task<int>[fileMetadata.FileServers.Count];
+            for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {
                 IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
                 tasks[ds] = Task.Factory.StartNew(() => { return dataServer.readFileVersion(FileName); });
