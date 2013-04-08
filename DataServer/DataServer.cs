@@ -116,7 +116,7 @@ namespace DataServer
 
         public void makeCheckpoint()
         {
-            
+            /*
                 String dataServerId = Id;
                 Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ +  " from server " + Id);
 
@@ -133,11 +133,12 @@ namespace DataServer
            // System.Xml.XmlDictionaryWriter xw = new System.Xml.DelegatingXmlDictionaryWriter(@dirName + "\\checkpoint.xml");
            // w.WriteObject(fileWriter, this);
 
-            fileWriter.Close();
+            fileWriter.Close();*/
         }
 
         public static DataServer getCheckpoint(String dataServerId)
         {
+            /*
             Console.WriteLine("#DS: getting checkpoint");
             System.Xml.Serialization.XmlSerializer reader =
                         new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
@@ -147,8 +148,9 @@ namespace DataServer
 
             DataServer dataServer = new DataServer();
             dataServer = (DataServer)reader.Deserialize(fileReader);
-
-            return dataServer;
+            
+            return dataServer;*/
+            return new DataServer();
         }
 
         public void dump()

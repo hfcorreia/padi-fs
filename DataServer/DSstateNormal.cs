@@ -14,6 +14,7 @@ namespace DataServer
 
         public override void write(File file)
         {
+            Console.WriteLine("#DS write( fileName: " + file.FileName + ", version: " + file.Version + ")");
             if (file == null)
             {
                 return;

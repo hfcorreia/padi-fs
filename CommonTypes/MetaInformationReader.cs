@@ -28,13 +28,14 @@ namespace CommonTypes
         private MetaInformationReader()
         {
                 MetaDataServers = new List<ServerObjectWrapper>();
+                ServerObjectWrapper mds0wrapper = new ServerObjectWrapper(Int32.Parse(Properties.Resources.MDS0_PORT), "m-0", Properties.Resources.MDS0_Host);
                 ServerObjectWrapper mds1wrapper = new ServerObjectWrapper( Int32.Parse(Properties.Resources.MDS1_PORT), "m-1", Properties.Resources.MDS1_Host );
                 ServerObjectWrapper mds2wrapper = new ServerObjectWrapper( Int32.Parse(Properties.Resources.MDS2_PORT), "m-2", Properties.Resources.MDS2_Host );
-                ServerObjectWrapper mds3wrapper = new ServerObjectWrapper( Int32.Parse(Properties.Resources.MDS3_PORT), "m-3", Properties.Resources.MDS3_Host );
 
+                MetaDataServers.Add(mds0wrapper);
                 MetaDataServers.Add( mds1wrapper );
                 MetaDataServers.Add( mds2wrapper );
-                MetaDataServers.Add( mds3wrapper );
+                
         }
 
         public ServerObjectWrapper getMetadataById(String id)

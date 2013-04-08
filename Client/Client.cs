@@ -20,6 +20,11 @@ namespace Client
     {
         public ClientState ClientState { get; set; }
 
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
         #region INITIALIZATION
         
         static void Main(string[] args)
@@ -65,7 +70,6 @@ namespace Client
 
         public void write(int fileRegisterId, byte[] content) 
         {
-
             if (ClientState.fileMetadataContainer.hasNullContent(fileRegisterId))
             {
                 throw new WriteFileException("Client - The file is not open " + fileRegisterId);
