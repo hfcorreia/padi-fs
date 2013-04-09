@@ -19,6 +19,12 @@ namespace CommonTypes
             Version = version;
             Content = content;
         }
+        public File(File file)
+        {
+            FileName = file.FileName;
+            Version = file.Version;
+            Content = file.Content;
+        }
 
     }
 

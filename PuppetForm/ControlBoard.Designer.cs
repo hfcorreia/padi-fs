@@ -61,12 +61,12 @@
             this.runScriptButton = new System.Windows.Forms.Button();
             this.loadScriptButton = new System.Windows.Forms.Button();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.button12 = new System.Windows.Forms.Button();
+            this.copySaltTextBox = new System.Windows.Forms.TextBox();
+            this.copyTargetFileRegisterTextBox = new System.Windows.Forms.TextBox();
+            this.copySourceFileRegisterTextBox = new System.Windows.Forms.TextBox();
+            this.CopyFileButtons = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.copySemanticsComboBox = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -441,12 +441,12 @@
             // 
             // groupBox11
             // 
-            this.groupBox11.Controls.Add(this.textBox10);
-            this.groupBox11.Controls.Add(this.textBox9);
-            this.groupBox11.Controls.Add(this.textBox8);
-            this.groupBox11.Controls.Add(this.button12);
+            this.groupBox11.Controls.Add(this.copySaltTextBox);
+            this.groupBox11.Controls.Add(this.copyTargetFileRegisterTextBox);
+            this.groupBox11.Controls.Add(this.copySourceFileRegisterTextBox);
+            this.groupBox11.Controls.Add(this.CopyFileButtons);
             this.groupBox11.Controls.Add(this.label18);
-            this.groupBox11.Controls.Add(this.comboBox1);
+            this.groupBox11.Controls.Add(this.copySemanticsComboBox);
             this.groupBox11.Controls.Add(this.label17);
             this.groupBox11.Controls.Add(this.label16);
             this.groupBox11.Controls.Add(this.label15);
@@ -457,35 +457,36 @@
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Copy";
             // 
-            // textBox10
+            // copySaltTextBox
             // 
-            this.textBox10.Location = new System.Drawing.Point(77, 105);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(93, 20);
-            this.textBox10.TabIndex = 39;
+            this.copySaltTextBox.Location = new System.Drawing.Point(77, 105);
+            this.copySaltTextBox.Name = "copySaltTextBox";
+            this.copySaltTextBox.Size = new System.Drawing.Size(93, 20);
+            this.copySaltTextBox.TabIndex = 39;
             // 
-            // textBox9
+            // copyTargetFileRegisterTextBox
             // 
-            this.textBox9.Location = new System.Drawing.Point(77, 81);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(93, 20);
-            this.textBox9.TabIndex = 38;
+            this.copyTargetFileRegisterTextBox.Location = new System.Drawing.Point(77, 81);
+            this.copyTargetFileRegisterTextBox.Name = "copyTargetFileRegisterTextBox";
+            this.copyTargetFileRegisterTextBox.Size = new System.Drawing.Size(93, 20);
+            this.copyTargetFileRegisterTextBox.TabIndex = 38;
             // 
-            // textBox8
+            // copySourceFileRegisterTextBox
             // 
-            this.textBox8.Location = new System.Drawing.Point(77, 25);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(93, 20);
-            this.textBox8.TabIndex = 36;
+            this.copySourceFileRegisterTextBox.Location = new System.Drawing.Point(77, 25);
+            this.copySourceFileRegisterTextBox.Name = "copySourceFileRegisterTextBox";
+            this.copySourceFileRegisterTextBox.Size = new System.Drawing.Size(93, 20);
+            this.copySourceFileRegisterTextBox.TabIndex = 36;
             // 
-            // button12
+            // CopyFileButtons
             // 
-            this.button12.Location = new System.Drawing.Point(6, 134);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(164, 26);
-            this.button12.TabIndex = 40;
-            this.button12.Text = "Copy File";
-            this.button12.UseVisualStyleBackColor = true;
+            this.CopyFileButtons.Location = new System.Drawing.Point(6, 134);
+            this.CopyFileButtons.Name = "CopyFileButtons";
+            this.CopyFileButtons.Size = new System.Drawing.Size(164, 26);
+            this.CopyFileButtons.TabIndex = 40;
+            this.CopyFileButtons.Text = "Copy File";
+            this.CopyFileButtons.UseVisualStyleBackColor = true;
+            this.CopyFileButtons.Click += new System.EventHandler(this.CopyFileButtons_Click);
             // 
             // label18
             // 
@@ -496,17 +497,17 @@
             this.label18.TabIndex = 29;
             this.label18.Text = "Salt";
             // 
-            // comboBox1
+            // copySemanticsComboBox
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.copySemanticsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.copySemanticsComboBox.FormattingEnabled = true;
+            this.copySemanticsComboBox.Items.AddRange(new object[] {
             "Default",
             "Monotonic"});
-            this.comboBox1.Location = new System.Drawing.Point(77, 54);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(93, 21);
-            this.comboBox1.TabIndex = 37;
+            this.copySemanticsComboBox.Location = new System.Drawing.Point(77, 54);
+            this.copySemanticsComboBox.Name = "copySemanticsComboBox";
+            this.copySemanticsComboBox.Size = new System.Drawing.Size(93, 21);
+            this.copySemanticsComboBox.TabIndex = 37;
             // 
             // label17
             // 
@@ -904,12 +905,12 @@
         private System.Windows.Forms.Button writeFileButton;
         private System.Windows.Forms.TextBox byteArrayTextBox;
         private System.Windows.Forms.GroupBox groupBox11;
-        private System.Windows.Forms.TextBox textBox10;
-        private System.Windows.Forms.TextBox textBox9;
-        private System.Windows.Forms.TextBox textBox8;
-        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.TextBox copySaltTextBox;
+        private System.Windows.Forms.TextBox copyTargetFileRegisterTextBox;
+        private System.Windows.Forms.TextBox copySourceFileRegisterTextBox;
+        private System.Windows.Forms.Button CopyFileButtons;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox copySemanticsComboBox;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;

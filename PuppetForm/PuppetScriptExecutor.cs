@@ -151,7 +151,7 @@ namespace PuppetForm
 
         private void copy(string[] input)
         {
-            PuppetMasterEntity.copy(input[0], input[1], input[2], input[3], input[4]);
+            PuppetMasterEntity.copy(input[0], Int32.Parse(input[1]), input[2], Int32.Parse(input[3]), input[4]);
         }
 
         private void read(string[] input)

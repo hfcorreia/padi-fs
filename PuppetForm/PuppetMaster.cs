@@ -263,13 +263,18 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.StackTrace);
             }
         }
-        
 
-        public void copy(string process, string fileRegister1, string semantics, string fileRegister2, string salt)
+
+        public void copy(string process, int fileRegister1, string semantics, int fileRegister2, string salt)
         {
             startProcess(process);
+            
+            ServerObjectWrapper sow = getRemoteObjectWrapper(process);
 
-            System.Windows.Forms.MessageBox.Show("COPY: Not Done Yet");
+            IClient client = sow.getObject<IClient>();
+
+            client.copy(fileRegister1, semantics, fileRegister2, salt);
+
         }
 
         public void dump(string process)

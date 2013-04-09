@@ -26,5 +26,7 @@ namespace CommonTypes
         List<string> getAllStringRegisters();
 
         List<string> getAllFileRegisters();
+
+        void copy(int sourceFileRegisterId, string semantics, int targetFileRegisterId, string salt);
     }
 }

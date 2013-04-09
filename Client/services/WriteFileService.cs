@@ -15,10 +15,9 @@ namespace Client.services
 {
     class WriteFileService : ClientService
     {
-        private File NewFile { get; set; }
+        public File NewFile { get; set; }
 
-        public WriteFileService(ClientState clientState, File file)
-            : base(clientState) 
+        public WriteFileService(ClientState clientState, File file) : base(clientState) 
         {
             NewFile = file;
         }
@@ -45,7 +44,7 @@ namespace Client.services
                 tasks[ds] = Task.Factory.StartNew(() => { dataServer.write(NewFile); });
             }
 
-            State.fileContentContainer.addFileContent(NewFile);
+            //State.fileContentContainer.addFileContent(NewFile);
 
             int writeQuorum = fileMetadata.WriteQuorum;
 

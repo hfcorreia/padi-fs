@@ -22,11 +22,10 @@ namespace Client.services
         private int StringRegisterId { get; set; }
         public File ReadedFile { get; set; }
 
-        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId, int stringRegisterId) : base(clientState) 
+        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId) : base(clientState) 
         {
             FileRegisterId = fileRegisterId;
             Semantics = semantics;
-            StringRegisterId = stringRegisterId;
             ReadedFile = null;
         }
 
@@ -54,7 +53,8 @@ namespace Client.services
                 throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
             }
 
-            State.fileContentContainer.setFileContent(StringRegisterId, file);
+            
+            //State.fileContentContainer.setFileContent(StringRegisterId, file);
             Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.fileContentContainer.getAllFileContentAsString());
 
             ReadedFile = file;

@@ -545,6 +545,39 @@ namespace PuppetForm
             return clientFileRegisterlistBox.SelectedIndex;
         }
 
+        private int getCopySourceRegisterId()
+        {
+            int source;
+            if (Int32.TryParse(copySourceFileRegisterTextBox.Text, out source))
+            {
+                return source;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        private int getCopyTargetRegisterId()
+        {
+            int target;
+            if (Int32.TryParse(copyTargetFileRegisterTextBox.Text, out target))
+            {
+                return target;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        private string getCopySalt()
+        {
+            return copySaltTextBox.Text;
+        }
+        private string getCopySemantics()
+        {
+            return (string) copySemanticsComboBox.Items[copySemanticsComboBox.SelectedIndex];
+        }
+
         #endregion getters
 
         #region setters
@@ -667,6 +700,23 @@ namespace PuppetForm
         private void fileNameTextBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void CopyFileButtons_Click(object sender, EventArgs e)
+        {
+            verifyClientSelection();
+
+            int sourceFileRegisterId = getCopySourceRegisterId();
+            int targetFileRegisterId = getCopyTargetRegisterId();
+            string semantics = "DEFAULT SEMANTICS";
+            string salt = getCopySalt();
+
+            System.Windows.Forms.MessageBox.Show("Copy: from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
+
+            puppetMaster.copy(getSelectedClient(), sourceFileRegisterId, semantics, targetFileRegisterId, salt);
+
+            updateClientFileRegister(getSelectedClient());
+            updateClientStringRegister(getSelectedClient());
         }
 
     }

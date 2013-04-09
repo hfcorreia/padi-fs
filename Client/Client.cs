@@ -109,6 +109,8 @@ namespace Client
             file.Version = readFileVersion(file.FileName) + 1;
             WriteFileService writeFileService = new WriteFileService(ClientState, file);
             writeFileService.execute();
+
+            ClientState.fileContentContainer.addFileContent(writeFileService.NewFile);
         }
         
         #endregion WRITE
@@ -122,8 +124,10 @@ namespace Client
 
         public File read(int fileRegisterId, string semantics, int stringRegisterId)
         {
-            ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId, stringRegisterId);
+            ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId);
             readFileService.execute();
+
+            ClientState.fileContentContainer.setFileContent(stringRegisterId, readFileService.ReadedFile);
             return readFileService.ReadedFile;
         }
 
@@ -149,8 +153,6 @@ namespace Client
         {
             CreateFileService createFileService = new CreateFileService(ClientState, filename, numberOfDataServers, readQuorum, writeQuorum);
             createFileService.execute();
-
-            //write(createFileService.FileRegisterId, new byte[]{} ); //writes an empty file
 
             Console.WriteLine("#Client - createFile - metadata - fileRegisterId:" + createFileService.FileRegisterId + " - fileName:" + createFileService.CreatedFileMetadata.FileName + ", numServers: " + createFileService.CreatedFileMetadata.NumServers + ", servers: " + createFileService.CreatedFileMetadata.FileServers);
 
@@ -179,6 +181,29 @@ namespace Client
         {
             Console.WriteLine("#Client: Exiting!");
             System.Environment.Exit(0);
+        }
+
+        public void copy(int sourceFileRegisterId, string semantics, int targetFileRegisterId, string salt) 
+        { 
+            Console.WriteLine("#Client: copy from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
+
+            ReadFileService readFileService = new ReadFileService(ClientState, semantics, sourceFileRegisterId);
+            readFileService.execute();
+
+            byte[] sourceBytes = readFileService.ReadedFile.Content;
+            byte[] saltBytes = System.Text.Encoding.UTF8.GetBytes(salt);
+            var contentVar = new System.IO.MemoryStream();
+            contentVar.Write(sourceBytes, 0, sourceBytes.Length);
+            contentVar.Write(saltBytes, 0, saltBytes.Length);
+            byte[] contentBytes = contentVar.ToArray();
+
+            Console.WriteLine("#Client: sourceContent : " + readFileService.ReadedFile.Content);
+
+            Console.WriteLine("#Client: newContent : " + contentBytes);
+
+            Console.WriteLine("#Client: byteContent : " + contentBytes);
+
+            write(targetFileRegisterId, contentBytes);
         }
 
         public void dump()
