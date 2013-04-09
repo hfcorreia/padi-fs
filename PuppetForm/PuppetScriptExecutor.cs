@@ -46,10 +46,13 @@ namespace PuppetForm
         private void runCommand(String line)
         {
             System.Windows.Forms.MessageBox.Show("Command: " + line);
-            String newLine = parseLine(line);
-            String[] input = newLine.Split(' ');
-            String[] newInput = input.Skip(1).ToArray<String>();
-            switch (input[0])
+
+            String[] newLine = parseLine(line);
+
+            String command = newLine[0];
+            String[] newInput = newLine.Skip(1).ToArray<String>();
+
+            switch (command)
             {
                 case "OPEN":
                     open(newInput);
@@ -91,18 +94,25 @@ namespace PuppetForm
                     exeClientScript(newInput);
                     break;
                 default:
-                    throw new PadiFsException("No such command: " + input[0] + "!");
+                    throw new PadiFsException("No such command: " + command + "!");
             }
         }
-        private String parseLine(string line)
+        private String[] parseLine(string line)
         {
             Match mp = Regex.Match(line, "\"(.*)\"");
             String newLine = line.Replace(",", "");
+            String[] newInput;
             if (mp.Success)
             {
-                newLine = Regex.Replace(newLine, "\"(.*)\"", "\"" + mp.Groups[1].Value + "\"");
+                String argument = "\"" + mp.Groups[1].Value + "\"";
+                newLine = Regex.Replace(newLine, "\"(.*)\"", "temp");
+                newInput = newLine.Split(' ');
+                newInput[newInput.Length -1 ] = argument;
+                return newInput;
             }
-            return newLine;
+            
+            newInput = newLine.Split(' ');
+            return newInput;
         }
 
         private void exeClientScript(string[] input)
@@ -161,8 +171,11 @@ namespace PuppetForm
 
         private void write(string[] input)
         {
+            foreach (String s in input) System.Windows.Forms.MessageBox.Show("write input: " + s);
+
             int fileRegisterId = Int32.Parse(input[1]);
-            Match mp = Regex.Match(input[2], "\"(.*)\"");
+            Match mp = Regex.Match(input[2], "\"(.*)\""); //success se input[2] e' uma string
+            
             if (mp.Success)
             {
                 PuppetMasterEntity.write(input[0], fileRegisterId, mp.Groups[1].Value);

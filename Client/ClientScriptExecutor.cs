@@ -49,13 +49,12 @@ namespace Client
 
         private void exeScriptCommand(string line)
         {
-            String newLine = parseLine(line);
-    
-            String[] input = newLine.Split(' ');
+            String[] newLine = parseLine(line);
 
-            String[] newInput = input.Skip(2).ToArray<String>();
+            String command = newLine[0];
+            String[] newInput = newLine.Skip(2).ToArray<String>();
 
-           switch (input[0])
+           switch (command)
             {
                 case "OPEN":
                     open(newInput);
@@ -79,20 +78,27 @@ namespace Client
                     dump(newInput);
                     break;
                 default:
-                    Console.WriteLine("#Client: No such command: " + input[0] + "!");
+                    Console.WriteLine("#Client: No such command: " + command + "!");
                     break;
             }
         }
 
-        private String parseLine(string line)
+        private String[] parseLine(string line)
         {
             Match mp = Regex.Match(line, "\"(.*)\"");
             String newLine = line.Replace(",", "");
+            String[] newInput;
             if (mp.Success)
             {
-                newLine = Regex.Replace(newLine, "\"(.*)\"", "\"" + mp.Groups[1].Value + "\"");
+                String argument = "\"" + mp.Groups[1].Value + "\"";
+                newLine = Regex.Replace(newLine, "\"(.*)\"", "temp");
+                newInput = newLine.Split(' ');
+                newInput[newInput.Length - 1] = argument;
+                return newInput;
             }
-            return newLine;
+
+            newInput = newLine.Split(' ');
+            return newInput;
         }
 
         private void dump(string[] input)

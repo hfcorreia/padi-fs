@@ -56,10 +56,13 @@ namespace CommonTypes
         public FileMetadata getFileMetadata(string filename)
         {
             foreach (FileMetadata fileMetadata in Metadata) {
+                Console.WriteLine("percorrer files : " + ((fileMetadata != null) ? fileMetadata.FileName : "Null"));
                 if (fileMetadata!=null && fileMetadata.FileName!=null && fileMetadata.FileName.Equals(filename)) {
+                    Console.WriteLine("encontrei!! ");
                     return fileMetadata;   
                 }
             }
+            Console.WriteLine("vou retornar null");
             return null;
         }
 

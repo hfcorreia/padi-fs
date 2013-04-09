@@ -13,6 +13,7 @@ namespace Client.services
         public void waitVoidQuorum(Task[] tasks, int quorum)
         {
             int responsesCounter = 0;
+
             while (responsesCounter < quorum)
             {
                 responsesCounter = 0;
