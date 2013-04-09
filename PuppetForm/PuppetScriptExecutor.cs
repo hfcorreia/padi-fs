@@ -171,7 +171,6 @@ namespace PuppetForm
 
         private void write(string[] input)
         {
-            foreach (String s in input) System.Windows.Forms.MessageBox.Show("write input: " + s);
 
             int fileRegisterId = Int32.Parse(input[1]);
             Match mp = Regex.Match(input[2], "\"(.*)\""); //success se input[2] e' uma string

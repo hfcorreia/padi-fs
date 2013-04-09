@@ -147,7 +147,6 @@ namespace Client
         {
             DeleteFileService deleteFileService = new DeleteFileService(ClientState, filename);
             deleteFileService.execute();
-            Console.WriteLine("acabei o del no client");
         }
 
         public FileMetadata create(string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
