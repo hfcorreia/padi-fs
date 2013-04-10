@@ -161,6 +161,8 @@ namespace PuppetForm
 
         private void copy(string[] input)
         {
+            System.Windows.Forms.MessageBox.Show("copy invocado");
+            foreach (String s in input) System.Windows.Forms.MessageBox.Show("copy args: " + s);
             PuppetMasterEntity.copy(input[0], Int32.Parse(input[1]), input[2], Int32.Parse(input[3]), input[4]);
         }
 
