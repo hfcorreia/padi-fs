@@ -17,7 +17,7 @@ namespace PuppetForm
         ///                        region for the variables                      ///
         ////////////////////////////////////////////////////////////////////////////
 
-        private PuppetMaster puppetMaster = new PuppetMaster();
+        private PuppetMaster puppetMaster;
         private static int NUM_METADATA_SERVERS = 3;
         #endregion variables
 
@@ -32,6 +32,7 @@ namespace PuppetForm
             InitializeComponent();
             try
             {
+                puppetMaster = new PuppetMaster(this);
                 puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
             }
             catch (Exception exception)
@@ -717,6 +718,11 @@ namespace PuppetForm
 
             updateClientFileRegister(getSelectedClient());
             updateClientStringRegister(getSelectedClient());
+        }
+
+        public void printCommand(String s)
+        {
+            shell.Text += s + "\r\n";
         }
 
     }

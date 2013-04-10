@@ -97,6 +97,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.shell = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -824,12 +825,23 @@
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;
             // 
+            // shell
+            // 
+            this.shell.Location = new System.Drawing.Point(816, 12);
+            this.shell.Multiline = true;
+            this.shell.Name = "shell";
+            this.shell.ReadOnly = true;
+            this.shell.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.shell.Size = new System.Drawing.Size(371, 673);
+            this.shell.TabIndex = 22;
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(833, 697);
+            this.ClientSize = new System.Drawing.Size(1198, 692);
+            this.Controls.Add(this.shell);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
@@ -857,6 +869,7 @@
             this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -931,6 +944,7 @@
         private System.Windows.Forms.CheckBox openFileByNameCheckbox;
         private System.Windows.Forms.TextBox fileNameTextBox;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TextBox shell;
     }
 }
 

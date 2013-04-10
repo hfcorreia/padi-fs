@@ -22,7 +22,6 @@ namespace PuppetForm
 
         public void runScript(Boolean oneStep)
         {
-
             String line = ScriptReader.ReadLine();
             while (line != null)
             {
@@ -45,8 +44,6 @@ namespace PuppetForm
 
         private void runCommand(String line)
         {
-            System.Windows.Forms.MessageBox.Show("Command: " + line);
-
             String[] newLine = parseLine(line);
 
             String command = newLine[0];
@@ -161,8 +158,6 @@ namespace PuppetForm
 
         private void copy(string[] input)
         {
-            System.Windows.Forms.MessageBox.Show("copy invocado");
-            foreach (String s in input) System.Windows.Forms.MessageBox.Show("copy args: " + s);
             PuppetMasterEntity.copy(input[0], Int32.Parse(input[1]), input[2], Int32.Parse(input[3]), input[4]);
         }
 
