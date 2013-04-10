@@ -9,6 +9,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization.Formatters;
 using System.Threading.Tasks;
 using CommonTypes;
+using CommonTypes.Exceptions;
 
 namespace Client.services
 {
@@ -30,6 +31,10 @@ namespace Client.services
             int fileVersion = 0;
 
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileName);
+            if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
+            { 
+                throw new ReadFileVersionException("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the metadata ");
+            }
             Task<int>[] tasks = new Task<int>[fileMetadata.FileServers.Count];
             for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {

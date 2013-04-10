@@ -14,7 +14,10 @@ namespace CommonTypes
         {
             if (!System.IO.File.Exists(dir))
             {
-                System.IO.Directory.CreateDirectory(dir);
+                lock (typeof(Util))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
             }
         }
 
@@ -26,13 +29,18 @@ namespace CommonTypes
             System.Xml.Serialization.XmlSerializer writer =
             new System.Xml.Serialization.XmlSerializer(typeof(File));
 
-            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + getFileName(file.FileName, file.Version) );
-            writer.Serialize(fileWriter, file);
-            fileWriter.Close();
+            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + getFileName(file.FileName, file.Version));
+         
+            lock (typeof(Util))
+            {
+                writer.Serialize(fileWriter, file);
+                fileWriter.Close();
+            }
         }
 
         public static File readFileFromDisk(String clientName, String name, Int32 version)
         {
+            
             System.Xml.Serialization.XmlSerializer reader =
                       new System.Xml.Serialization.XmlSerializer(typeof(File));
 
@@ -40,7 +48,11 @@ namespace CommonTypes
             System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
             
             File file = new File();
-            file = (File)reader.Deserialize(fileReader);
+            
+            lock (typeof(Util))
+            {
+                file = (File) reader.Deserialize(fileReader);
+            }
 
             return file;
         }

@@ -34,9 +34,14 @@ namespace Client.services
                 throw new WriteFileException("Client - tryng to write a file that is not open");
             }
 
+            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
+            if (fileMetadata.FileServers.Count < fileMetadata.WriteQuorum) 
+            {
+                throw new WriteFileException("Client - trying to write in a quorum of " + fileMetadata.WriteQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+            }
+
             Console.WriteLine("#Client: writing file '" + NewFile.FileName + "' with content: '" + NewFile.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(NewFile.Content));
 
-            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
             Task[] tasks = new Task[fileMetadata.FileServers.Count];
             for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {
