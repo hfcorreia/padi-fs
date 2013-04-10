@@ -35,9 +35,8 @@ namespace Client.services
 
             FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
-            int postion = State.fileMetadataContainer.addFileMetadata(fileMetadata);
-
-            Console.WriteLine("#Client: metadata saved in position " + postion);
+              int position = State.fileMetadataContainer.addFileMetadata(fileMetadata);
+         Console.WriteLine("#Client: metadata saved in position " + position);
         }
     }
 }

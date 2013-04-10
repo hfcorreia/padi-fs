@@ -44,8 +44,7 @@ namespace Client.services
 
             CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, WriteQuorum);
 
-
-            //FileRegisterId = State.fileMetadataContainer.addFileMetadata(fileMetadata);
+         //   FileRegisterId = State.fileMetadataContainer.addFileMetadata(CreatedFileMetadata);
 
 
         }

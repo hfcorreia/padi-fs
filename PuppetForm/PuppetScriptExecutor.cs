@@ -44,54 +44,59 @@ namespace PuppetForm
 
         private void runCommand(String line)
         {
-            String[] newLine = parseLine(line);
-
-            String command = newLine[0];
-            String[] newInput = newLine.Skip(1).ToArray<String>();
-
-            switch (command)
+            System.Windows.Forms.MessageBox.Show("Command: " + line);
+            if (line != String.Empty)
             {
-                case "OPEN":
-                    open(newInput);
-                    break;
-                case "CLOSE":
-                    close(newInput);
-                    break;
-                case "CREATE":
-                    create(newInput);
-                    break;
-                case "DELETE":
-                    delete(newInput);
-                    break;
-                case "WRITE":
-                    write(newInput);
-                    break;
-                case "READ":
-                    read(newInput);
-                    break;
-                case "COPY":
-                    copy(newInput);
-                    break;
-                case "DUMP":
-                    dump(newInput);
-                    break;
-                case "FAIL":
-                    fail(newInput);
-                    break;
-                case "RECOVER":
-                    recover(newInput);
-                    break;
-                case "FREEZE":
-                    freeze(newInput);
-                    break;
-                case "UNFREEZE":
-                    unfreeze(newInput);
-                    break;
-                case "EXESCRIPT":
-                    exeClientScript(newInput);
-                    break;
-                default:
-                    throw new PadiFsException("No such command: " + command + "!");
+
+                String[] newLine = parseLine(line);
+
+                String command = newLine[0];
+                String[] newInput = newLine.Skip(1).ToArray<String>();
+
+                switch (command)
+                {
+                    case "OPEN":
+                        open(newInput);
+                        break;
+                    case "CLOSE":
+                        close(newInput);
+                        break;
+                    case "CREATE":
+                        create(newInput);
+                        break;
+                    case "DELETE":
+                        delete(newInput);
+                        break;
+                    case "WRITE":
+                        write(newInput);
+                        break;
+                    case "READ":
+                        read(newInput);
+                        break;
+                    case "COPY":
+                        copy(newInput);
+                        break;
+                    case "DUMP":
+                        dump(newInput);
+                        break;
+                    case "FAIL":
+                        fail(newInput);
+                        break;
+                    case "RECOVER":
+                        recover(newInput);
+                        break;
+                    case "FREEZE":
+                        freeze(newInput);
+                        break;
+                    case "UNFREEZE":
+                        unfreeze(newInput);
+                        break;
+                    case "EXESCRIPT":
+                        exeClientScript(newInput);
+                        break;
+                    default:
+                        throw new PadiFsException("No such command: " + command + "!");
+                }
             }
         }
         private String[] parseLine(string line)

@@ -27,8 +27,6 @@ namespace Client.services
         override public void execute()
         {
             Console.WriteLine("#Client: Deleting file " + FileName);
-            if (State.fileMetadataContainer.containsFileMetadata(FileName))
-            {
                 Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
                 for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
                 {
@@ -36,15 +34,10 @@ namespace Client.services
                     tasks[md] = Task.Factory.StartNew(() => { metadataServer.delete(State.Id, FileName); });
                 }
 
-                int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
-                State.fileMetadataContainer.removeFileMetadata(FileName);
-                State.fileContentContainer.removeFileContent(FileName);
-                waitVoidQuorum(tasks, 1); //porque 1?
-            }
-            else
-            {
-                throw new DeleteFileException("Trying to delete a file that is not in the file-register.");
-            }
+                waitVoidQuorum(tasks, 1); 
+
+             //   State.fileMetadataContainer.removeFileMetadata(FileName);
+               // State.fileContentContainer.removeFileContent(FileName);
         }
     }
 }

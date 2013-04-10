@@ -120,7 +120,7 @@ namespace MetaDataServer
 
         public void delete(string clientId, string filename)
         {
-            if (fileMetadata.ContainsKey(filename) && fileMetadata[filename].Clients.Count == 1 && fileMetadata[filename].Clients.Contains(clientId))
+            if (fileMetadata.ContainsKey(filename) && fileMetadata[filename].Clients.Count == 0)
             {
                 fileMetadata[filename].Clients.Remove(clientId);
                 fileMetadata.Remove(filename);
