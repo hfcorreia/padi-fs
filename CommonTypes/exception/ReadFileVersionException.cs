@@ -11,7 +11,7 @@ namespace CommonTypes
         [Serializable]
         public class ReadFileVersionException : PadiFsException
         {
-            public ReadFileVersionException(String message) : base(message) { }
+            public ReadFileVersionException(String message) : base(message) { }   
             public ReadFileVersionException(SerializationInfo info, StreamingContext contex) : base(info, contex) { }
         }
     }
