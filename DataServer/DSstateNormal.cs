@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CommonTypes;
+using CommonTypes.Exceptions;
 
 namespace DataServer
 {
@@ -36,7 +37,7 @@ namespace DataServer
         {
             if (filename == null || !Ds.Files.ContainsKey(filename))
             {
-                return null; //throw exception because the file does not exist
+                throw new ReadFileException("The server does not contain the file " + filename);
             }
 
             return Util.readFileFromDisk("DS" + Ds.Id, filename, Ds.Files[filename].Version);
