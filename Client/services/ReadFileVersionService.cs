@@ -33,7 +33,7 @@ namespace Client.services
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileName);
             if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
             { 
-                throw new ReadFileVersionException("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the metadata ");
+                throw new ReadFileVersionException("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
             }
             Task<int>[] tasks = new Task<int>[fileMetadata.FileServers.Count];
             for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
