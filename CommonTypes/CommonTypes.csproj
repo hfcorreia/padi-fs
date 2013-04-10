@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="exception\ReadFileVersionException.cs" />
     <Compile Include="exception\PadiFsException.cs" />
     <Compile Include="exception\ReadFileException.cs" />
     <Compile Include="exception\WriteFileException.cs" />

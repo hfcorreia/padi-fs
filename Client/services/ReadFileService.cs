@@ -34,6 +34,11 @@ namespace Client.services
             Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
             File file = null;
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
+            if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
+            {
+                throw new WriteFileException("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+            }
+
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {
                 Task<File>[] tasks = new Task<File>[fileMetadata.FileServers.Count];

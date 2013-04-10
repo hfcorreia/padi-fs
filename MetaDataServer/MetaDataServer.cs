@@ -65,7 +65,20 @@ namespace MetaDataServer
             Console.WriteLine("#MDS: Registering DS " + id);
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
             dataServers.Add(id, remoteObjectWrapper);
+            addServerToUnbalancedFiles(id);
             makeCheckpoint();
+        }
+
+        private void addServerToUnbalancedFiles(string id)
+        {
+            foreach (String fileName in fileMetadata.Keys) 
+            { 
+                FileMetadata metadata = fileMetadata[fileName];
+                if (metadata.FileServers.Count < metadata.ReadQuorum || metadata.FileServers.Count < metadata.WriteQuorum) 
+                {
+                    metadata.FileServers.Add(dataServers[id]);
+                }
+            }
         }
 
         public FileMetadata open(String clientID, string filename)
