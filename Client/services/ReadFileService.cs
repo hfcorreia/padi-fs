@@ -22,7 +22,8 @@ namespace Client.services
         private int StringRegisterId { get; set; }
         public File ReadedFile { get; set; }
 
-        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId) : base(clientState) 
+        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId)
+            : base(clientState)
         {
             FileRegisterId = fileRegisterId;
             Semantics = semantics;
@@ -31,6 +32,7 @@ namespace Client.services
 
         override public void execute()
         {
+
             Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
             File file = null;
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
@@ -58,7 +60,7 @@ namespace Client.services
                 throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
             }
 
-            
+
             //State.fileContentContainer.setFileContent(StringRegisterId, file);
             Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.fileContentContainer.getAllFileContentAsString());
 

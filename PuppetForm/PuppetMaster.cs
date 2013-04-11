@@ -128,7 +128,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            ControlBoard.printCommand("CREATE " + clientId + " " + filename + " " + numberDataServers);
+            ControlBoard.printCommand("CREATE " + clientId + " " + filename + " " + numberDataServers + " " + readQuorum + " " + writeQuorum);
         }
 
         public void delete(String clientId, string filename)

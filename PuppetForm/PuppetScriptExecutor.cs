@@ -44,8 +44,6 @@ namespace PuppetForm
 
         private void runCommand(String line)
         {
-            System.Windows.Forms.MessageBox.Show("Command: " + line);
-           // PuppetMasterEntity.ControlBoard.printCommand(line);
             if (line != String.Empty)
             {
                 String[] newLine = parseLine(line);
