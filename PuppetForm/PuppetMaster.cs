@@ -22,10 +22,10 @@ namespace PuppetForm
         public Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         public Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public PuppetScriptExecutor ScriptExecutor { get; set; }
-        public ControlBoard controlBoard;
+        public ControlBoard ControlBoard { get; set; }
        
         public PuppetMaster(ControlBoard cb) {
-            controlBoard = cb;
+            ControlBoard = cb;
         }
 
         public void createClient(String clientId)
@@ -47,7 +47,7 @@ namespace PuppetForm
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
                 clients.Add(clientId, clientWrapper);
 
-                controlBoard.printCommand("CREATE " + clientId);
+                ControlBoard.printCommand("CREATE " + clientId);
             }
         }
 
@@ -61,7 +61,7 @@ namespace PuppetForm
                 ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
 
                 dataServers.Add(id, dataServerWrapper);
-                controlBoard.printCommand("CREATE " + id);
+                ControlBoard.printCommand("CREATE " + id);
             }
         }
 
@@ -92,7 +92,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            controlBoard.printCommand("OPEN " + clientId + " " + filename);
+            ControlBoard.printCommand("OPEN " + clientId + " " + filename);
         }
 
         public void close(String clientId, string filename)
@@ -111,7 +111,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            controlBoard.printCommand("CLOSE " + clientId + " " + filename);
+            ControlBoard.printCommand("CLOSE " + clientId + " " + filename);
         }
 
         public void create(String clientId, string filename, int numberDataServers, int readQuorum, int writeQuorum)
@@ -128,7 +128,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            controlBoard.printCommand("CREATE " + clientId + " " + filename + " " + numberDataServers);
+            ControlBoard.printCommand("CREATE " + clientId + " " + filename + " " + numberDataServers);
         }
 
         public void delete(String clientId, string filename)
@@ -148,7 +148,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            controlBoard.printCommand("DELETE " + clientId + " " + filename);
+            ControlBoard.printCommand("DELETE " + clientId + " " + filename);
         }
 
         public void failDS(string process)
@@ -161,7 +161,7 @@ namespace PuppetForm
             IDataServer dataServer = sow.getObject<IDataServer>();
 
             dataServer.fail();
-            controlBoard.printCommand("FAIL " + process);
+            ControlBoard.printCommand("FAIL " + process);
 
         }
 
@@ -176,7 +176,7 @@ namespace PuppetForm
             IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
 
             metaData.fail();
-            controlBoard.printCommand("FAIL " + process);
+            ControlBoard.printCommand("FAIL " + process);
 
         }
 
@@ -189,7 +189,7 @@ namespace PuppetForm
             IDataServer dataServer = sow.getObject<IDataServer>();
 
             dataServer.recover();
-            controlBoard.printCommand("RECOVER " + process);
+            ControlBoard.printCommand("RECOVER " + process);
         }
 
         public void recoverMD(string process)
@@ -202,7 +202,7 @@ namespace PuppetForm
             IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
 
             metaData.recover();
-            controlBoard.printCommand("RECOVER " + process);
+            ControlBoard.printCommand("RECOVER " + process);
         }
 
         public void freeze(string process) 
@@ -214,7 +214,7 @@ namespace PuppetForm
             IDataServer dataServer = sow.getObject<IDataServer>();
 
             dataServer.freeze();
-            controlBoard.printCommand("FREEZE " + process);
+            ControlBoard.printCommand("FREEZE " + process);
         }
 
         public void unfreeze(string process) 
@@ -226,7 +226,7 @@ namespace PuppetForm
             IDataServer dataServer = sow.getObject<IDataServer>();
 
             dataServer.unfreeze();
-            controlBoard.printCommand("UNFREEZE " + process);
+            ControlBoard.printCommand("UNFREEZE " + process);
         }
 
         public void read(string process, int fileRegisterId, string semantics, int stringRegisterId)
@@ -246,7 +246,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            controlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics + " " + stringRegisterId);
+            ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics + " " + stringRegisterId);
         }
 
         public void write(string process, int fileRegisterId, string contents)
@@ -269,7 +269,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            controlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + contents);
+            ControlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + contents);
         }
 
         public void write(string process, int fileRegisterId, int stringRegisterId)
@@ -289,7 +289,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.StackTrace);
             }
 
-            controlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + stringRegisterId);
+            ControlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + stringRegisterId);
         }
 
 
@@ -302,7 +302,7 @@ namespace PuppetForm
             IClient client = sow.getObject<IClient>();
 
             client.copy(fileRegister1, semantics, fileRegister2, salt);
-            controlBoard.printCommand("COPY " + process + " " + fileRegister1 + " " + semantics + " " + fileRegister2 + " " + salt);
+            ControlBoard.printCommand("COPY " + process + " " + fileRegister1 + " " + semantics + " " + fileRegister2 + " " + salt);
         }
 
         public void dump(string process)
@@ -315,7 +315,7 @@ namespace PuppetForm
 
             obj.dump();
 
-            controlBoard.printCommand("DUMP " + process);
+            ControlBoard.printCommand("DUMP " + process);
         }
 
         private ServerObjectWrapper getRemoteObjectWrapper(string process)
@@ -368,7 +368,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.StackTrace);
             }
 
-            controlBoard.printCommand("EXESCRIPT " + process + " " + filename);
+            ControlBoard.printCommand("EXESCRIPT " + process + " " + filename);
         }
 
         public void exeScript(Boolean oneStep)
