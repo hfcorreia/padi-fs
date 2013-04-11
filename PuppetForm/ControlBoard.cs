@@ -178,6 +178,7 @@ namespace PuppetForm
                     //we want to substitute the selected string register
                     verifyStringRegisterIdSelection();
                     printCommand("read com Sregister replace check " + stringRegisterId);
+
                     puppetMaster.read(processId, fileRegisterId, readSemantics, stringRegisterId);
                 }
                 else
@@ -783,6 +784,24 @@ namespace PuppetForm
         private void groupBox5_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void exeClientScriptButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+//                    string[] splitedFileName = fileDialog.FileName.Split('\\');
+  //                  string fileName = splitedFileName[splitedFileName.Length];
+                    puppetMaster.exeClientScript(getSelectedClient(), fileDialog.SafeFileName);
+                }
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+            }
         }
 
     }

@@ -260,6 +260,12 @@ namespace MetaDataServer
             Console.WriteLine();
 
         }
+
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
     }
 
 }

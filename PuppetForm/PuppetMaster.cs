@@ -427,15 +427,17 @@ namespace PuppetForm
         {
             startProcess(process);
 
-            ServerObjectWrapper sow = clients[process];
 
-            IClient client = sow.getObject<IClient>();
             try
             {
-                client.exeScript(filename);
+                ServerObjectWrapper sow = clients[process];
+                IClient client = sow.getObject<IClient>();
+                Task task = new Task(() => { client.exeScript(filename); });
+                task.Start();
             }
-            catch (Exception e)
+            catch (AggregateException aggregateException)
             {
+                Exception e = aggregateException.Flatten().InnerException;
                 System.Windows.Forms.MessageBox.Show("Error executing client script for client " + process + ":" + e.Message + " :\n" + e.StackTrace);
             }
 

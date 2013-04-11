@@ -169,8 +169,6 @@ namespace Client
             CreateFileService createFileService = new CreateFileService(ClientState, filename, numberOfDataServers, readQuorum, writeQuorum);
             createFileService.execute();
 
-            Console.WriteLine("#Client - createFile - metadata - fileRegisterId:" + createFileService.FileRegisterId + " - fileName:" + createFileService.CreatedFileMetadata.FileName + ", numServers: " + createFileService.CreatedFileMetadata.NumServers + ", servers: " + createFileService.CreatedFileMetadata.FileServers);
-
             return createFileService.CreatedFileMetadata;
         }
         
@@ -233,5 +231,6 @@ namespace Client
             Console.WriteLine();
 
         }
+    
     }
 }

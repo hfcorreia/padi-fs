@@ -206,5 +206,9 @@ namespace DataServer
             State = newState;
         }
 
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
     }
 }

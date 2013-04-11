@@ -23,7 +23,7 @@ namespace Client.services
         public int FileRegisterId { get; set; }
 
         public CreateFileService(ClientState clientState, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
-            : base(clientState) 
+            : base(clientState)
         {
             FileName = filename;
             NumberOfDataServers = numberOfDataServers;
@@ -44,9 +44,7 @@ namespace Client.services
 
             CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, WriteQuorum);
 
-         //   FileRegisterId = State.fileMetadataContainer.addFileMetadata(CreatedFileMetadata);
-
-
+            FileRegisterId = State.fileMetadataContainer.addFileMetadata(CreatedFileMetadata);
         }
     }
 }

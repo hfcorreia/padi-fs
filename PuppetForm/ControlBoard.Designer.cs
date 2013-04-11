@@ -100,6 +100,7 @@
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.shell = new System.Windows.Forms.TextBox();
+            this.exeClientScriptButton = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -340,6 +341,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.exeClientScriptButton);
             this.groupBox5.Controls.Add(this.label19);
             this.groupBox5.Controls.Add(this.exitButton);
             this.groupBox5.Controls.Add(this.label7);
@@ -860,6 +862,16 @@
             this.shell.TabIndex = 22;
             this.shell.TextChanged += new System.EventHandler(this.shell_TextChanged);
             // 
+            // exeClientScriptButton
+            // 
+            this.exeClientScriptButton.Location = new System.Drawing.Point(649, 39);
+            this.exeClientScriptButton.Name = "exeClientScriptButton";
+            this.exeClientScriptButton.Size = new System.Drawing.Size(112, 38);
+            this.exeClientScriptButton.TabIndex = 53;
+            this.exeClientScriptButton.Text = "Exe Client Script";
+            this.exeClientScriptButton.UseVisualStyleBackColor = true;
+            this.exeClientScriptButton.Click += new System.EventHandler(this.exeClientScriptButton_Click);
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -973,6 +985,7 @@
         private System.Windows.Forms.TextBox shell;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button exeClientScriptButton;
     }
 }
 
