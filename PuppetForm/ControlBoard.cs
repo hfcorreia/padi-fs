@@ -177,15 +177,19 @@ namespace PuppetForm
                     stringRegisterId = clientStringRegisterListBox.SelectedIndex;
                     //we want to substitute the selected string register
                     verifyStringRegisterIdSelection();
+                    printCommand("read com Sregister replace check " + stringRegisterId);
+                    puppetMaster.read(processId, fileRegisterId, readSemantics, stringRegisterId);
                 }
                 else
                 {
-                    verifyFullStringRegister();
+                    //verifyFullStringRegister();
                     //the string register is not full and we dont want to replace, so write on the next free position
-                    stringRegisterId = clientStringRegisterListBox.Items.Count + 1;
+                    //stringRegisterId = clientStringRegisterListBox.Items.Count;
+                    printCommand("read com Sregister em circulo");
+                    puppetMaster.read(processId, fileRegisterId, readSemantics);
                 }
 
-                puppetMaster.read(processId, fileRegisterId, readSemantics, stringRegisterId);
+                
                 updateClientStringRegister(processId);
             }
             catch (Exception exception)

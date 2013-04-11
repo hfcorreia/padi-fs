@@ -13,6 +13,8 @@ namespace CommonTypes
 
         File read(int fileRegisterId, string semantics, int stringRegisterId);
 
+        File read(int fileRegisterId, string semantics);
+
         void open(string filename);
 
         void close(string filename);

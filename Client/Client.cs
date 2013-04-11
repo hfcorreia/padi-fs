@@ -124,10 +124,20 @@ namespace Client
 
         public File read(int fileRegisterId, string semantics, int stringRegisterId)
         {
+            Console.WriteLine("client read in registers (file, string) : (" + fileRegisterId + " , " + stringRegisterId + ")");
             ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId);
             readFileService.execute();
 
             ClientState.fileContentContainer.setFileContent(stringRegisterId, readFileService.ReadedFile);
+            return readFileService.ReadedFile;
+        }
+
+        public File read(int fileRegisterId, string semantics)
+        {
+            ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId);
+            readFileService.execute();
+
+            ClientState.fileContentContainer.addFileContent(readFileService.ReadedFile);
             return readFileService.ReadedFile;
         }
 

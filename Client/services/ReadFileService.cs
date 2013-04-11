@@ -33,12 +33,12 @@ namespace Client.services
         override public void execute()
         {
 
-            Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
+            Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", stringRegister: " + StringRegisterId + ", semantics: " + Semantics);
             File file = null;
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
             if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
             {
-                throw new WriteFileException("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+                throw new ReadFileException("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
             }
 
             if (fileMetadata != null && fileMetadata.FileServers != null)
