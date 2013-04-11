@@ -8,7 +8,7 @@ namespace CommonTypes
     public class FileContentContainer
     {
         private List<File> Files { get; set; }
-        private int nextFreePosition;
+        private int writePosition;
         private int capacity;
 
         //receives the maximum number of FileMetada's that can be saved
@@ -16,7 +16,7 @@ namespace CommonTypes
         public FileContentContainer(int capacity)
         {
             this.capacity = capacity;
-            this.nextFreePosition = 0;
+            this.writePosition = 0;
             this.Files = new List<File>();
             for (int i = 0; i < capacity; ++i) {
                 Files.Add(null);
@@ -26,20 +26,19 @@ namespace CommonTypes
         //receives a new filemetadata,
         //inserts the file in a roundRobin manner and returns 
         //the position in witch the fileMetadata was saved
-        public int addFileContent(File file)
+        public void addFileContent(File file)
         {
-
-            int filePosition = nextFreePosition;
-            //int filePosition = findFirstFreePosition();
+            //int filePosition = nextFreePosition;
+            int filePosition = findRegisterPosition();
 
             Files[filePosition] = file;
 
-            nextFreePosition = ( nextFreePosition + 1 ) % capacity;
+            //nextFreePosition = ( nextFreePosition + 1 ) % capacity;
             
-            return filePosition;
+           // return filePosition;
         }
 
-        private int findFirstFreePosition()
+        private int findRegisterPosition()
         {
             for (int i = 0; i < Files.Count; ++i)
             {
@@ -48,7 +47,10 @@ namespace CommonTypes
                     return i;
                 }
             }
-            return -1;
+
+            int position = writePosition;
+            writePosition = (writePosition + 1) % capacity;
+            return position;
         }
 
         //receives a position in the structure and returns

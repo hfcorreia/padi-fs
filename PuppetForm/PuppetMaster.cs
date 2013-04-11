@@ -289,6 +289,26 @@ namespace PuppetForm
             ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics + " " + stringRegisterId);
         }
 
+        public void read(string process, int fileRegisterId, string semantics)
+        {
+            startProcess(process);
+
+            ServerObjectWrapper sow = clients[process];
+
+            IClient client = sow.getObject<IClient>();
+
+            try
+            {
+                client.read(fileRegisterId, semantics);
+            }
+            catch (PadiFsException e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+
+            ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics );
+        }
+
         public void write(string process, int fileRegisterId, string contents)
         {
             byte[] byteArrayRegisterContent = System.Text.Encoding.UTF8.GetBytes(contents);
