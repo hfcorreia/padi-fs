@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using CommonTypes;
 
 namespace PuppetForm
 {
@@ -724,6 +725,24 @@ namespace PuppetForm
         public void printCommand(String s)
         {
             shell.Text += s + "\r\n";
+        }
+
+        private void dumpDSs_Click(object sender, EventArgs e)
+        {
+            foreach (ServerObjectWrapper obj in puppetMaster.dataServers.Values)
+            {
+                IRemote remoteObj = obj.getObject<IRemote>();
+                remoteObj.dump();
+            }
+        }
+
+        private void dumpCLIENT_Click(object sender, EventArgs e)
+        {
+            foreach (ServerObjectWrapper obj in puppetMaster.clients.Values)
+            {
+                IRemote remoteObj = obj.getObject<IRemote>();
+                remoteObj.dump();
+            }
         }
 
     }

@@ -38,6 +38,8 @@
             this.mdIdTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
             this.CreateFile = new System.Windows.Forms.GroupBox();
@@ -200,18 +202,39 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.button2);
+            this.groupBox4.Controls.Add(this.button1);
             this.groupBox4.Controls.Add(this.button11);
-            this.groupBox4.Controls.Add(this.exitButton);
-            this.groupBox4.Location = new System.Drawing.Point(584, 295);
+            this.groupBox4.Location = new System.Drawing.Point(633, 21);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(177, 162);
+            this.groupBox4.Size = new System.Drawing.Size(177, 197);
             this.groupBox4.TabIndex = 45;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "GENERAL";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(6, 126);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(163, 44);
+            this.button2.TabIndex = 47;
+            this.button2.Text = "Dump Clients";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.dumpCLIENT_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(7, 76);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(163, 44);
+            this.button1.TabIndex = 46;
+            this.button1.Text = "Dump DSs";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.dumpDSs_Click);
+            // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(6, 42);
+            this.button11.Location = new System.Drawing.Point(8, 26);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(163, 44);
             this.button11.TabIndex = 45;
@@ -221,7 +244,7 @@
             // 
             // exitButton
             // 
-            this.exitButton.Location = new System.Drawing.Point(5, 89);
+            this.exitButton.Location = new System.Drawing.Point(605, 370);
             this.exitButton.Name = "exitButton";
             this.exitButton.Size = new System.Drawing.Size(164, 43);
             this.exitButton.TabIndex = 47;
@@ -318,6 +341,7 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.label19);
+            this.groupBox5.Controls.Add(this.exitButton);
             this.groupBox5.Controls.Add(this.label7);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.groupBox2);
@@ -327,7 +351,6 @@
             this.groupBox5.Controls.Add(this.createClientButton);
             this.groupBox5.Controls.Add(this.groupBox12);
             this.groupBox5.Controls.Add(this.groupBox11);
-            this.groupBox5.Controls.Add(this.groupBox4);
             this.groupBox5.Controls.Add(this.groupBox9);
             this.groupBox5.Controls.Add(this.groupBox7);
             this.groupBox5.Controls.Add(this.groupBox1);
@@ -845,6 +868,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
+            this.Controls.Add(this.groupBox4);
             this.Name = "ControlBoard";
             this.Text = "Puppet Master";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ControlBoard_FormClosing);
@@ -945,6 +969,8 @@
         private System.Windows.Forms.TextBox fileNameTextBox;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TextBox shell;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
     }
 }
 
