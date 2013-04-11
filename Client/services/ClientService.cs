@@ -13,14 +13,27 @@ namespace Client.services
         public void waitVoidQuorum(Task[] tasks, int quorum)
         {
             int responsesCounter = 0;
+            List<Exception> errorResponses = new List<Exception>();
 
             while (responsesCounter < quorum)
             {
                 responsesCounter = 0;
                 for (int i = 0; i < tasks.Length; ++i)
                 {
-                    responsesCounter += tasks[i].IsCompleted ? 1 : 0;
+                    try {
+                        responsesCounter += tasks[i].IsCompleted ? 1 : 0;
+                        if (tasks[i].Exception!=null) {
+                            errorResponses.Add(tasks[i].Exception.Flatten().InnerException);
+                        }
+                    } catch(AggregateException aggregateException){
+                        errorResponses.Add(aggregateException.Flatten().InnerException);
+                    }
                 }
+            }
+
+            if (errorResponses.Count > 0) {
+                Console.WriteLine("#Client - waitVoidQuorum - Error: " + errorResponses[0].Message + ".\n" + errorResponses[0].StackTrace);
+                throw errorResponses[0];
             }
         }
 

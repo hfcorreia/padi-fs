@@ -363,6 +363,7 @@
             this.groupBox5.TabIndex = 14;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
+            this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
             // 
             // label19
             // 
@@ -855,15 +856,16 @@
             this.shell.Name = "shell";
             this.shell.ReadOnly = true;
             this.shell.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.shell.Size = new System.Drawing.Size(371, 673);
+            this.shell.Size = new System.Drawing.Size(255, 673);
             this.shell.TabIndex = 22;
+            this.shell.TextChanged += new System.EventHandler(this.shell_TextChanged);
             // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1198, 692);
+            this.ClientSize = new System.Drawing.Size(1083, 692);
             this.Controls.Add(this.shell);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox6);

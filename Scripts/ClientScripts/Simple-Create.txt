@@ -1,4 +1,6 @@
 #Create a new test-file
 CREATE c-1, teste-file, 1, 1, 1
+open c-1, teste-file
 #delete the test file
+CLOSE c-1, teste-file
 DELETE c-1, teste-file

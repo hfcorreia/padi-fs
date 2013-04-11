@@ -38,7 +38,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers " + exception.Message +" :\n" + exception.StackTrace);
             }
         }
 
@@ -190,7 +190,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show(exception.Message);
+                System.Windows.Forms.MessageBox.Show(exception.StackTrace);
             }
         }
 
@@ -220,7 +220,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error writing file: \n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error writing file:" + exception.Message +" :\n" + exception.StackTrace);
             }
         }
 
@@ -242,7 +242,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error creating client:\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error creating client:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -258,7 +258,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error creating DS:\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error creating DS:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -273,7 +273,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error exiting:\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error exiting:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -307,7 +307,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error opening file :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error opening file:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -332,7 +332,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error closing file :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error closing file:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -358,7 +358,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error creating file \n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error creating file:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -375,12 +375,10 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error deleting file :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error deleting file :" + exception.Message + " :\n" + exception.StackTrace);
             }
 
         }
-
-
 
         private void loadScript_Click(object sender, EventArgs e)
         {
@@ -394,7 +392,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error loading script:\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -406,7 +404,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show(exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error executing script:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -418,7 +416,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show(exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -430,7 +428,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing button :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error failing button:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -442,7 +440,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error recovering metadataserver :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error recovering metadataserver :" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -454,7 +452,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error freezing DS :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error freezing DS :" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -466,7 +464,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error unfreezing DS :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error unfreezing DS :" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -478,7 +476,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing DS :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error failing DS:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -490,7 +488,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error recovering DS :\n" + exception.Message);
+                System.Windows.Forms.MessageBox.Show("Error recovering DS :" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -501,7 +499,14 @@ namespace PuppetForm
 
         private void dumpAllMds_Click(object sender, EventArgs e)
         {
-            puppetMaster.dumpAllMds();
+            try
+            {
+                puppetMaster.dumpAllMds();
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+            }
         }
 
 
@@ -707,32 +712,46 @@ namespace PuppetForm
 
         private void CopyFileButtons_Click(object sender, EventArgs e)
         {
-            verifyClientSelection();
+            try
+            {
+                verifyClientSelection();
 
-            int sourceFileRegisterId = getCopySourceRegisterId();
-            int targetFileRegisterId = getCopyTargetRegisterId();
-            string semantics = "DEFAULT SEMANTICS";
-            string salt = getCopySalt();
+                int sourceFileRegisterId = getCopySourceRegisterId();
+                int targetFileRegisterId = getCopyTargetRegisterId();
+                string semantics = "DEFAULT SEMANTICS";
+                string salt = getCopySalt();
 
-            System.Windows.Forms.MessageBox.Show("Copy: from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
+                System.Windows.Forms.MessageBox.Show("Copy: from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
 
-            puppetMaster.copy(getSelectedClient(), sourceFileRegisterId, semantics, targetFileRegisterId, salt);
+                puppetMaster.copy(getSelectedClient(), sourceFileRegisterId, semantics, targetFileRegisterId, salt);
 
-            updateClientFileRegister(getSelectedClient());
-            updateClientStringRegister(getSelectedClient());
+                updateClientFileRegister(getSelectedClient());
+                updateClientStringRegister(getSelectedClient());
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+            }
         }
 
         public void printCommand(String s)
         {
-            shell.Text += s + "\r\n";
+            shell.Text += "> " + s + "\r\n";
         }
 
         private void dumpDSs_Click(object sender, EventArgs e)
         {
             foreach (ServerObjectWrapper obj in puppetMaster.dataServers.Values)
             {
-                IRemote remoteObj = obj.getObject<IRemote>();
-                remoteObj.dump();
+                try
+                {
+                    IRemote remoteObj = obj.getObject<IRemote>();
+                    remoteObj.dump();
+                }
+                catch (Exception exception)
+                {
+                    System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+                }
             }
         }
 
@@ -740,9 +759,26 @@ namespace PuppetForm
         {
             foreach (ServerObjectWrapper obj in puppetMaster.clients.Values)
             {
-                IRemote remoteObj = obj.getObject<IRemote>();
-                remoteObj.dump();
+                try
+                {
+                    IRemote remoteObj = obj.getObject<IRemote>();
+                    remoteObj.dump();
+                }
+                catch (Exception exception)
+                {
+                    System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+                }
             }
+        }
+
+        private void shell_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
         }
 
     }

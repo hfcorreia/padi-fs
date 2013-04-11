@@ -1,7 +1,8 @@
 DUMP d-1
-CREATE c-1, 1, 1, 1
-WRITE c-1, 1, 1
-WRITE c-1, 1, "E UM TEST"
+CREATE c-1, teste, 1, 1, 1
+OPEN c-1, teste
+WRITE c-1, 0, "E UM TEST"
+WRITE c-1, 0, 1
 DUMP c-1
 DUMP d-1
 DUMP m-1

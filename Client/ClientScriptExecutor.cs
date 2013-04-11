@@ -34,7 +34,15 @@ namespace Client
                 }
                 else
                 {
-                    runCommand(line);
+                    try
+                    {
+                        exeScriptCommand(line);
+                    }
+                    catch (Exception e) 
+                    {
+                        Console.WriteLine("#ClientScriptExecutor: " + e.Message + "\n\n" + e.StackTrace);
+                    }
+
                     line = fileReader.ReadLine();
                 }
             }
@@ -42,13 +50,9 @@ namespace Client
             fileReader.Close();
         }
 
-        private void runCommand(string line)
-        {
-            exeScriptCommand(line);
-        }
-
         private void exeScriptCommand(string line)
         {
+            Console.Write("## SCRIPT: ");
             String[] newLine = parseLine(line);
 
             String command = newLine[0];

@@ -42,7 +42,7 @@ namespace PuppetForm
                 }
                 catch (Exception e)
                 {
-                    System.Windows.Forms.MessageBox.Show(e.Message);
+                    System.Windows.Forms.MessageBox.Show("Error creating client:" + e.Message + " :\n" + e.StackTrace);
                 }
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
                 clients.Add(clientId, clientWrapper);
@@ -87,9 +87,9 @@ namespace PuppetForm
                 client.open(filename);
                 
             }
-            catch (OpenFileException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error opening file " + filename + " : " + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("OPEN " + clientId + " " + filename);
@@ -106,9 +106,9 @@ namespace PuppetForm
             {
                 client.close(filename);
             }
-            catch (CloseFileException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error closing file " + filename + " : " + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("CLOSE " + clientId + " " + filename);
@@ -123,9 +123,9 @@ namespace PuppetForm
             {
                 FileMetadata metadata = client.create(filename, numberDataServers, readQuorum, writeQuorum);
             }
-            catch (CreateFileException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error creating file " + filename + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("CREATE " + clientId + " " + filename + " " + numberDataServers + " " + readQuorum + " " + writeQuorum);
@@ -143,9 +143,9 @@ namespace PuppetForm
             {
                 client.delete(filename);
             }
-            catch (DeleteFileException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error deleting file " + filename + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("DELETE " + clientId + " " + filename);
@@ -153,79 +153,119 @@ namespace PuppetForm
 
         public void failDS(string process)
         {
+            try
+            {
+                startProcess(process);
 
-            startProcess(process);
+                ServerObjectWrapper sow = dataServers[process];
 
-            ServerObjectWrapper sow = dataServers[process];
+                IDataServer dataServer = sow.getObject<IDataServer>();
 
-            IDataServer dataServer = sow.getObject<IDataServer>();
-
-            dataServer.fail();
+                dataServer.fail();
+            }
+            catch (Exception e) 
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing DS" + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("FAIL " + process);
 
         }
 
         public void failMD(string process)
         {
+            try
+            {
+                //not tested
+                startProcess(process);
 
-            //not tested
-            startProcess(process);
+                ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
 
-            ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
+                IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
 
-            IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
-
-            metaData.fail();
+                metaData.fail();
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("FAIL " + process);
 
         }
 
         public void recoverDS(string process)
         {
-            startProcess(process);
+            try
+            {
+                startProcess(process);
 
-            ServerObjectWrapper sow = dataServers[process];
+                ServerObjectWrapper sow = dataServers[process];
 
-            IDataServer dataServer = sow.getObject<IDataServer>();
+                IDataServer dataServer = sow.getObject<IDataServer>();
 
-            dataServer.recover();
+                dataServer.recover();
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("RECOVER " + process);
         }
 
         public void recoverMD(string process)
         {
-            //not tested
-            startProcess(process);
+            try
+            {
+                //not tested
+                startProcess(process);
 
-            ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
+                ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
 
-            IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
+                IMetaDataServer metaData = sow.getObject<IMetaDataServer>();
 
-            metaData.recover();
+                metaData.recover();
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("Error recovering MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("RECOVER " + process);
         }
 
         public void freeze(string process) 
         {
-            startProcess(process);
+            try
+            {
+                startProcess(process);
 
-            ServerObjectWrapper sow = dataServers[process];
+                ServerObjectWrapper sow = dataServers[process];
 
-            IDataServer dataServer = sow.getObject<IDataServer>();
+                IDataServer dataServer = sow.getObject<IDataServer>();
 
-            dataServer.freeze();
+                dataServer.freeze();
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("Error freezing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("FREEZE " + process);
         }
 
         public void unfreeze(string process) 
         {
-            startProcess(process);
+            try
+            {
+                startProcess(process);
 
-            ServerObjectWrapper sow = dataServers[process];
+                ServerObjectWrapper sow = dataServers[process];
 
-            IDataServer dataServer = sow.getObject<IDataServer>();
+                IDataServer dataServer = sow.getObject<IDataServer>();
 
-            dataServer.unfreeze();
+                dataServer.unfreeze();
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("Error unfreezing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("UNFREEZE " + process);
         }
 
@@ -241,9 +281,9 @@ namespace PuppetForm
             {
                 client.read(fileRegisterId, semantics, stringRegisterId);
             }
-            catch (PadiFsException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error read file" + fileRegisterId+ ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics + " " + stringRegisterId);
@@ -263,10 +303,9 @@ namespace PuppetForm
             {
                 client.write(fileRegisterId, byteArrayRegisterContent);
             }
-            catch (PadiFsException e)
+            catch (Exception e)
             {
-
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error write file" + fileRegisterId + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + contents);
@@ -284,9 +323,9 @@ namespace PuppetForm
             {
                 client.write(fileRegisterId, stringRegisterId);
             }
-            catch (PadiFsException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error write file" + fileRegisterId + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + stringRegisterId);
@@ -295,13 +334,20 @@ namespace PuppetForm
 
         public void copy(string process, int fileRegister1, string semantics, int fileRegister2, string salt)
         {
-            startProcess(process);
-            
-            ServerObjectWrapper sow = getRemoteObjectWrapper(process);
+            try
+            {
+                startProcess(process);
 
-            IClient client = sow.getObject<IClient>();
+                ServerObjectWrapper sow = getRemoteObjectWrapper(process);
 
-            client.copy(fileRegister1, semantics, fileRegister2, salt);
+                IClient client = sow.getObject<IClient>();
+
+                client.copy(fileRegister1, semantics, fileRegister2, salt);
+            }
+            catch (Exception e) 
+            {
+                System.Windows.Forms.MessageBox.Show("Error copying file" + fileRegister1 + " to " +fileRegister2 + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("COPY " + process + " " + fileRegister1 + " " + semantics + " " + fileRegister2 + " " + salt);
         }
 
@@ -312,9 +358,14 @@ namespace PuppetForm
             ServerObjectWrapper sow = getRemoteObjectWrapper(process);
 
             IRemote obj = sow.getObject<IClient>();
-
-            obj.dump();
-
+            try
+            {
+                obj.dump();
+            }
+            catch (Exception e) 
+            {
+                System.Windows.Forms.MessageBox.Show("Error dumping process " + process + ":" + e.Message + " :\n" + e.StackTrace);
+            }
             ControlBoard.printCommand("DUMP " + process);
         }
 
@@ -365,7 +416,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error executing client script for client " + process + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("EXESCRIPT " + process + " " + filename);
@@ -445,9 +496,9 @@ namespace PuppetForm
             {
                 return client.getAllStringRegisters();
             }
-            catch (CommonTypes.Exceptions.DeleteFileException e)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show("Error getting string Registers For Client " + clientId + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             return new List<string>();
@@ -465,9 +516,9 @@ namespace PuppetForm
            {
                return client.getAllFileRegisters();
            }
-           catch (CommonTypes.Exceptions.DeleteFileException e)
+           catch (Exception e)
            {
-               System.Windows.Forms.MessageBox.Show(e.Message);
+               System.Windows.Forms.MessageBox.Show("Error getting file Registers For Client " + clientId + ":" + e.Message + " :\n" + e.StackTrace);
            }
 
            return new List<string>();

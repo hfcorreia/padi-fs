@@ -89,7 +89,8 @@ namespace MetaDataServer
             }
             else if (fileMetadata[filename].Clients.Contains(clientID))
             {
-                throw new OpenFileException("#MDS.open - File " + filename + " is already opend.");
+                Console.WriteLine("#MDS.open - File " + filename + " is allready open for user " + clientID);
+                return fileMetadata[filename];
             }
             else
             {
@@ -109,7 +110,9 @@ namespace MetaDataServer
 
             if (fileMetadata.ContainsKey(filename) && !fileMetadata[filename].Clients.Contains(clientID))
             {
-                throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
+                //throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
+                Console.WriteLine("#MDS.close - File " + filename + " is allready closed for user " + clientID);
+                return;
             }
 
             Console.WriteLine("#MDS: closing file " + filename + "...");
@@ -120,19 +123,29 @@ namespace MetaDataServer
 
         public void delete(string clientId, string filename)
         {
-            if (fileMetadata.ContainsKey(filename) && fileMetadata[filename].Clients.Count == 0)
-            {
-                fileMetadata[filename].Clients.Remove(clientId);
-                fileMetadata.Remove(filename);
-                Console.WriteLine("#MDS: Deleted file: " + filename);
-                makeCheckpoint();
-            }
-            else
-            {
-                if (!fileMetadata.ContainsKey(filename))
+            if (!fileMetadata.ContainsKey(filename))
                     throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
-                else throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " is open.");
+
+            /*
+            if (fileMetadata[filename].Clients.Count == 1 && fileMetadata[filename].Clients.Contains(clientId))
+            {
+                close(clientId, filename);
             }
+            */
+
+            if (fileMetadata[filename].Clients.Count > 0)
+            {
+                string clients = "";
+                foreach (string c in fileMetadata[filename].Clients) 
+                {
+                    clients += c + ", ";
+                }
+                throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - Error deleting file " + filename + " for client " + clientId +" is open by clients: [ " + clients + " ]");
+            }
+
+            fileMetadata.Remove(filename);
+            Console.WriteLine("#MDS: Deleted file: " + filename);
+            makeCheckpoint();
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)

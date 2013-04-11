@@ -9,7 +9,7 @@ CREATE c-1, f3, 2, 2, 2
 # on the client's console
 DUMP c-1
 OPEN c-1, f3
-READ c-1, 2, default, 1
+READ c-1, 2, default, 0
 WRITE c-1, 2, "Text from the EXESCRIPT."
 CLOSE c-1, f3
 DUMP c-1

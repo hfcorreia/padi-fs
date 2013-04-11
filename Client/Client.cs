@@ -145,6 +145,11 @@ namespace Client
 
         public void delete(string filename)
         {
+            if (ClientState.fileMetadataContainer.containsFileMetadata(filename)) 
+            {
+                close(filename);
+            }
+
             DeleteFileService deleteFileService = new DeleteFileService(ClientState, filename);
             deleteFileService.execute();
         }
