@@ -365,7 +365,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message);
+                System.Windows.Forms.MessageBox.Show(e.StackTrace);
             }
 
             controlBoard.printCommand("EXESCRIPT " + process + " " + filename);

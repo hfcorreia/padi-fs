@@ -26,21 +26,42 @@ namespace DataServer
                 //updates the file
                 Ds.Files.Remove(file.FileName);
             }
+            if (!Ds.FileLocks.ContainsKey(file.FileName))
+            {
+                Ds.FileLocks.Add(file.FileName, new System.Threading.ReaderWriterLockSlim());
+            }
             //creates a new file
             Ds.Files.Add(file.FileName, file);
 
-            Util.writeFileToDisk(file, "" + "DS" + Ds.Id);
+            Ds.FileLocks[file.FileName].EnterWriteLock();
+            try
+            {
+                Util.writeFileToDisk(file, "" + "DS" + Ds.Id);
+            }
+            finally
+            {
+                Ds.FileLocks[file.FileName].ExitWriteLock();
+            }
             Ds.makeCheckpoint();
         }
 
         public override File read(string filename)
         {
-            if (filename == null || !Ds.Files.ContainsKey(filename))
+            File file = null;
+            if (filename == null || !Ds.Files.ContainsKey(filename) || !Ds.FileLocks.ContainsKey(filename))
             {
                 throw new ReadFileException("The server does not contain the file " + filename);
             }
-
-            return Util.readFileFromDisk("DS" + Ds.Id, filename, Ds.Files[filename].Version);
+            Ds.FileLocks[filename].EnterWriteLock();
+            try
+            {
+                file = Util.readFileFromDisk("DS" + Ds.Id, filename, Ds.Files[filename].Version);
+            }
+            finally
+            {
+                Ds.FileLocks[filename].ExitWriteLock();
+            }
+            return file;
         }
 
         public override int readFileVersion(string filename)

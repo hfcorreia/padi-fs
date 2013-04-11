@@ -268,6 +268,7 @@ namespace PuppetForm
             try
             {
                 puppetMaster.exitAll();
+                Application.Exit();
             }
             catch (Exception exception)
             {

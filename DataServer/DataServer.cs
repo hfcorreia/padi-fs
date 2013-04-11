@@ -10,6 +10,7 @@ using System.Collections;
 using System.Runtime.Serialization.Formatters;
 using CommonTypes.Exceptions;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace DataServer
 {
@@ -27,11 +28,13 @@ namespace DataServer
 
         public SerializableDictionary<string, File> Files { get; set; }
 
+        
+             
         private DSstate State { get; set; }
 
         //isto vai ter de levar um lock qualquer para quando esta a tratar dos pedidos na queue nao andar ng a mexer?
         internal List<BufferedRequest> requestsBuffer = new List<BufferedRequest>();
-
+        internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
 
         static void Main(string[] args)
         {
@@ -59,6 +62,7 @@ namespace DataServer
             Host = host;
             Files = new SerializableDictionary<string, File>();
             State = new DSstateNormal(this);
+            FileLocks = new Dictionary<string, ReaderWriterLockSlim>();
             CheckpointCounter = 0;
         }
 

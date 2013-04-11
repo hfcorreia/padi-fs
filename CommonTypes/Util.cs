@@ -31,16 +31,13 @@ namespace CommonTypes
 
             System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + getFileName(file.FileName, file.Version));
          
-            lock (typeof(Util))
-            {
+           
                 writer.Serialize(fileWriter, file);
                 fileWriter.Close();
-            }
         }
 
         public static File readFileFromDisk(String clientName, String name, Int32 version)
         {
-            
             System.Xml.Serialization.XmlSerializer reader =
                       new System.Xml.Serialization.XmlSerializer(typeof(File));
 
@@ -48,11 +45,10 @@ namespace CommonTypes
             System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
             
             File file = new File();
-            
-            lock (typeof(Util))
-            {
-                file = (File) reader.Deserialize(fileReader);
-            }
+     
+            file = (File) reader.Deserialize(fileReader);
+
+            fileReader.Close();
 
             return file;
         }
