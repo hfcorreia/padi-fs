@@ -90,6 +90,14 @@ namespace PuppetForm
             }
         }
 
+        private void verifyFileSemanticsSelection()
+        {
+            if (readFileSemanicsComboBox.Items.Count == 0 || readFileSemanicsComboBox.SelectedIndex < 0)
+            {
+                throw new Exception("Please select a read semantics option");
+            }
+        }
+
         private void verifyNewFileQuorunsAndServers()
         {
             int tempValue;
@@ -142,6 +150,55 @@ namespace PuppetForm
         ///                        region for the events                        ///
         ////////////////////////////////////////////////////////////////////////////
 
+
+        private void exeClientScriptButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    puppetMaster.exeClientScript(getSelectedClient(), fileDialog.SafeFileName);
+                }
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+            }
+        }
+
+        private void dumpDSs_Click(object sender, EventArgs e)
+        {
+            foreach (ServerObjectWrapper obj in puppetMaster.dataServers.Values)
+            {
+                try
+                {
+                    IRemote remoteObj = obj.getObject<IRemote>();
+                    remoteObj.dump();
+                }
+                catch (Exception exception)
+                {
+                    System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+                }
+            }
+        }
+
+        private void dumpCLIENT_Click(object sender, EventArgs e)
+        {
+            foreach (ServerObjectWrapper obj in puppetMaster.clients.Values)
+            {
+                try
+                {
+                    IRemote remoteObj = obj.getObject<IRemote>();
+                    remoteObj.dump();
+                }
+                catch (Exception exception)
+                {
+                    System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+                }
+            }
+        }
+
         private void clientFileRegisterlistBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             updateClientStringRegister(getSelectedClient());
@@ -164,13 +221,14 @@ namespace PuppetForm
             {
                 verifyClientSelection();
                 verifyFileRegisterIdSelection();
+                verifyFileSemanticsSelection();
 
                 int stringRegisterId;
 
                 string processId = getSelectedClient();
                 int fileRegisterId = clientFileRegisterlistBox.SelectedIndex;
 
-                string readSemantics = "default";
+                string readSemantics = getSelectedReadSemantics();
 
                 if (replaceStringRegisterCheckBox.Checked)
                 {
@@ -193,6 +251,30 @@ namespace PuppetForm
             catch (Exception exception)
             {
                 System.Windows.Forms.MessageBox.Show(exception.StackTrace);
+            }
+        }
+
+        private void CopyFileButtons_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                verifyClientSelection();
+
+                int sourceFileRegisterId = getCopySourceRegisterId();
+                int targetFileRegisterId = getCopyTargetRegisterId();
+                string semantics = "DEFAULT SEMANTICS";
+                string salt = getCopySalt();
+
+                System.Windows.Forms.MessageBox.Show("Copy: from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
+
+                puppetMaster.copy(getSelectedClient(), sourceFileRegisterId, semantics, targetFileRegisterId, salt);
+
+                updateClientFileRegister(getSelectedClient());
+                updateClientStringRegister(getSelectedClient());
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -520,6 +602,11 @@ namespace PuppetForm
         ///                        region for the getters                        ///
         ////////////////////////////////////////////////////////////////////////////
 
+        private string getSelectedReadSemantics()
+        {
+            return (string)readFileSemanicsComboBox.Items[readFileSemanicsComboBox.SelectedIndex];
+        }
+
         private string getSelectedFileName()
         {
             return fileNameTextBox.Text;
@@ -707,70 +794,14 @@ namespace PuppetForm
 
         #endregion updates
 
-        private void fileNameTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CopyFileButtons_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                verifyClientSelection();
-
-                int sourceFileRegisterId = getCopySourceRegisterId();
-                int targetFileRegisterId = getCopyTargetRegisterId();
-                string semantics = "DEFAULT SEMANTICS";
-                string salt = getCopySalt();
-
-                System.Windows.Forms.MessageBox.Show("Copy: from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
-
-                puppetMaster.copy(getSelectedClient(), sourceFileRegisterId, semantics, targetFileRegisterId, salt);
-
-                updateClientFileRegister(getSelectedClient());
-                updateClientStringRegister(getSelectedClient());
-            }
-            catch (Exception exception)
-            {
-                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
-            }
-        }
-
         public void printCommand(String s)
         {
             shell.Text += "> " + s + "\r\n";
         }
 
-        private void dumpDSs_Click(object sender, EventArgs e)
+        private void fileNameTextBox_TextChanged(object sender, EventArgs e)
         {
-            foreach (ServerObjectWrapper obj in puppetMaster.dataServers.Values)
-            {
-                try
-                {
-                    IRemote remoteObj = obj.getObject<IRemote>();
-                    remoteObj.dump();
-                }
-                catch (Exception exception)
-                {
-                    System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
-                }
-            }
-        }
 
-        private void dumpCLIENT_Click(object sender, EventArgs e)
-        {
-            foreach (ServerObjectWrapper obj in puppetMaster.clients.Values)
-            {
-                try
-                {
-                    IRemote remoteObj = obj.getObject<IRemote>();
-                    remoteObj.dump();
-                }
-                catch (Exception exception)
-                {
-                    System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
-                }
-            }
         }
 
         private void shell_TextChanged(object sender, EventArgs e)
@@ -783,23 +814,7 @@ namespace PuppetForm
 
         }
 
-        private void exeClientScriptButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                OpenFileDialog fileDialog = new OpenFileDialog();
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                {
-//                    string[] splitedFileName = fileDialog.FileName.Split('\\');
-  //                  string fileName = splitedFileName[splitedFileName.Length];
-                    puppetMaster.exeClientScript(getSelectedClient(), fileDialog.SafeFileName);
-                }
-            }
-            catch (Exception exception)
-            {
-                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
-            }
-        }
+
 
     }
 }

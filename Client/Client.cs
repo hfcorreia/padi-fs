@@ -70,12 +70,12 @@ namespace Client
 
         public void write(int fileRegisterId, byte[] content) 
         {
-            if (ClientState.fileMetadataContainer.hasNullContent(fileRegisterId))
+            if (ClientState.FileMetadataContainer.hasNullContent(fileRegisterId))
             {
                 throw new WriteFileException("Client - The file is not open " + fileRegisterId);
             }
 
-            FileMetadata fileMetadata = ClientState.fileMetadataContainer.getFileMetadata(fileRegisterId);
+            FileMetadata fileMetadata = ClientState.FileMetadataContainer.getFileMetadata(fileRegisterId);
             //int stringRegisterId = ClientState.fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
 
             File file = new File(fileMetadata.FileName, -1, content);
@@ -85,19 +85,19 @@ namespace Client
 
         public void write(int fileRegisterId, int stringRegisterId)
         {
-            if (ClientState.fileMetadataContainer.hasNullContent(fileRegisterId))
+            if (ClientState.FileMetadataContainer.hasNullContent(fileRegisterId))
             {
                 throw new WriteFileException("Client - the file is not open " + fileRegisterId);
             }
 
-            if (ClientState.fileContentContainer.hasNullContent(stringRegisterId))
+            if (ClientState.FileContentContainer.hasNullContent(stringRegisterId))
             {
                 throw new WriteFileException("Client - We have no content at StringRegister " + stringRegisterId);
             }
 
-            FileMetadata fileMetadata = ClientState.fileMetadataContainer.getFileMetadata(fileRegisterId);
+            FileMetadata fileMetadata = ClientState.FileMetadataContainer.getFileMetadata(fileRegisterId);
 
-            byte[] fileContent = ClientState.fileContentContainer.getFileContent(stringRegisterId).Content;
+            byte[] fileContent = ClientState.FileContentContainer.getFileContent(stringRegisterId).Content;
 
             File file = new File(fileMetadata.FileName, -1, fileContent);
 
@@ -111,7 +111,8 @@ namespace Client
             WriteFileService writeFileService = new WriteFileService(ClientState, file);
             writeFileService.execute();
 
-            ClientState.fileContentContainer.addFileContent(writeFileService.NewFile);
+            ClientState.FileContentContainer.addFileContent(writeFileService.NewFile);
+            ClientState.saveMostRecentVersion(writeFileService.NewFile.FileName, writeFileService.NewFile.Version);
         }
         
         #endregion WRITE
@@ -129,7 +130,8 @@ namespace Client
             ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId);
             readFileService.execute();
 
-            ClientState.fileContentContainer.setFileContent(stringRegisterId, readFileService.ReadedFile);
+            ClientState.FileContentContainer.setFileContent(stringRegisterId, readFileService.ReadedFile);
+            ClientState.saveMostRecentVersion(readFileService.ReadedFile.FileName, readFileService.ReadedFile.Version);
             return readFileService.ReadedFile;
         }
 
@@ -138,7 +140,8 @@ namespace Client
             ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId);
             readFileService.execute();
 
-            ClientState.fileContentContainer.addFileContent(readFileService.ReadedFile);
+            ClientState.FileContentContainer.addFileContent(readFileService.ReadedFile);
+            ClientState.saveMostRecentVersion(readFileService.ReadedFile.FileName, readFileService.ReadedFile.Version);
             return readFileService.ReadedFile;
         }
 
@@ -156,7 +159,7 @@ namespace Client
 
         public void delete(string filename)
         {
-            if (ClientState.fileMetadataContainer.containsFileMetadata(filename)) 
+            if (ClientState.FileMetadataContainer.containsFileMetadata(filename)) 
             {
                 close(filename);
             }
@@ -182,13 +185,13 @@ namespace Client
 
         public List<string> getAllFileRegisters()
         {
-            return ClientState.fileMetadataContainer.getAllFileNames();
+            return ClientState.FileMetadataContainer.getAllFileNames();
         }
         
         #endregion SCRIPT
 
         public List<string> getAllStringRegisters() {
-            return ClientState.fileContentContainer.getAllFileContentAsString();
+            return ClientState.FileContentContainer.getAllFileContentAsString();
         }
 
         public void exit()
@@ -225,7 +228,7 @@ namespace Client
             Console.WriteLine("#Client: Dumping!\r\n");
             Console.WriteLine(" URL: " + ClientState.Url);
             Console.WriteLine(" Opened Files:");
-            foreach (String name in ClientState.fileMetadataContainer.getAllFileNames())
+            foreach (String name in ClientState.FileMetadataContainer.getAllFileNames())
             {
                 Console.WriteLine("\t" + name);
             }

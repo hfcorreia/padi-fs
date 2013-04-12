@@ -11,6 +11,10 @@ namespace CommonTypes
 {
     public static class Util
     {
+
+        public static string MONOTONIC_READ_SEMANTICS = "monotonic";
+        public static string DEFAULT_READ_SEMANTICS = "default";
+
         public static void createDir(String dir)
         {
             if (!System.IO.File.Exists(dir))

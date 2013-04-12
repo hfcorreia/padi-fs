@@ -33,20 +33,41 @@ namespace Client.services
                 {
                     if (tasks[i].IsCompleted)
                     {
-                        try
+                        if (tasks[i].Exception == null && tasks[i].Result is File)
                         {
-                            responses.Add(tasks[i].Result);
+                            File file = (File)tasks[i].Result;
+                            if (Semantics.ToLower().Equals(Util.DEFAULT_READ_SEMANTICS))
+                            {
+                                Console.WriteLine("#Client read - found a valid response for semantics " + Semantics);
+                                responses.Add(file);
+                            }
+                            else if (Semantics.ToLower().Equals(Util.MONOTONIC_READ_SEMANTICS))
+                            {
+                                if (file.Version >= State.findMostRecentVersion(file.FileName) ||
+                                    responses.Count > 0)
+                                {
+                                    Console.WriteLine("#Client read - found a valid response for semantics " + Semantics);
+                                    responses.Add(file);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("#Client read - Invalid response -> starting new task...");
+                                    FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
+                                    tasks[i] = createAsyncTask(fileMetadata, i);
+                                }
+                            }
                         }
-                        catch (AggregateException aggregateException)
+                        else if (tasks[i].Exception != null)
                         {
-                            Exception exception = aggregateException.Flatten().InnerException;
+                            Exception exception = tasks[i].Exception.Flatten().InnerException;
                             if (exception is ReadFileException)
                             {
                                 responses.Add(exception);
                             }
                             else
                             {
-                                FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
+                                Console.WriteLine("#Client read - received an invalid execption[" + exception.Message + "]. Starting a new task... ");
+                                FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
                                 tasks[i] = createAsyncTask(fileMetadata, i);
                             }
                         }
@@ -54,6 +75,7 @@ namespace Client.services
                 }
             }
 
+            Console.WriteLine("#Client - Received enough valid responses -> canceling the remaining tasks... \n " + responses.Count);
             closeUncompletedTasks(tasks);
 
             //choose the better option
@@ -92,14 +114,14 @@ namespace Client.services
             return result;
         }
 
-      
+
         override public void execute()
         {
 
             Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
             File file = null;
 
-            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
+            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {
                 if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
@@ -114,7 +136,7 @@ namespace Client.services
                 }
 
                 int readQuorum = fileMetadata.ReadQuorum;
-
+                Console.WriteLine("#Client: waiting read quorum...");
                 file = waitReadQuorum(tasks, readQuorum);
 
             }
@@ -123,7 +145,7 @@ namespace Client.services
                 throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
             }
 
-            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.fileContentContainer.getAllFileContentAsString());
+            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.FileContentContainer.getAllFileContentAsString());
 
             ReadedFile = file;
         }
@@ -133,12 +155,15 @@ namespace Client.services
             IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
             return Task<File>.Factory.StartNew(() =>
             {
-                try
-                {
-                    return dataServer.read(fileMetadata.FileName);
-                }
-                catch (Exception) { return null; }
-            });
+                /*try
+                 {
+                     return dataServer.read(fileMetadata.FileName);
+                 }
+                 catch (Exception) { return null; }
+                 */
+                return dataServer.read(fileMetadata.FileName);
+            }
+            );
         }
 
 

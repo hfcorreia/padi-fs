@@ -30,12 +30,12 @@ namespace Client.services
                 throw new WriteFileException("Client - trying to write null file " + NewFile);
             }
 
-            if (!State.fileMetadataContainer.containsFileMetadata(NewFile.FileName))
+            if (!State.FileMetadataContainer.containsFileMetadata(NewFile.FileName))
             {
                 throw new WriteFileException("Client - tryng to write a file that is not open");
             }
 
-            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
+            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(NewFile.FileName);
             if (fileMetadata.FileServers.Count < fileMetadata.WriteQuorum)
             {
                 throw new WriteFileException("Client - trying to write in a quorum of " + fileMetadata.WriteQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
@@ -65,7 +65,7 @@ namespace Client.services
                         if (tasks[i].Exception != null)
                         {
                             //in case the write gives an error we resend the message until we get a quorum
-                            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
+                            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(NewFile.FileName);
                             tasks[i] = createAsyncWriteTask(fileMetadata, i);
                         }
                         else {
@@ -83,11 +83,12 @@ namespace Client.services
             IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
             return Task.Factory.StartNew(() =>
             {
-                try
+                /*try
                 {
                     dataServer.write(NewFile);
                 }
-                catch (Exception) { }
+                catch (Exception) { }*/
+                dataServer.write(NewFile);
             });
         
         }

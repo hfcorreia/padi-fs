@@ -7,6 +7,8 @@ namespace CommonTypes
 {
     public interface IClient : IRemote
     {
+
+
         void write(int fileRegisterId, int stringRegisterId);
 
         void write(int fileRegisterId, byte[] content);

@@ -35,7 +35,7 @@ namespace Client.services
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.close(State.Id, FileName); });
             }
 
-            int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
+            int writeQuorum = State.FileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
 
             waitVoidQuorum(tasks, 1);
 

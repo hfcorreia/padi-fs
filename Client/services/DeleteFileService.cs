@@ -36,7 +36,7 @@ namespace Client.services
 
             waitVoidQuorum(tasks, 1); 
 
-            State.fileMetadataContainer.removeFileMetadata(FileName);
+            State.FileMetadataContainer.removeFileMetadata(FileName);
             // State.fileContentContainer.removeFileContent(FileName); DEVE RETIRAR-SE O STRING REGISTER QUANDO HA UM DELETE???
         }
     }

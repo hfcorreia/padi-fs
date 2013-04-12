@@ -30,7 +30,7 @@ namespace Client.services
         {
             Console.WriteLine("#Client: reading async file version for file '" + FileName + "'");
 
-            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileName);
+            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
             if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
             {
                 throw new ReadFileVersionException("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
@@ -61,7 +61,7 @@ namespace Client.services
                         }
                         catch (AggregateException)
                         {
-                            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileName);
+                            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
                             tasks[i] = createAsyncTask(fileMetadata, i);
                         }
                     }
@@ -92,12 +92,16 @@ namespace Client.services
             IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
             return Task<int>.Factory.StartNew(() =>
             {
-                try
+                /*try
                 {
                     return dataServer.readFileVersion(FileName);
                 }
                 catch (Exception) { return 0; }
-            });
+                }*/
+
+                return dataServer.readFileVersion(FileName);
+            }
+            );
         }
 
 

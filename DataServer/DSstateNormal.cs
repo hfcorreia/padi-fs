@@ -51,6 +51,7 @@ namespace DataServer
             File file = null;
             if (filename == null || !Ds.Files.ContainsKey(filename) || !Ds.FileLocks.ContainsKey(filename))
             {
+                Console.WriteLine("#DS: read error - the server does not have the file " + filename);
                 throw new ReadFileException("The server does not contain the file " + filename);
             }
             Ds.FileLocks[filename].EnterWriteLock();

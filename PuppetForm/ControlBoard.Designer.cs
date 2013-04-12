@@ -52,6 +52,7 @@
             this.WriteQuorumTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.exeClientScriptButton = new System.Windows.Forms.Button();
             this.label19 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -86,7 +87,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.replaceStringRegisterCheckBox = new System.Windows.Forms.CheckBox();
             this.readFileButton = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.readFileSemanicsComboBox = new System.Windows.Forms.ComboBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
@@ -100,7 +101,6 @@
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.shell = new System.Windows.Forms.TextBox();
-            this.exeClientScriptButton = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -366,6 +366,16 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Control";
             this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
+            // 
+            // exeClientScriptButton
+            // 
+            this.exeClientScriptButton.Location = new System.Drawing.Point(649, 39);
+            this.exeClientScriptButton.Name = "exeClientScriptButton";
+            this.exeClientScriptButton.Size = new System.Drawing.Size(112, 38);
+            this.exeClientScriptButton.TabIndex = 53;
+            this.exeClientScriptButton.Text = "Exe Client Script";
+            this.exeClientScriptButton.UseVisualStyleBackColor = true;
+            this.exeClientScriptButton.Click += new System.EventHandler(this.exeClientScriptButton_Click);
             // 
             // label19
             // 
@@ -685,7 +695,7 @@
             // 
             this.groupBox1.Controls.Add(this.replaceStringRegisterCheckBox);
             this.groupBox1.Controls.Add(this.readFileButton);
-            this.groupBox1.Controls.Add(this.comboBox2);
+            this.groupBox1.Controls.Add(this.readFileSemanicsComboBox);
             this.groupBox1.Controls.Add(this.textBox6);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label10);
@@ -716,19 +726,18 @@
             this.readFileButton.UseVisualStyleBackColor = true;
             this.readFileButton.Click += new System.EventHandler(this.readFileButton_Click);
             // 
-            // comboBox2
+            // readFileSemanicsComboBox
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.Enabled = false;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.readFileSemanicsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.readFileSemanicsComboBox.FormattingEnabled = true;
+            this.readFileSemanicsComboBox.Items.AddRange(new object[] {
             "Default",
             "Monotonic"});
-            this.comboBox2.Location = new System.Drawing.Point(89, 44);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(109, 21);
-            this.comboBox2.Sorted = true;
-            this.comboBox2.TabIndex = 26;
+            this.readFileSemanicsComboBox.Location = new System.Drawing.Point(89, 44);
+            this.readFileSemanicsComboBox.Name = "readFileSemanicsComboBox";
+            this.readFileSemanicsComboBox.Size = new System.Drawing.Size(109, 21);
+            this.readFileSemanicsComboBox.Sorted = true;
+            this.readFileSemanicsComboBox.TabIndex = 26;
             // 
             // textBox6
             // 
@@ -862,16 +871,6 @@
             this.shell.TabIndex = 22;
             this.shell.TextChanged += new System.EventHandler(this.shell_TextChanged);
             // 
-            // exeClientScriptButton
-            // 
-            this.exeClientScriptButton.Location = new System.Drawing.Point(649, 39);
-            this.exeClientScriptButton.Name = "exeClientScriptButton";
-            this.exeClientScriptButton.Size = new System.Drawing.Size(112, 38);
-            this.exeClientScriptButton.TabIndex = 53;
-            this.exeClientScriptButton.Text = "Exe Client Script";
-            this.exeClientScriptButton.UseVisualStyleBackColor = true;
-            this.exeClientScriptButton.Click += new System.EventHandler(this.exeClientScriptButton_Click);
-            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -938,7 +937,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button readFileButton;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox readFileSemanicsComboBox;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button failMetaDataButton;
