@@ -107,6 +107,7 @@ namespace Client
         private void write(File file)
         {
             file.Version = readFileVersion(file.FileName) + 1;
+
             WriteFileService writeFileService = new WriteFileService(ClientState, file);
             writeFileService.execute();
 

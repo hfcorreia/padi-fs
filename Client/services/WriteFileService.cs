@@ -17,7 +17,8 @@ namespace Client.services
     {
         public File NewFile { get; set; }
 
-        public WriteFileService(ClientState clientState, File file) : base(clientState) 
+        public WriteFileService(ClientState clientState, File file)
+            : base(clientState)
         {
             NewFile = file;
         }
@@ -35,7 +36,7 @@ namespace Client.services
             }
 
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
-            if (fileMetadata.FileServers.Count < fileMetadata.WriteQuorum) 
+            if (fileMetadata.FileServers.Count < fileMetadata.WriteQuorum)
             {
                 throw new WriteFileException("Client - trying to write in a quorum of " + fileMetadata.WriteQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
             }
@@ -45,16 +46,59 @@ namespace Client.services
             Task[] tasks = new Task[fileMetadata.FileServers.Count];
             for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {
-                IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
-                tasks[ds] = Task.Factory.StartNew(() => { dataServer.write(NewFile); });
+                tasks[ds] = createAsyncWriteTask(fileMetadata, ds);
             }
 
-            //State.fileContentContainer.addFileContent(NewFile);
-
-            int writeQuorum = fileMetadata.WriteQuorum;
-
-            waitVoidQuorum(tasks, writeQuorum);
+            waitWriteQuorum(tasks, fileMetadata.WriteQuorum);
 
         }
+
+        public void waitWriteQuorum(Task[] tasks, int quorum)
+        {
+            int responsesCounter = 0;
+            while (responsesCounter < quorum)
+            {
+                responsesCounter = 0;
+                for (int i = 0; i < tasks.Length; ++i)
+                {
+                    if(tasks[i].IsCompleted){
+
+                        if (tasks[i].Exception != null)
+                        {
+                            //in case the write gives an error we resend the message until we get a quorum
+                            FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(NewFile.FileName);
+                            tasks[i] = createAsyncWriteTask(fileMetadata, i);
+                        }
+                        else {
+                            responsesCounter++;
+                        }
+                    }
+                }
+            }
+
+            foreach (Task task in tasks)
+            {
+                if (!task.IsCompleted)
+                {
+                    Util.IgnoreExceptions(task);
+                }
+            }
+
+        }
+
+        private Task createAsyncWriteTask(FileMetadata fileMetadata, int ds)
+        {
+            IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
+            return Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    dataServer.write(NewFile);
+                }
+                catch (Exception) { }
+            });
+        
+        }
+        
     }
 }

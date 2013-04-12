@@ -15,7 +15,7 @@ namespace DataServer
 
         public override void write(File file)
         {
-            Console.WriteLine("#DS write( fileName: " + file.FileName + ", version: " + file.Version + ")");
+            
             if (file == null)
             {
                 return;
@@ -36,6 +36,7 @@ namespace DataServer
             Ds.FileLocks[file.FileName].EnterWriteLock();
             try
             {
+                Console.WriteLine("#DS: write fileName: " + file.FileName + ", version: " + file.Version);
                 Util.writeFileToDisk(file, "" + "DS" + Ds.Id);
             }
             finally
@@ -55,6 +56,7 @@ namespace DataServer
             Ds.FileLocks[filename].EnterWriteLock();
             try
             {
+                Console.WriteLine("#DS: read fileName: " + filename);
                 file = Util.readFileFromDisk("DS" + Ds.Id, filename, Ds.Files[filename].Version);
             }
             finally
@@ -66,7 +68,9 @@ namespace DataServer
 
         public override int readFileVersion(string filename)
         {
-            return Ds.Files.ContainsKey(filename) ? Ds.Files[filename].Version : -1;
+            int fileVersion = Ds.Files.ContainsKey(filename) ? Ds.Files[filename].Version : -1;
+            Console.WriteLine("#DS: readFileVersion " + filename + " has version " + fileVersion);
+            return fileVersion; 
         }
     }
 }

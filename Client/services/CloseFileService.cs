@@ -37,9 +37,6 @@ namespace Client.services
 
             int writeQuorum = State.fileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
 
-         // State.fileMetadataContainer.removeFileMetadata(FileName);
-         // State.fileContentContainer.removeFileContent(FileName);
-
             waitVoidQuorum(tasks, 1);
 
         }

@@ -170,15 +170,13 @@ namespace PuppetForm
                 string processId = getSelectedClient();
                 int fileRegisterId = clientFileRegisterlistBox.SelectedIndex;
 
-                string readSemantics = "NOT DONE";
+                string readSemantics = "default";
 
                 if (replaceStringRegisterCheckBox.Checked)
                 {
                     stringRegisterId = clientStringRegisterListBox.SelectedIndex;
                     //we want to substitute the selected string register
                     verifyStringRegisterIdSelection();
-                    printCommand("read com Sregister replace check " + stringRegisterId);
-
                     puppetMaster.read(processId, fileRegisterId, readSemantics, stringRegisterId);
                 }
                 else
@@ -186,7 +184,6 @@ namespace PuppetForm
                     //verifyFullStringRegister();
                     //the string register is not full and we dont want to replace, so write on the next free position
                     //stringRegisterId = clientStringRegisterListBox.Items.Count;
-                    printCommand("read com Sregister em circulo");
                     puppetMaster.read(processId, fileRegisterId, readSemantics);
                 }
 

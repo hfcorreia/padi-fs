@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 
 namespace CommonTypes
 {
@@ -80,6 +81,11 @@ namespace CommonTypes
                 i++;
             }
             return i;
+        }
+
+        public static void IgnoreExceptions(this Task task)
+        {
+            task.ContinueWith(c => { var ignored = c.Exception; });
         }
     }
 }

@@ -301,7 +301,7 @@ namespace PuppetForm
             {
                 client.read(fileRegisterId, semantics);
             }
-            catch (PadiFsException e)
+            catch (Exception e)
             {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
@@ -426,8 +426,6 @@ namespace PuppetForm
         public void exeClientScript(string process, string filename)
         {
             startProcess(process);
-
-
             try
             {
                 ServerObjectWrapper sow = clients[process];
@@ -502,8 +500,6 @@ namespace PuppetForm
                 Task.WaitAll(tasks);
             }
             catch (Exception e) {}
-            
-            //Application.Exit();
         }
         
        public List<string> stringRegistersForClient(string clientId)

@@ -1,12 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Remoting.Channels;
-using System.Collections;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting;
-using System.Runtime.Serialization.Formatters;
 using CommonTypes;
 using System.Threading.Tasks;
 using CommonTypes.Exceptions;
@@ -30,12 +23,81 @@ namespace Client.services
             ReadedFile = null;
         }
 
+        public File waitReadQuorum(Task<File>[] tasks, int quorum)
+        {
+            List<Object> responses = new List<Object>();
+            while (responses.Count < quorum)
+            {
+                responses = new List<Object>();
+                for (int i = 0; i < tasks.Length; ++i)
+                {
+                    if (tasks[i].IsCompleted)
+                    {
+                        try
+                        {
+                            responses.Add(tasks[i].Result);
+                        }
+                        catch (AggregateException aggregateException)
+                        {
+                            Exception exception = aggregateException.Flatten().InnerException;
+                            if (exception is ReadFileException)
+                            {
+                                responses.Add(exception);
+                            }
+                            else
+                            {
+                                FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
+                                tasks[i] = createAsyncTask(fileMetadata, i);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (Task task in tasks)
+            {
+                if (!task.IsCompleted)
+                {
+                    Util.IgnoreExceptions(task);
+                }
+            }
+
+            //choose the bettew option
+            Object result = null;
+            int moreRecentVersion = -1;
+            foreach (Object obj in responses)
+            {
+                if (obj is File)
+                {
+                    CommonTypes.File file = (File)obj;
+                    if (file.Version > moreRecentVersion)
+                    {
+                        moreRecentVersion = file.Version;
+                        result = file;
+                    }
+                }
+                if (result == null && (obj is ReadFileException))
+                {
+                    result = obj;
+                }
+            }
+
+            if (result is ReadFileException)
+            {
+                throw (ReadFileException)result;
+            }
+            else
+            {
+                return (File)result;
+            }
+        }
+
         override public void execute()
         {
 
             Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
             File file = null;
-           
+
             FileMetadata fileMetadata = State.fileMetadataContainer.getFileMetadata(FileRegisterId);
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {
@@ -47,13 +109,12 @@ namespace Client.services
                 Task<File>[] tasks = new Task<File>[fileMetadata.FileServers.Count];
                 for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
                 {
-                    IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
-                    tasks[ds] = Task.Factory.StartNew(() => { return dataServer.read(fileMetadata.FileName); });
+                    tasks[ds] = createAsyncTask(fileMetadata, ds);
                 }
 
                 int readQuorum = fileMetadata.ReadQuorum;
 
-                file = waitQuorum<File>(tasks, readQuorum);
+                file = waitReadQuorum(tasks, readQuorum);
 
             }
             else
@@ -67,5 +128,20 @@ namespace Client.services
 
             ReadedFile = file;
         }
+
+        private Task<File> createAsyncTask(FileMetadata fileMetadata, int ds)
+        {
+            IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
+            return Task<File>.Factory.StartNew(() =>
+            {
+                try
+                {
+                    return dataServer.read(fileMetadata.FileName);
+                }
+                catch (Exception) { return null; }
+            });
+        }
+
+
     }
 }

@@ -27,8 +27,6 @@ namespace DataServer
         public string Url { get { return "tcp://" + Host +":" + Port + "/" + Id; } }
 
         public SerializableDictionary<string, File> Files { get; set; }
-
-        
              
         private DSstate State { get; set; }
 
@@ -84,15 +82,11 @@ namespace DataServer
 
         public void write(File file)
         {
-            Console.WriteLine("#DS: writing file '" + file.FileName +"', version: " + file.Version + ", content: " + file.Content );
-
             State.write(file);
-
         }
 
         public File read(string filename)
         {
-            Console.WriteLine("#DS: reading file '" + filename + "'");
 			return State.read(filename);
         }
 
@@ -108,7 +102,6 @@ namespace DataServer
 
         public int readFileVersion(string filename)
         {
-            Console.WriteLine("#DS: reading file version for file'" + filename + "'");
             return State.readFileVersion(filename);
         }
 
