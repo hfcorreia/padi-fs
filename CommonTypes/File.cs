@@ -11,6 +11,7 @@ namespace CommonTypes
         public string FileName { get; set; }
         public int Version { get; set; }
         public byte[] Content { get; set; }
+        public string clientId { get; set; }
 
         public File() { }
         public File(string fileName, int version, byte[] content) 
