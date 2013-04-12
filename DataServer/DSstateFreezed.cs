@@ -17,23 +17,22 @@ namespace DataServer
         {
             Console.WriteLine("#DS write " + file.FileName + " is waiting because the server is freezed ");
             monitor.WaitOne();
-            Console.WriteLine("#DS write " + file.FileName + " unfreezed");
+            Console.WriteLine("#DS write " + file.FileName + " will execute ");
             new DSstateNormal(Ds).write(file);
-
         }
-        public override File read(string filename)
+        public override File read(string filename) 
         {
             Console.WriteLine("#DS read " + filename + " is waiting because the server is freezed ");
             monitor.WaitOne();
-            Console.WriteLine("#DS read " + filename + " unfreezed");
-            return new DSstateNormal(Ds).read(filename);
+            Console.WriteLine("#DS read " + filename + " will execute ");
+            return new DSstateNormal(Ds).read(filename); 
         }
 
         public override int readFileVersion(string filename)
         {
             Console.WriteLine("#DS read file version " + filename + " is waiting because the server is freezed ");
             monitor.WaitOne();
-            Console.WriteLine("#DS read file version " + filename + " unfreezed");
+            Console.WriteLine("#DS read file version " + filename + " will execute ");
             return new DSstateNormal(Ds).readFileVersion(filename);
         }
 
@@ -43,6 +42,5 @@ namespace DataServer
             monitor.Set();
             Ds.setState(new DSstateNormal(Ds));
         }
-
     }
 }
