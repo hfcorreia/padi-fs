@@ -17,7 +17,7 @@ namespace DataServer
 {
     public class DataServer : MarshalByRefObject, IDataServer
     {
-        public int CheckpointCounter { get; set; }
+        private int CheckpointCounter { get; set; }
 
         public String Id { get; set; }
 
@@ -75,7 +75,6 @@ namespace DataServer
 
             RemotingServices.Marshal(dataServer, Id, typeof(DataServer));
             registInMetadataServers();
-
         }
 
 
@@ -114,7 +113,6 @@ namespace DataServer
 
         public void makeCheckpoint()
         {
-            /*
                 String dataServerId = Id;
                 Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ +  " from server " + Id);
 
@@ -124,14 +122,11 @@ namespace DataServer
                 System.Xml.Serialization.XmlSerializer writer =
                 new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-            writer.Serialize(fileWriter, this);
+                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+                writer.Serialize(fileWriter, this);
 
-           // DataContractSerializer w = new DataContractSerializer(typeof(DataServer));
-           // System.Xml.XmlDictionaryWriter xw = new System.Xml.DelegatingXmlDictionaryWriter(@dirName + "\\checkpoint.xml");
-           // w.WriteObject(fileWriter, this);
-
-            fileWriter.Close();*/
+            fileWriter.Close();
+            Console.WriteLine("#DS: checkpoint " + CheckpointCounter + " from server " + Id + " done");
         }
 
         public static DataServer getCheckpoint(String dataServerId)
