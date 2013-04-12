@@ -50,7 +50,6 @@ namespace Client.services
             }
 
             waitWriteQuorum(tasks, fileMetadata.WriteQuorum);
-
         }
 
         public void waitWriteQuorum(Task[] tasks, int quorum)
@@ -75,14 +74,7 @@ namespace Client.services
                     }
                 }
             }
-
-            foreach (Task task in tasks)
-            {
-                if (!task.IsCompleted)
-                {
-                    Util.IgnoreExceptions(task);
-                }
-            }
+            closeUncompletedTasks(tasks);
 
         }
 

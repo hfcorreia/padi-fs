@@ -41,7 +41,7 @@ namespace Client.services
                 tasks[ds] = createAsyncTask(fileMetadata, ds);
             }
 
-            FileVersion = waitQuorum<int>(tasks, fileMetadata.WriteQuorum);
+            FileVersion = waitReadQuorum(tasks, fileMetadata.WriteQuorum);
         }
 
 
@@ -68,14 +68,7 @@ namespace Client.services
                 }
             }
 
-            foreach (Task task in tasks)
-            {
-                if (!task.IsCompleted)
-                {
-                    Util.IgnoreExceptions(task);
-                }
-            }
-
+            closeUncompletedTasks(tasks);
             //choose the bettew option
             return findMax(responses);
         }

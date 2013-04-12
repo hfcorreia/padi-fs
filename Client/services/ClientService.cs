@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommonTypes;
 
 namespace Client.services
 {
@@ -71,7 +72,16 @@ namespace Client.services
             }
         }
 
-
+        public void closeUncompletedTasks(Task[] tasks)
+        {
+            foreach (Task task in tasks)
+            {
+                if (!task.IsCompleted)
+                {
+                    Util.IgnoreExceptions(task);
+                }
+            }
+        }
 
         public ClientService(ClientState clientState){
             State = clientState;

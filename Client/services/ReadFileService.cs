@@ -54,15 +54,23 @@ namespace Client.services
                 }
             }
 
-            foreach (Task task in tasks)
-            {
-                if (!task.IsCompleted)
-                {
-                    Util.IgnoreExceptions(task);
-                }
-            }
+            closeUncompletedTasks(tasks);
 
-            //choose the bettew option
+            //choose the better option
+            Object result = findMostRecentVersion(responses);
+
+            if (result is ReadFileException)
+            {
+                throw (ReadFileException)result;
+            }
+            else
+            {
+                return (File)result;
+            }
+        }
+
+        private Object findMostRecentVersion(List<Object> responses)
+        {
             Object result = null;
             int moreRecentVersion = -1;
             foreach (Object obj in responses)
@@ -81,17 +89,10 @@ namespace Client.services
                     result = obj;
                 }
             }
-
-            if (result is ReadFileException)
-            {
-                throw (ReadFileException)result;
-            }
-            else
-            {
-                return (File)result;
-            }
+            return result;
         }
 
+      
         override public void execute()
         {
 
@@ -122,8 +123,6 @@ namespace Client.services
                 throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
             }
 
-
-            //State.fileContentContainer.setFileContent(StringRegisterId, file);
             Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.fileContentContainer.getAllFileContentAsString());
 
             ReadedFile = file;

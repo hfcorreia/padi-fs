@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Formatters;
 using CommonTypes.Exceptions;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DataServer
 {
@@ -21,13 +22,13 @@ namespace DataServer
         public String Id { get; set; }
 
         public int Port { get; set; }
-        
+
         public string Host { get; set; }
 
-        public string Url { get { return "tcp://" + Host +":" + Port + "/" + Id; } }
+        public string Url { get { return "tcp://" + Host + ":" + Port + "/" + Id; } }
 
         public SerializableDictionary<string, File> Files { get; set; }
-             
+
         private DSstate State { get; set; }
 
         //isto vai ter de levar um lock qualquer para quando esta a tratar dos pedidos na queue nao andar ng a mexer?
@@ -48,7 +49,7 @@ namespace DataServer
                 dataServer.initialize(Int32.Parse(args[0]), args[1], "localhost");
                 dataServer.startConnection(dataServer);
 
-                Console.WriteLine("#DS: Registered "+ dataServer.Id + " at " + dataServer.Url);
+                Console.WriteLine("#DS: Registered " + dataServer.Id + " at " + dataServer.Url);
                 Console.ReadLine();
             }
         }
@@ -76,7 +77,7 @@ namespace DataServer
 
             RemotingServices.Marshal(dataServer, Id, typeof(DataServer));
             registInMetadataServers();
-            
+
         }
 
 
@@ -87,16 +88,18 @@ namespace DataServer
 
         public File read(string filename)
         {
-			return State.read(filename);
+            return State.read(filename);
         }
 
 
         public void registInMetadataServers()
         {
             Console.WriteLine("#DS: registering in MetadataServers");
-            foreach (ServerObjectWrapper metadataServerWrapper in MetaInformationReader.Instance.MetaDataServers)
+            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
+            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
-                metadataServerWrapper.getObject<IMetaDataServer>().registDataServer(Id, Host, Port);
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
+                tasks[md] = Task.Factory.StartNew(() => { metadataServer.registDataServer(Id, Host, Port); });
             }
         }
 
