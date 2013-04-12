@@ -13,18 +13,23 @@ namespace DataServer
 
         public override void write(File file) 
         {
-            Console.WriteLine("#DS write " + file.FileName + " refused because the server is failing ");
-            throw new ServerDownException("The server " + Ds.Id + " is down");
+            failError(file.FileName);
         }
         public override File read(string filename) 
         {
-            Console.WriteLine("#DS read " + filename + " refused because the server is failing ");
-            throw new ServerDownException("The server " + Ds.Id + " is down"); 
+            failError(filename);
+            return null;
         }
         public override int readFileVersion(string filename) 
         {
-            Console.WriteLine("#DS read file version " + filename + " refused because the server is failing ");
-            throw new ServerDownException("The server " + Ds.Id + " is down"); 
+            failError(filename);
+            return -1;
+        }
+
+        private void failError(string filename)
+        {
+            Console.WriteLine("#DS read file version " + filename + " refused because the server is down!");
+            throw new ServerDownException("The server " + Ds.Id + " is down");
         }
     }
 }

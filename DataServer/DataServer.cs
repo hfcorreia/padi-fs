@@ -31,8 +31,6 @@ namespace DataServer
 
         private DSstate State { get; set; }
 
-        //isto vai ter de levar um lock qualquer para quando esta a tratar dos pedidos na queue nao andar ng a mexer?
-        internal List<BufferedRequest> requestsBuffer = new List<BufferedRequest>();
         internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
 
         static void Main(string[] args)
@@ -165,17 +163,6 @@ namespace DataServer
             Console.WriteLine();
         }
 
-        public void queue(BufferedRequest request)
-        {
-            requestsBuffer.Add(request);
-
-            Console.WriteLine("QUEUE DEBUG");
-            foreach (BufferedRequest req in requestsBuffer)
-            {
-                Console.WriteLine("Buff: " + req.GetType());
-            }
-        }
-
         public void fail()
         {
             State.fail();
@@ -196,7 +183,6 @@ namespace DataServer
             State.unfreeze();
         }
 
-        //so existe porque nao consigo por state a public e a fazer checkpoints sem erros
         public void setState(DSstate newState)
         {
             State = newState;

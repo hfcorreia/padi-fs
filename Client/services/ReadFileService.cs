@@ -155,12 +155,6 @@ namespace Client.services
             IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
             return Task<File>.Factory.StartNew(() =>
             {
-                /*try
-                 {
-                     return dataServer.read(fileMetadata.FileName);
-                 }
-                 catch (Exception) { return null; }
-                 */
                 return dataServer.read(fileMetadata.FileName);
             }
             );

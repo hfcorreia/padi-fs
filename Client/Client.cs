@@ -20,13 +20,9 @@ namespace Client
     {
         public ClientState ClientState { get; set; }
 
-        public override object InitializeLifetimeService()
-        {
-            return null;
-        }
-
         #region INITIALIZATION
-        
+      
+
         static void Main(string[] args)
         {
             Console.SetWindowSize(80, 15);
@@ -63,7 +59,11 @@ namespace Client
             StartConnectionService startConnectionService = new StartConnectionService(ClientState, client);
             startConnectionService.execute();
         }
-        
+
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
         #endregion INITIALIZATION
         
         #region WRITE
@@ -76,7 +76,6 @@ namespace Client
             }
 
             FileMetadata fileMetadata = ClientState.FileMetadataContainer.getFileMetadata(fileRegisterId);
-            //int stringRegisterId = ClientState.fileContentContainer.addFileContent(new File(fileMetadata.FileName, -1, content));
 
             File file = new File(fileMetadata.FileName, -1, content);
 
@@ -207,20 +206,18 @@ namespace Client
             ReadFileService readFileService = new ReadFileService(ClientState, semantics, sourceFileRegisterId);
             readFileService.execute();
 
-            byte[] sourceBytes = readFileService.ReadedFile.Content;
+            byte[] newBytes = appendBytes(readFileService.ReadedFile.Content, salt);
+            
+            write(targetFileRegisterId, newBytes);
+        }
+
+        public byte[] appendBytes(byte[] original, string salt)
+        {
             byte[] saltBytes = System.Text.Encoding.UTF8.GetBytes(salt);
             var contentVar = new System.IO.MemoryStream();
-            contentVar.Write(sourceBytes, 0, sourceBytes.Length);
+            contentVar.Write(original, 0, original.Length);
             contentVar.Write(saltBytes, 0, saltBytes.Length);
-            byte[] contentBytes = contentVar.ToArray();
-
-            Console.WriteLine("#Client: sourceContent : " + readFileService.ReadedFile.Content);
-
-            Console.WriteLine("#Client: newContent : " + contentBytes);
-
-            Console.WriteLine("#Client: byteContent : " + contentBytes);
-
-            write(targetFileRegisterId, contentBytes);
+            return contentVar.ToArray();
         }
 
         public void dump()
@@ -233,7 +230,6 @@ namespace Client
                 Console.WriteLine("\t" + name);
             }
             Console.WriteLine();
-
         }
     
     }
