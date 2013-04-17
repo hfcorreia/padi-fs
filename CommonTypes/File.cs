@@ -27,6 +27,10 @@ namespace CommonTypes
             Content = file.Content;
         }
 
+        public override string ToString() {
+            return "File: " + FileName + " version: " + Version + "Content: " + Content;
+        }
+
     }
 
 }

@@ -12,6 +12,7 @@ using CommonTypes.Exceptions;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace DataServer
 {
@@ -25,7 +26,7 @@ namespace DataServer
 
         public string Host { get; set; }
 
-        public string Url { get { return "tcp://" + Host + ":" + Port + "/" + Id; } }
+        public string Url { get { return "tcp://" + Host + ":" + Port + "/" + Id; }}
 
         public SerializableDictionary<string, File> Files { get; set; }
 
@@ -113,17 +114,17 @@ namespace DataServer
 
         public void makeCheckpoint()
         {
-                String dataServerId = Id;
-                Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ +  " from server " + Id);
+            String dataServerId = Id;
+            Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ + " from server " + Id);
 
-                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
-                Util.createDir(dirName);
+            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
+            Util.createDir(dirName);
 
-                System.Xml.Serialization.XmlSerializer writer =
-                new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+            System.Xml.Serialization.XmlSerializer writer =
+            new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-                writer.Serialize(fileWriter, this);
+            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+            writer.Serialize(fileWriter, this);
 
             fileWriter.Close();
             Console.WriteLine("#DS: checkpoint " + CheckpointCounter + " from server " + Id + " done");
@@ -153,7 +154,7 @@ namespace DataServer
             Console.WriteLine(" Opened Files:");
             foreach (KeyValuePair<String, File> name in Files)
             {
-                Console.WriteLine("\t " + name.Key);
+                Console.WriteLine("\t " + name.Value);
             }
             Console.WriteLine();
         }

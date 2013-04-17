@@ -26,5 +26,10 @@ namespace CommonTypes
             FileServers = fileServers;
             Clients = new List<string>();
         }
+
+        public override string ToString()
+        {
+            return "File: " + FileName + "Nb: " + NumServers+ " RQ: " + ReadQuorum + " WQ: " + WriteQuorum + " Nb_FileServers " + FileServers.Count + " Nb_Clients: " + Clients.Count;
+        }
     }
 }

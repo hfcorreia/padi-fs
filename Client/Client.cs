@@ -231,6 +231,9 @@ namespace Client
                 Console.WriteLine("\t" + name);
             }
             Console.WriteLine();
+
+            ClientState.FileMetadataContainer.printMetaDataContainer();
+
         }
     
     }

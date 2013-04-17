@@ -13,41 +13,6 @@ namespace DataServer
 
         public DSstateNormal(DataServer dataServer) : base(dataServer) { }
         
-        /*
-        public override void write(File file)
-        {
-            
-            if (file == null)
-            {
-                return;
-            }
-
-            if (Ds.Files.ContainsKey(file.FileName))
-            {
-                //updates the file
-                Ds.Files.Remove(file.FileName);
-            }
-            if (!Ds.FileLocks.ContainsKey(file.FileName))
-            {
-                Ds.FileLocks.Add(file.FileName, new System.Threading.ReaderWriterLockSlim());
-            }
-            //creates a new file
-            Ds.Files.Add(file.FileName, file);
-
-            Ds.FileLocks[file.FileName].EnterWriteLock();
-            try
-            {
-                Console.WriteLine("#DS: write fileName: " + file.FileName + ", version: " + file.Version);
-                Util.writeFileToDisk(file, "" + "DS" + Ds.Id);
-            }
-            finally
-            {
-                Ds.FileLocks[file.FileName].ExitWriteLock();
-            }
-            Ds.makeCheckpoint();
-        }
-        */
-        
         public override File read(string filename)
         {
             File file = null;
@@ -71,7 +36,6 @@ namespace DataServer
 
         public override void write(File file)
         {
-            
             if (file == null)
             {
                 return;
@@ -122,14 +86,15 @@ namespace DataServer
             
             try
             {
-                Console.WriteLine("#DS: write fileName: " + file.FileName + ", version: " + file.Version);
+                Console.WriteLine("#DS: write fileName: " + file.FileName + ", version: " + file.Version + ", content: " + System.Text.Encoding.UTF8.GetString(file.Content));
                 Util.writeFileToDisk(file, "" + "DS" + Ds.Id);
+                Ds.makeCheckpoint();
             }
             finally
             {
                 Ds.FileLocks[file.FileName].ExitWriteLock();
             }
-            Ds.makeCheckpoint();
+            
         }
 
         private int getClientId(string userString)

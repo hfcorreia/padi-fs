@@ -102,5 +102,14 @@ namespace CommonTypes
             }
             return result;
         }
+
+        public void printMetaDataContainer()
+        {
+            Console.WriteLine("printing metaDataContainer info:");
+            foreach (FileMetadata file in Metadata)
+            {
+                Console.WriteLine(file);
+            }
+        }
     }
 }

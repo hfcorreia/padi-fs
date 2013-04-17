@@ -256,6 +256,7 @@ namespace MetaDataServer
                     Console.Write(name + " ");
                 }
                 Console.WriteLine("]");
+                Console.WriteLine("nb " + files.Value.NumServers + " rq " + files.Value.ReadQuorum + " wq" + files.Value.WriteQuorum);
             }
             Console.WriteLine();
 

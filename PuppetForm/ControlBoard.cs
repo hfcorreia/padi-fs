@@ -250,7 +250,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show(exception.StackTrace);
+                System.Windows.Forms.MessageBox.Show(exception.Message);
             }
         }
 
