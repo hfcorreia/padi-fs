@@ -15,13 +15,71 @@ namespace Client.services
         private int StringRegisterId { get; set; }
         public File ReadedFile { get; set; }
 
-        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId)
-            : base(clientState)
+        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId) : base(clientState)
         {
             FileRegisterId = fileRegisterId;
             Semantics = semantics;
             ReadedFile = null;
         }
+
+        override public void execute()
+        {
+
+            Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
+            File file = null;
+
+            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
+            if (fileMetadata != null && fileMetadata.FileServers != null)
+            {
+                if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
+                {
+                    Console.WriteLine("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+                    updateReadFileMetadata(fileMetadata.FileName);
+                    fileMetadata = State.FileMetadataContainer.getFileMetadata(fileMetadata.FileName);
+                    //throw new WriteFileException("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+                }
+
+                Task<File>[] tasks = new Task<File>[fileMetadata.FileServers.Count];
+                for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
+                {
+                    tasks[ds] = createAsyncTask(fileMetadata, ds);
+                }
+
+                int readQuorum = fileMetadata.ReadQuorum;
+                Console.WriteLine("#Client: waiting read quorum...");
+                file = waitReadQuorum(tasks, readQuorum);
+
+            }
+            else
+            {
+                throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
+            }
+
+            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.FileContentContainer.getAllFileContentAsString());
+
+            ReadedFile = file;
+        }
+
+        private void updateReadFileMetadata(String filename)
+        {
+
+            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
+            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
+                Console.WriteLine("updateReadFileMetadata [filename: " + filename + ", metadataServer: " + md);
+                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.updateReadMetadata(State.Id, filename); });
+            }
+
+            Console.WriteLine("updateReadFileMetadata - waitingQuorum");
+            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
+            Console.WriteLine("updateReadFileMetadata - quorum achieved. Result: " + fileMetadata.FileServers.Count);
+            closeUncompletedTasks(tasks);
+            int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
+            Console.WriteLine("#Client: metadata saved in position " + position);
+        
+        }
+
 
         public File waitReadQuorum(Task<File>[] tasks, int quorum)
         {
@@ -115,40 +173,7 @@ namespace Client.services
         }
 
 
-        override public void execute()
-        {
 
-            Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
-            File file = null;
-
-            FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
-            if (fileMetadata != null && fileMetadata.FileServers != null)
-            {
-                if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
-                {
-                    throw new WriteFileException("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
-                }
-
-                Task<File>[] tasks = new Task<File>[fileMetadata.FileServers.Count];
-                for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
-                {
-                    tasks[ds] = createAsyncTask(fileMetadata, ds);
-                }
-
-                int readQuorum = fileMetadata.ReadQuorum;
-                Console.WriteLine("#Client: waiting read quorum...");
-                file = waitReadQuorum(tasks, readQuorum);
-
-            }
-            else
-            {
-                throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
-            }
-
-            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.FileContentContainer.getAllFileContentAsString());
-
-            ReadedFile = file;
-        }
 
         private Task<File> createAsyncTask(FileMetadata fileMetadata, int ds)
         {

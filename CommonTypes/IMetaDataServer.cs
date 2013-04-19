@@ -36,6 +36,20 @@ namespace CommonTypes
         void delete(string clientId, string filename);
 
         /**
+         * Update Read Metadata
+         * blocks until a given file has the required number of servers to fullfill the readQuorum
+         * and then returns the metadata of that file.
+         **/
+        FileMetadata updateReadMetadata(string clientId, string filename);
+
+        /**
+         * Update Write Metadata
+         * blocks until a given file has the required number of servers to fullfill the writeQuorum
+         * and then returns the metadata of that file.
+         *
+        void updateWriteMetadata(string clientId, string filename);
+        **/
+        /**
          * Fail
          * The server starts ignoring all requests from Clients and DataServers.
          **/

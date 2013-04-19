@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters;
 using CommonTypes;
 using System.Collections;
 using CommonTypes.Exceptions;
+using System.Threading;
 
 namespace MetaDataServer
 {
@@ -21,7 +22,8 @@ namespace MetaDataServer
         private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
         //private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
         private Dictionary<String, FileMetadata> fileMetadata = new Dictionary<String, FileMetadata>();
-       
+        private Dictionary<String, ManualResetEvent> fileMetadataLocks = new Dictionary<string, ManualResetEvent>();
+
         static void Main(string[] args)
         {
             Console.SetWindowSize(80, 15);
@@ -77,6 +79,7 @@ namespace MetaDataServer
                 if (metadata.FileServers.Count < metadata.ReadQuorum || metadata.FileServers.Count < metadata.WriteQuorum) 
                 {
                     metadata.FileServers.Add(dataServers[id]);
+                    fileMetadataLocks[fileName].Set();
                 }
             }
         }
@@ -169,6 +172,7 @@ namespace MetaDataServer
             //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
             fileMetadata.Add(filename, newFileMetadata);
+            fileMetadataLocks.Add(filename, new ManualResetEvent(false));
             Console.WriteLine("#MDS: Created " + filename);
             makeCheckpoint();
 
@@ -236,6 +240,19 @@ namespace MetaDataServer
             metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
 
             return metadaServer;
+        }
+
+        public FileMetadata updateReadMetadata(string clientId, string filename)
+        {
+            while (fileMetadata[filename].FileServers.Count < fileMetadata[filename].ReadQuorum) 
+            {
+                Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].ReadQuorum);
+                fileMetadataLocks[filename].WaitOne();
+            }
+
+            Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].ReadQuorum);
+
+            return fileMetadata[filename];
         }
 
         public void dump()
