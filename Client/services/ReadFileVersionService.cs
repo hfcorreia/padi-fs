@@ -31,6 +31,10 @@ namespace Client.services
             Console.WriteLine("#Client: reading async file version for file '" + FileName + "'");
 
             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
+            if (!fileMetadata.IsOpen) 
+            {
+                throw new ReadFileVersionException("Client - The file " + fileMetadata.FileName + " is closed. Please open the file before reading the version.");
+            }
             if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
             {
                 Console.WriteLine("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");

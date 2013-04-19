@@ -36,6 +36,8 @@ namespace Client.services
             }
 
             int writeQuorum = State.FileMetadataContainer.getFileMetadata(FileName).WriteQuorum;
+            
+            State.FileMetadataContainer.markClosedFile(FileName);
 
             waitVoidQuorum(tasks, 1);
 

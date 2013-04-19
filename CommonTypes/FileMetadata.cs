@@ -15,6 +15,7 @@ namespace CommonTypes
         public int NumServers { get; set; }
         public List<ServerObjectWrapper> FileServers { get; set; }
         public List<String> Clients { get; set; }
+        public bool IsOpen { get; set; }
 
         public FileMetadata() { }
         public FileMetadata(String filename, int numServers, int readQuorum, int writeQuorum, List<ServerObjectWrapper> fileServers)
@@ -25,11 +26,14 @@ namespace CommonTypes
             WriteQuorum = writeQuorum;
             FileServers = fileServers;
             Clients = new List<string>();
+            IsOpen = false;
         }
 
         public override string ToString()
         {
             return "File: " + FileName + "Nb: " + NumServers+ " RQ: " + ReadQuorum + " WQ: " + WriteQuorum + " Nb_FileServers " + FileServers.Count + " Nb_Clients: " + Clients.Count;
         }
+
+        
     }
 }

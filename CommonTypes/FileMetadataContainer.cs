@@ -27,9 +27,10 @@ namespace CommonTypes
         //the position in witch the fileMetadata was saved
         public int addFileMetadata(FileMetadata fileMetadata){
             int fileMetadataPosition = (containsFileMetadata(fileMetadata.FileName)) ? getPositionOf(fileMetadata.FileName) : findFirstFreePosition();
-           
-            Metadata[fileMetadataPosition] = fileMetadata;
 
+            fileMetadata.IsOpen = true;
+            Metadata[fileMetadataPosition] = fileMetadata;
+            
             return fileMetadataPosition;
         }
 
@@ -109,6 +110,22 @@ namespace CommonTypes
             foreach (FileMetadata file in Metadata)
             {
                 Console.WriteLine(file);
+            }
+        }
+
+        public void markOpenFile(String filename)
+        {
+            if (containsFileMetadata(filename)) 
+            {
+                getFileMetadata(filename).IsOpen = true;
+            }
+        }
+
+        public void markClosedFile(String filename)
+        {
+            if (containsFileMetadata(filename))
+            {
+                getFileMetadata(filename).IsOpen = false;
             }
         }
     }

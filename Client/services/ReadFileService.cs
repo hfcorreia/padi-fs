@@ -29,8 +29,15 @@ namespace Client.services
             File file = null;
 
             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
+            
+
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {
+                if (!fileMetadata.IsOpen) 
+                {
+                    throw new ReadFileException("Client - The file " + fileMetadata.FileName + " is closed. Please open the file before reading.");
+                }
+
                 if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
                 {
                     Console.WriteLine("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");

@@ -32,10 +32,14 @@ namespace Client.services
 
             if (!State.FileMetadataContainer.containsFileMetadata(NewFile.FileName))
             {
-                throw new WriteFileException("Client - tryng to write a file that is not open");
+                throw new WriteFileException("Client - tryng to write a file that is not in the file-register");
             }
 
             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(NewFile.FileName);
+            if (!fileMetadata.IsOpen)
+            {
+                throw new WriteFileException("Client - tryng to write a file that is not open");
+            }
             if (fileMetadata.FileServers.Count < fileMetadata.WriteQuorum)
             {
                 Console.WriteLine("Client - trying to write in a quorum of " + fileMetadata.WriteQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");

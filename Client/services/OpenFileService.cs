@@ -21,22 +21,30 @@ namespace Client.services
         {
             FileName = fileName;
         }
-        
+
         override public void execute()
         {
             Console.WriteLine("#Client: opening file '" + FileName + "'");
-            
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
+            if (State.FileMetadataContainer.containsFileMetadata(FileName))
             {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.open(State.Id, FileName); });
+                //if we allready have the file in the metadataContainer, we only mark it has being open
+                State.FileMetadataContainer.markOpenFile(FileName);
             }
+            else
+            {
+                //if we don't have metadata of the file, we go get it on the MetadataServers
+                Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
+                for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
+                {
+                    IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
+                    tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.open(State.Id, FileName); });
+                }
 
-            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
+                FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
-            int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
-            Console.WriteLine("#Client: metadata saved in position " + position);
+                int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
+                Console.WriteLine("#Client: metadata saved in position " + position);
+            }
         }
     }
 }
