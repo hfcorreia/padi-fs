@@ -46,9 +46,9 @@ namespace CommonTypes
          * Update Write Metadata
          * blocks until a given file has the required number of servers to fullfill the writeQuorum
          * and then returns the metadata of that file.
-         *
-        void updateWriteMetadata(string clientId, string filename);
-        **/
+         **/
+        FileMetadata updateWriteMetadata(string clientId, string filename);
+       
         /**
          * Fail
          * The server starts ignoring all requests from Clients and DataServers.

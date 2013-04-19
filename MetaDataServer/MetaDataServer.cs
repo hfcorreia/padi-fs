@@ -255,6 +255,19 @@ namespace MetaDataServer
             return fileMetadata[filename];
         }
 
+        public FileMetadata updateWriteMetadata(string clientId, string filename)
+        {
+            while (fileMetadata[filename].FileServers.Count < fileMetadata[filename].WriteQuorum)
+            {
+                Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].WriteQuorum);
+                fileMetadataLocks[filename].WaitOne();
+            }
+
+            Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].WriteQuorum);
+
+            return fileMetadata[filename];
+        }
+
         public void dump()
         {
             Console.WriteLine("#MDS: Dumping!\r\n");
