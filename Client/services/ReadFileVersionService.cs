@@ -35,19 +35,21 @@ namespace Client.services
             {
                 throw new ReadFileVersionException("Client - The file " + fileMetadata.FileName + " is closed. Please open the file before reading the version.");
             }
-            if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
+            if (fileMetadata.FileServers.Count < fileMetadata.NumServers)
             {
                 Console.WriteLine("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                 updateWriteFileMetadata(FileName);
-
+                fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
             }
+            Console.WriteLine("Client - creating new tasks for reading file version");
             Task<int>[] tasks = new Task<int>[fileMetadata.FileServers.Count];
             for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {
                 tasks[ds] = createAsyncTask(fileMetadata, ds);
             }
-
+            Console.WriteLine("Client - waiting quorum for a quorum of "+ fileMetadata.WriteQuorum + " server for readFileVersion");
             FileVersion = waitReadQuorum(tasks, fileMetadata.WriteQuorum);
+            Console.WriteLine("#Client: file version for file '" + FileName + "' is " + FileVersion);
         }
 
 

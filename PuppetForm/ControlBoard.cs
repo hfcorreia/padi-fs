@@ -142,6 +142,14 @@ namespace PuppetForm
             }
         }
 
+        private void verifyCopySemanticsSelection()
+        {
+            if (copySemanticsComboBox.SelectedIndex < 0)
+            {
+                throw new Exception("Please select a semantics for the copy operation");
+            }
+        }
+
         #endregion verifications
 
         #region events
@@ -259,10 +267,11 @@ namespace PuppetForm
             try
             {
                 verifyClientSelection();
+                verifyCopySemanticsSelection();
 
                 int sourceFileRegisterId = getCopySourceRegisterId();
                 int targetFileRegisterId = getCopyTargetRegisterId();
-                string semantics = "DEFAULT SEMANTICS";
+                string semantics = getCopySemantics();
                 string salt = getCopySalt();
 
                 System.Windows.Forms.MessageBox.Show("Copy: from " + sourceFileRegisterId + " to " + targetFileRegisterId + " with salt " + salt);
@@ -274,7 +283,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error loading script::" + exception.Message + " :\n" + exception.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error executing copy: " + exception.Message);
             }
         }
 

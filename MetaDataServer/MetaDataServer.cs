@@ -76,7 +76,7 @@ namespace MetaDataServer
             foreach (String fileName in fileMetadata.Keys) 
             { 
                 FileMetadata metadata = fileMetadata[fileName];
-                if (metadata.FileServers.Count < metadata.ReadQuorum || metadata.FileServers.Count < metadata.WriteQuorum) 
+                if (metadata.FileServers.Count < metadata.NumServers) 
                 {
                     metadata.FileServers.Add(dataServers[id]);
                     fileMetadataLocks[fileName].Set();

@@ -38,7 +38,7 @@ namespace Client.services
                     throw new ReadFileException("Client - The file " + fileMetadata.FileName + " is closed. Please open the file before reading.");
                 }
 
-                if (fileMetadata.FileServers.Count < fileMetadata.ReadQuorum)
+                if (fileMetadata.FileServers.Count < fileMetadata.NumServers)
                 {
                     Console.WriteLine("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                     updateReadFileMetadata(fileMetadata.FileName);
