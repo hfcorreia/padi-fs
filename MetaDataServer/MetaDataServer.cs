@@ -127,8 +127,9 @@ namespace MetaDataServer
         public void delete(string clientId, string filename)
         {
             if (!fileMetadata.ContainsKey(filename))
-                    throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
-
+            {
+                throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
+            }
             /*
             if (fileMetadata[filename].Clients.Count == 1 && fileMetadata[filename].Clients.Contains(clientId))
             {
@@ -136,15 +137,15 @@ namespace MetaDataServer
             }
             */
 
-            if (fileMetadata[filename].Clients.Count > 0)
-            {
-                string clients = "";
-                foreach (string c in fileMetadata[filename].Clients) 
-                {
-                    clients += c + ", ";
-                }
-                throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - Error deleting file " + filename + " for client " + clientId +" is open by clients: [ " + clients + " ]");
-            }
+            //if (fileMetadata[filename].Clients.Count > 0)
+            //{
+            //    string clients = "";
+            //    foreach (string c in fileMetadata[filename].Clients) 
+            //    {
+            //        clients += c + ", ";
+            //    }
+            //    throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - Error deleting file " + filename + " for client " + clientId +" is open by clients: [ " + clients + " ]");
+            //}
 
             fileMetadata.Remove(filename);
             Console.WriteLine("#MDS: Deleted file: " + filename);
