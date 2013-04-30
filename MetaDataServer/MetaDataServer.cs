@@ -19,10 +19,20 @@ namespace MetaDataServer
         public int Port { get; set; }
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
-        private Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-        //private Dictionary<String, FileInfo> filesInfo = new Dictionary<string, FileInfo>();
-        private Dictionary<String, FileMetadata> fileMetadata = new Dictionary<String, FileMetadata>();
-        private Dictionary<String, ManualResetEvent> fileMetadataLocks = new Dictionary<string, ManualResetEvent>();
+
+        public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
+
+        /***
+         * PUBLIC => erro
+         * ***/
+        public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
+        /***
+         * fim de erro
+         *  ***/
+
+        public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
+
+        private int CheckpointCounter;
 
         static void Main(string[] args)
         {
@@ -48,6 +58,10 @@ namespace MetaDataServer
         {
             Port = port;
             Id = id;
+            CheckpointCounter = 0;
+            FileMetadata = new SerializableDictionary<String, FileMetadata>();
+            FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
+            DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
         }
 
         public void startConnection(MetaDataServer metadataServer)
@@ -66,52 +80,55 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MDS: Registering DS " + id);
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
-            dataServers.Add(id, remoteObjectWrapper);
+            DataServers.Add(id, remoteObjectWrapper);
             addServerToUnbalancedFiles(id);
             makeCheckpoint();
         }
 
         private void addServerToUnbalancedFiles(string id)
         {
-            foreach (String fileName in fileMetadata.Keys) 
-            { 
-                FileMetadata metadata = fileMetadata[fileName];
-                if (metadata.FileServers.Count < metadata.NumServers) 
+            foreach (String fileName in FileMetadata.Keys)
+            {
+                FileMetadata metadata = FileMetadata[fileName];
+                if (metadata.FileServers.Count < metadata.NumServers)
                 {
-                    metadata.FileServers.Add(dataServers[id]);
-                    fileMetadataLocks[fileName].Set();
+                    metadata.FileServers.Add(DataServers[id]);
+                    FileMetadataLocks[fileName].Set();
                 }
             }
         }
 
         public FileMetadata open(String clientID, string filename)
         {
-            if (!fileMetadata.ContainsKey(filename))
-            {
-                throw new OpenFileException("#MDS.open - File " + filename + " does not exist");
-            }
-            else if (fileMetadata[filename].Clients.Contains(clientID))
-            {
-                Console.WriteLine("#MDS.open - File " + filename + " is allready open for user " + clientID);
-                return fileMetadata[filename];
-            }
-            else
-            {
-                Console.WriteLine("#MDS: opening file: " + filename);
-                fileMetadata[filename].Clients.Add(clientID);
-                makeCheckpoint();
-                return fileMetadata[filename];
-            }
+            //if (!FileMetadata.ContainsKey(filename))
+            //{
+            //    throw new OpenFileException("#MDS.open - File " + filename + " does not exist");
+            //}
+            //else if (FileMetadata[filename].Clients.Contains(clientID))
+            //{
+            //    Console.WriteLine("#MDS.open - File " + filename + " is allready open for user " + clientID);
+            //    return FileMetadata[filename];
+            //}
+            //else
+            //{
+            //    Console.WriteLine("#MDS: opening file: " + filename);
+            //    FileMetadata[filename].Clients.Add(clientID);
+            //    makeCheckpoint();
+            //    return FileMetadata[filename];
+            //}
+            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
+            openOperation.execute(this);
+            return openOperation.Result;
         }
 
         public void close(String clientID, string filename)
         {
-           if (!fileMetadata.ContainsKey(filename))
+            if (!FileMetadata.ContainsKey(filename))
             {
                 throw new CloseFileException("#MDS.close - File " + filename + " does not exist");
             }
 
-            if (fileMetadata.ContainsKey(filename) && !fileMetadata[filename].Clients.Contains(clientID))
+            if (FileMetadata.ContainsKey(filename) && !FileMetadata[filename].Clients.Contains(clientID))
             {
                 //throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
                 Console.WriteLine("#MDS.close - File " + filename + " is allready closed for user " + clientID);
@@ -119,88 +136,66 @@ namespace MetaDataServer
             }
 
             Console.WriteLine("#MDS: closing file " + filename + "...");
-            fileMetadata[filename].Clients.Remove(clientID);
+            FileMetadata[filename].Clients.Remove(clientID);
             makeCheckpoint();
 
         }
 
         public void delete(string clientId, string filename)
         {
-            if (!fileMetadata.ContainsKey(filename))
+            if (!FileMetadata.ContainsKey(filename))
             {
                 throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
             }
-            /*
-            if (fileMetadata[filename].Clients.Count == 1 && fileMetadata[filename].Clients.Contains(clientId))
-            {
-                close(clientId, filename);
-            }
-            */
 
-            //if (fileMetadata[filename].Clients.Count > 0)
-            //{
-            //    string clients = "";
-            //    foreach (string c in fileMetadata[filename].Clients) 
-            //    {
-            //        clients += c + ", ";
-            //    }
-            //    throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - Error deleting file " + filename + " for client " + clientId +" is open by clients: [ " + clients + " ]");
-            //}
-
-            fileMetadata.Remove(filename);
+            FileMetadata.Remove(filename);
             Console.WriteLine("#MDS: Deleted file: " + filename);
             makeCheckpoint();
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            if ((writeQuorum > numberOfDataServers) || (readQuorum > numberOfDataServers))
-                throw new CreateFileException("Invalid quorums values in create " + filename);
+            //if ((writeQuorum > numberOfDataServers) || (readQuorum > numberOfDataServers))
+            //    throw new CreateFileException("Invalid quorums values in create " + filename);
 
-            if (fileMetadata.ContainsKey(filename))
-            {
-                throw new CreateFileException("#MDS.create - The file " + filename + " allready exists ");
-            }
+            //if (FileMetadata.ContainsKey(filename))
+            //{
+            //    throw new CreateFileException("#MDS.create - The file " + filename + " allready exists ");
+            //}
 
-            List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
+            //List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
 
-            foreach(ServerObjectWrapper wrapper in newFileDataServers)
-            {
-                Console.WriteLine("#MDS.create - atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
-            }
+            //foreach(ServerObjectWrapper wrapper in newFileDataServers)
+            //{
+            //    Console.WriteLine("#MDS.create - atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
+            //}
 
-            FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
-            //FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
+            //FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
+            ////FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
 
-            fileMetadata.Add(filename, newFileMetadata);
-            fileMetadataLocks.Add(filename, new ManualResetEvent(false));
-            Console.WriteLine("#MDS: Created " + filename);
-            makeCheckpoint();
+            //FileMetadata.Add(filename, newFileMetadata);
+            //FileMetadataLocks.Add(filename, new ManualResetEvent(false));
+            //Console.WriteLine("#MDS: Created " + filename);
+            //makeCheckpoint();
 
-            //return open(clientID, filename);
-            return fileMetadata[filename];
+            ////return open(clientID, filename);
+            //return FileMetadata[filename];
+
+            MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
+            createOperation.execute(this);
+
+            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
+            openOperation.execute(this);
+
+            return createOperation.Result;
         }
 
-        private List<ServerObjectWrapper> getFirstServers(int numDataServers)
-        {
-            List<ServerObjectWrapper> firstDataServers = new List<ServerObjectWrapper>();
-
-            foreach (ServerObjectWrapper dataserverWrapper in dataServers.Values)
-            {
-                if (firstDataServers.Count < numDataServers)
-                {
-                    firstDataServers.Add(new ServerObjectWrapper(dataserverWrapper));
-                }
-            }
-            return firstDataServers;
-        }
-
-        public void fail() 
+        public void fail()
         {
             Console.WriteLine("Fail not implemented in MD yet");
         }
 
-        public void recover() 
+        public void recover()
         {
             Console.WriteLine("Recover not implemented in MD yet");
         }
@@ -214,59 +209,65 @@ namespace MetaDataServer
 
         public void makeCheckpoint()
         {
-            lock (this)
-            {
-                String metadataServerId = Id;
-                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
-                Util.createDir(dirName);
+            //lock (typeof(MetaDataServer))
+            //{
 
-                System.Xml.Serialization.XmlSerializer writer =
-                new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+            //    String metadataServerId = Id;
+            //    Console.WriteLine("#MDS: making checkpoint " + CheckpointCounter++ + " from server " + Id);
 
-                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-                writer.Serialize(fileWriter, this);
-                fileWriter.Close();
-            }
+            //    string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
+            //    Util.createDir(dirName);
+
+            //    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+
+            //    System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+            //    writer.Serialize(fileWriter, this);
+
+            //    fileWriter.Close();
+
+            //    Console.WriteLine("#MDS: checkpoint " + CheckpointCounter + " from metaDataServer " + Id + " done");
+            //}
         }
 
         public static MetaDataServer getCheckpoint(String metadataServerId)
         {
-            System.Xml.Serialization.XmlSerializer reader =
-                      new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+            //System.Xml.Serialization.XmlSerializer reader =
+            //          new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId + "\\checkpoint.xml";
-            System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
+            //string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId + "\\checkpoint.xml";
+            //System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
 
-            MetaDataServer metadaServer = new MetaDataServer();
-            metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
+            //MetaDataServer metadaServer = new MetaDataServer();
+            //metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
 
-            return metadaServer;
+            //return metadaServer;
+            return null;
         }
 
         public FileMetadata updateReadMetadata(string clientId, string filename)
         {
-            while (fileMetadata[filename].FileServers.Count < fileMetadata[filename].ReadQuorum) 
+            while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
             {
-                Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].ReadQuorum);
-                fileMetadataLocks[filename].WaitOne();
+                Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
+                FileMetadataLocks[filename].WaitOne();
             }
 
-            Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].ReadQuorum);
+            Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
 
-            return fileMetadata[filename];
+            return FileMetadata[filename];
         }
 
         public FileMetadata updateWriteMetadata(string clientId, string filename)
         {
-            while (fileMetadata[filename].FileServers.Count < fileMetadata[filename].WriteQuorum)
+            while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
             {
-                Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].WriteQuorum);
-                fileMetadataLocks[filename].WaitOne();
+                Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
+                FileMetadataLocks[filename].WaitOne();
             }
 
-            Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + fileMetadata[filename].FileServers.Count + ", quorum: " + fileMetadata[filename].WriteQuorum);
+            Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
 
-            return fileMetadata[filename];
+            return FileMetadata[filename];
         }
 
         public void dump()
@@ -274,12 +275,12 @@ namespace MetaDataServer
             Console.WriteLine("#MDS: Dumping!\r\n");
             Console.WriteLine(" URL: " + Url);
             Console.WriteLine(" Registered Data Servers:");
-            foreach (KeyValuePair<String, ServerObjectWrapper> dataServer in dataServers)
+            foreach (KeyValuePair<String, ServerObjectWrapper> dataServer in DataServers)
             {
                 Console.WriteLine("\t" + dataServer.Key);
             }
             Console.WriteLine(" Opened Files: ");
-            foreach (KeyValuePair<String, FileMetadata> files in fileMetadata)
+            foreach (KeyValuePair<String, FileMetadata> files in FileMetadata)
             {
                 Console.Write("\t" + files.Key + " - Clients[ ");
                 foreach (String name in files.Value.Clients)
