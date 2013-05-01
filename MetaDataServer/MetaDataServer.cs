@@ -78,11 +78,6 @@ namespace MetaDataServer
 
         public void registDataServer(String dataserverId, string dataserverHost, int dataserverPort)
         {
-            //Console.WriteLine("#MDS: Registering DS " + id);
-            //ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
-            //DataServers.Add(id, remoteObjectWrapper);
-            //addServerToUnbalancedFiles(id);
-            //makeCheckpoint();
             MetaDataRegisterServerOperation registerDataserverOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
             registerDataserverOperation.execute(this);
         }
@@ -102,22 +97,6 @@ namespace MetaDataServer
 
         public FileMetadata open(String clientID, string filename)
         {
-            //if (!FileMetadata.ContainsKey(filename))
-            //{
-            //    throw new OpenFileException("#MDS.open - File " + filename + " does not exist");
-            //}
-            //else if (FileMetadata[filename].Clients.Contains(clientID))
-            //{
-            //    Console.WriteLine("#MDS.open - File " + filename + " is allready open for user " + clientID);
-            //    return FileMetadata[filename];
-            //}
-            //else
-            //{
-            //    Console.WriteLine("#MDS: opening file: " + filename);
-            //    FileMetadata[filename].Clients.Add(clientID);
-            //    makeCheckpoint();
-            //    return FileMetadata[filename];
-            //}
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
             openOperation.execute(this);
             return openOperation.Result;
@@ -125,21 +104,6 @@ namespace MetaDataServer
 
         public void close(String clientID, string filename)
         {
-            //if (!FileMetadata.ContainsKey(filename))
-            //{
-            //    throw new CloseFileException("#MDS.close - File " + filename + " does not exist");
-            //}
-
-            //if (FileMetadata.ContainsKey(filename) && !FileMetadata[filename].Clients.Contains(clientID))
-            //{
-            //    //throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
-            //    Console.WriteLine("#MDS.close - File " + filename + " is allready closed for user " + clientID);
-            //    return;
-            //}
-
-            //Console.WriteLine("#MDS: closing file " + filename + "...");
-            //FileMetadata[filename].Clients.Remove(clientID);
-            //makeCheckpoint();
             MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename);
             closeOperation.execute(this);
 
@@ -147,46 +111,12 @@ namespace MetaDataServer
 
         public void delete(string clientId, string filename)
         {
-            //if (!FileMetadata.ContainsKey(filename))
-            //{
-            //    throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
-            //}
-
-            //FileMetadata.Remove(filename);
-            //Console.WriteLine("#MDS: Deleted file: " + filename);
-            //makeCheckpoint();
             MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
             deleteOperation.execute(this);
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            //if ((writeQuorum > numberOfDataServers) || (readQuorum > numberOfDataServers))
-            //    throw new CreateFileException("Invalid quorums values in create " + filename);
-
-            //if (FileMetadata.ContainsKey(filename))
-            //{
-            //    throw new CreateFileException("#MDS.create - The file " + filename + " allready exists ");
-            //}
-
-            //List<ServerObjectWrapper> newFileDataServers = getFirstServers(numberOfDataServers);
-
-            //foreach(ServerObjectWrapper wrapper in newFileDataServers)
-            //{
-            //    Console.WriteLine("#MDS.create - atribute file to dataserver " + wrapper.getObject<IDataServer>().GetHashCode());
-            //}
-
-            //FileMetadata newFileMetadata = new FileMetadata(filename, numberOfDataServers, readQuorum, writeQuorum, newFileDataServers);
-            ////FileInfo newFileInfo = new FileInfo(newFileMetadata, newFileDataServers);
-
-            //FileMetadata.Add(filename, newFileMetadata);
-            //FileMetadataLocks.Add(filename, new ManualResetEvent(false));
-            //Console.WriteLine("#MDS: Created " + filename);
-            //makeCheckpoint();
-
-            ////return open(clientID, filename);
-            //return FileMetadata[filename];
-
             MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
             createOperation.execute(this);
 
