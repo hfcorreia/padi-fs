@@ -17,7 +17,7 @@ namespace MetaDataServer
         public FileMetadata Result { get; set; }
 
 
-        public MetaDataCloseOperation(String clientID, string filename)
+        public MetaDataCloseOperation(String clientID, string filename) 
         {
             ClientID = clientID;
             Filename = filename;

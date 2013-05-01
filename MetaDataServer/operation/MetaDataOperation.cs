@@ -8,6 +8,8 @@ namespace MetaDataServer
 {
     public abstract class MetaDataOperation
     {
+        public int OperationId { get; set; }
+
         public abstract void execute(MetaDataServer md);
     }
 }
