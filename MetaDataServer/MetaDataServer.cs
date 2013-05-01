@@ -19,6 +19,7 @@ namespace MetaDataServer
         public int Port { get; set; }
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
+        public MetaDataLog Log { get; set; }
 
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
 
@@ -33,6 +34,13 @@ namespace MetaDataServer
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
 
         private int CheckpointCounter;
+
+        /**
+        * Implementation of all the initilization stuff
+        **/
+
+        #region Initilization
+
 
         static void Main(string[] args)
         {
@@ -54,16 +62,6 @@ namespace MetaDataServer
             }
         }
 
-        public void initialize(int port, String id)
-        {
-            Port = port;
-            Id = id;
-            CheckpointCounter = 0;
-            FileMetadata = new SerializableDictionary<String, FileMetadata>();
-            FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
-            DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-        }
-
         public void startConnection(MetaDataServer metadataServer)
         {
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
@@ -76,10 +74,60 @@ namespace MetaDataServer
             RemotingServices.Marshal(metadataServer, Id, typeof(MetaDataServer));
         }
 
+        public void initialize(int port, String id)
+        {
+            Port = port;
+            Id = id;
+            CheckpointCounter = 0;
+            FileMetadata = new SerializableDictionary<String, FileMetadata>();
+            FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
+            DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
+            Log = new MetaDataLog(this);
+        }
+
+
+
+        #endregion Initilization
+
+        /**
+         * Operations that change the state of the Metadata
+         **/
+
+        #region OperationsThatChangeTheState
+
         public void registDataServer(String dataserverId, string dataserverHost, int dataserverPort)
         {
-            MetaDataRegisterServerOperation registerDataserverOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
-            registerDataserverOperation.execute(this);
+            Log.registerOperationAndExecute(new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort));
+        }
+
+        public FileMetadata open(String clientID, string filename)
+        {
+            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
+            Log.registerOperation(openOperation);
+            openOperation.execute(this);
+
+            return openOperation.Result;
+        }
+
+        public void close(String clientID, string filename)
+        {
+            Log.registerOperationAndExecute(new MetaDataCloseOperation(clientID, filename));
+        }
+
+        public void delete(string clientId, string filename)
+        {
+            Log.registerOperationAndExecute(new MetaDataDeleteOperation(clientId, filename));
+        }
+
+        public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
+        {
+            MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
+            Log.registerOperation(createOperation);
+            createOperation.execute(this);
+
+            Log.registerOperationAndExecute(new MetaDataOpenOperation(clientID, filename));
+
+            return createOperation.Result;
         }
 
         public void addServerToUnbalancedFiles(string id)
@@ -95,36 +143,47 @@ namespace MetaDataServer
             }
         }
 
-        public FileMetadata open(String clientID, string filename)
+        #endregion OperationsThatChangeTheState
+        
+        /**
+        * Operations that don't change the state of the metadata
+        **/
+
+        #region OperationsThatDontChangeState
+
+        public FileMetadata updateReadMetadata(string clientId, string filename)
         {
-            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
-            openOperation.execute(this);
-            return openOperation.Result;
+            while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
+            {
+                Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
+                FileMetadataLocks[filename].WaitOne();
+            }
+
+            Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
+
+            return FileMetadata[filename];
         }
 
-        public void close(String clientID, string filename)
+        public FileMetadata updateWriteMetadata(string clientId, string filename)
         {
-            MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename);
-            closeOperation.execute(this);
+            while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
+            {
+                Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
+                FileMetadataLocks[filename].WaitOne();
+            }
 
+            Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
+
+            return FileMetadata[filename];
         }
 
-        public void delete(string clientId, string filename)
-        {
-            MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
-            deleteOperation.execute(this);
-        }
+        #endregion OperationsThatDontChangeState
+        
+        /**
+         * implementation of all the fail and recover operations
+         **/
 
-        public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
-        {
-            MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
-            createOperation.execute(this);
-
-            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
-            openOperation.execute(this);
-
-            return createOperation.Result;
-        }
+        #region FailAndRecover
 
         public void fail()
         {
@@ -136,13 +195,13 @@ namespace MetaDataServer
             Console.WriteLine("Recover not implemented in MD yet");
         }
 
-        public void exit()
-        {
-            Console.WriteLine("#MDS: Exiting!");
-            System.Environment.Exit(0);
-        }
+        #endregion FailAndRecover
 
-
+        /**
+         * CheckPoint opperations
+         **/
+        #region Checkpoint
+        
         public void makeCheckpoint()
         {
             //lock (typeof(MetaDataServer))
@@ -180,31 +239,7 @@ namespace MetaDataServer
             return null;
         }
 
-        public FileMetadata updateReadMetadata(string clientId, string filename)
-        {
-            while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
-            {
-                Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
-                FileMetadataLocks[filename].WaitOne();
-            }
-
-            Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
-
-            return FileMetadata[filename];
-        }
-
-        public FileMetadata updateWriteMetadata(string clientId, string filename)
-        {
-            while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
-            {
-                Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
-                FileMetadataLocks[filename].WaitOne();
-            }
-
-            Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
-
-            return FileMetadata[filename];
-        }
+        #endregion Checkpoint
 
         public void dump()
         {
@@ -231,6 +266,12 @@ namespace MetaDataServer
             }
             Console.WriteLine();
 
+        }
+
+        public void exit()
+        {
+            Console.WriteLine("#MDS: Exiting!");
+            System.Environment.Exit(0);
         }
 
         public override object InitializeLifetimeService()

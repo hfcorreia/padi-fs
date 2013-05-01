@@ -5,24 +5,33 @@ using System.Text;
 
 namespace MetaDataServer
 {
-    class MetaDataLog
+    public class MetaDataLog
     {
-        private List<MetaDataOperation> log = new List<MetaDataOperation>();
-        private MetaDataServer Md { get; set; }
+        private List<MetaDataOperation> log { get; set; }
+        private MetaDataServer MetadataServer { get; set; }
+        public int Status { get; set; }
 
         public MetaDataLog(MetaDataServer md)
         {
-            Md = md;
+            log = new List<MetaDataOperation>();
+            MetadataServer = md;
+            Status = 0;
         }
 
-        public void registerOperation(MetaDataOperation op)
+        public void registerOperationAndExecute(MetaDataOperation operation)
         {
-            log.Add(op);
+            registerOperation(operation);
+            operation.execute(MetadataServer);
+        }
+
+        public void registerOperation(MetaDataOperation operation)
+        {
+            log.Add(operation);
         }
 
         public void printLog()
         {
-            Console.WriteLine("Log from MD " + Md.Id + " com " + log.Count + " operacoes registadas");
+            Console.WriteLine("Log from MD " + MetadataServer.Id + " com " + log.Count + " operacoes registadas");
             foreach(MetaDataOperation op in log)
             {
                 Console.WriteLine("Operation: " + op);
