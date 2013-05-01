@@ -26,6 +26,12 @@ namespace MetaDataServer
 
         public void registerOperation(MetaDataOperation operation)
         {
+            int operationId;
+            lock (typeof(MetaDataLog))
+            {
+                operationId = Status++;
+            }
+            operation.OperationId = operationId;
             log.Add(operation);
         }
 
