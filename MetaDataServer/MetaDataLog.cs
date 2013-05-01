@@ -26,12 +26,18 @@ namespace MetaDataServer
                 MaxId++;
             }
             log.Add(operation);
-            
+        }
+
+
+
+        public void loadLog(String filename)
+        {
+            //TODO - load the log from a xml file and deserialize
         }
 
         public void saveLog() 
         { 
-            //SERIALIZE THE LOG IN A XML FILE
+            //TODO - SERIALIZE THE LOG IN A XML FILE
         }
 
         public void incrementStatus() 
