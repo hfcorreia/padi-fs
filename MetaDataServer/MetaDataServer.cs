@@ -97,7 +97,9 @@ namespace MetaDataServer
 
         public void registDataServer(String dataserverId, string dataserverHost, int dataserverPort)
         {
-            Log.registerOperationAndExecute(new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort));
+            MetaDataRegisterServerOperation registerOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
+            Log.registerOperation(registerOperation);
+            registerOperation.execute(this);
         }
 
         public FileMetadata open(String clientID, string filename)
@@ -111,12 +113,16 @@ namespace MetaDataServer
 
         public void close(String clientID, string filename)
         {
-            Log.registerOperationAndExecute(new MetaDataCloseOperation(clientID, filename));
+            MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename); 
+            Log.registerOperation(closeOperation);
+            closeOperation.execute(this);
         }
 
         public void delete(string clientId, string filename)
         {
-            Log.registerOperationAndExecute(new MetaDataDeleteOperation(clientId, filename));
+            MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
+            Log.registerOperation(deleteOperation);
+            deleteOperation.execute(this);
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
@@ -125,7 +131,8 @@ namespace MetaDataServer
             Log.registerOperation(createOperation);
             createOperation.execute(this);
 
-            Log.registerOperationAndExecute(new MetaDataOpenOperation(clientID, filename));
+            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename); 
+            Log.registerOperation(openOperation);
 
             return createOperation.Result;
         }

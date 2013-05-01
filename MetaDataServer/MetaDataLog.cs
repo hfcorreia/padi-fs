@@ -10,6 +10,7 @@ namespace MetaDataServer
         private List<MetaDataOperation> log { get; set; }
         private MetaDataServer MetadataServer { get; set; }
         public int Status { get; set; }
+        public int MaxId { get; set; }
 
         public MetaDataLog(MetaDataServer md)
         {
@@ -18,15 +19,27 @@ namespace MetaDataServer
             Status = 0;
         }
 
-        public void registerOperationAndExecute(MetaDataOperation operation)
-        {
-            registerOperation(operation);
-            operation.execute(MetadataServer);
-        }
-
         public void registerOperation(MetaDataOperation operation)
         {
+            lock (typeof(MetaDataLog))
+            {
+                MaxId++;
+            }
             log.Add(operation);
+            
+        }
+
+        public void saveLog() 
+        { 
+            //SERIALIZE THE LOG IN A XML FILE
+        }
+
+        public void incrementStatus() 
+        {
+            lock (typeof(MetaDataLog))
+            {
+                Status++;
+            }
         }
 
         public void printLog()
