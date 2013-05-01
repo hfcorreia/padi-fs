@@ -159,10 +159,10 @@ namespace Client
 
         public void delete(string filename)
         {
-            if (ClientState.FileMetadataContainer.containsFileMetadata(filename)) 
-            {
-                close(filename);
-            }
+            //if (ClientState.FileMetadataContainer.containsFileMetadata(filename)) 
+            //{
+            //    close(filename);
+            //}
 
             DeleteFileService deleteFileService = new DeleteFileService(ClientState, filename);
             deleteFileService.execute();

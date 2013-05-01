@@ -33,8 +33,6 @@ namespace MetaDataServer
 
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
 
-        private int CheckpointCounter;
-
         /**
         * Implementation of all the initilization stuff
         **/
@@ -78,11 +76,11 @@ namespace MetaDataServer
         {
             Port = port;
             Id = id;
-            CheckpointCounter = 0;
             FileMetadata = new SerializableDictionary<String, FileMetadata>();
             FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
             DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-            Log = new MetaDataLog(this);
+            Log = new MetaDataLog();
+            Log.init(this);
         }
 
 
@@ -139,6 +137,7 @@ namespace MetaDataServer
 
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename); 
             Log.registerOperation(openOperation);
+            openOperation.execute(this);
 
             Log.incrementStatus();
 
@@ -170,11 +169,11 @@ namespace MetaDataServer
         {
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
             {
-                Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
+               // Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
                 FileMetadataLocks[filename].WaitOne();
             }
 
-            Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
+           // Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
 
             return FileMetadata[filename];
         }
@@ -183,11 +182,11 @@ namespace MetaDataServer
         {
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
             {
-                Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
+                //Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
                 FileMetadataLocks[filename].WaitOne();
             }
 
-            Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
+            //Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
 
             return FileMetadata[filename];
         }

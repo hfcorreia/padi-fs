@@ -31,7 +31,7 @@ namespace MetaDataServer
             }
             else if (md.FileMetadata[Filename].Clients.Contains(ClientID))
             {
-                Console.WriteLine("#MDS.open - File " + Filename + " is allready open for user " + ClientID);
+                Console.WriteLine("#MDS.open - File " + Filename + " is already open for user " + ClientID);
                 Result = md.FileMetadata[Filename];
                 return;
             }

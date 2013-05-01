@@ -27,13 +27,14 @@ namespace MetaDataServer
         {
             if (!md.FileMetadata.ContainsKey(Filename))
             {
-                throw new CloseFileException("#MDS.close - File " + Filename + " does not exist");
+               // throw new CloseFileException("#MDS.close - File " + Filename + " does not exist");
+                return;
             }
 
             if (md.FileMetadata.ContainsKey(Filename) && !md.FileMetadata[Filename].Clients.Contains(ClientID))
             {
                 //throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
-                Console.WriteLine("#MDS.close - File " + Filename + " is allready closed for user " + ClientID);
+                Console.WriteLine("#MDS.close - File " + Filename + " is already closed for user " + ClientID);
                 return;
             }
 

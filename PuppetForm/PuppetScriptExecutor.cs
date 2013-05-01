@@ -38,8 +38,9 @@ namespace PuppetForm
                 }
             }
             ScriptReader.Close();
-            PuppetMasterEntity.ScriptExecutor = null;
-            throw new PadiFsException("End of file");
+            //PuppetMasterEntity.ScriptExecutor = null;
+            System.Windows.Forms.MessageBox.Show("End Of File");
+            //throw new PadiFsException("End of file");
         }
 
         private void runCommand(String line)

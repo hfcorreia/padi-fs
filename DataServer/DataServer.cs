@@ -16,7 +16,7 @@ using System.Xml;
 
 namespace DataServer
 {
-    public class DataServer : MarshalByRefObject, IDataServer
+    public class DataServer : MarshalByRefObject, IDataServer, IRemote
     {
         private int CheckpointCounter { get; set; }
 
@@ -120,10 +120,9 @@ namespace DataServer
             string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
             Util.createDir(dirName);
 
-            System.Xml.Serialization.XmlSerializer writer =
-            new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
-
+            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
             System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+
             writer.Serialize(fileWriter, this);
 
             fileWriter.Close();
@@ -152,9 +151,10 @@ namespace DataServer
             Console.WriteLine("#DS: Dumping!\r\n");
             Console.WriteLine(" URL: " + Url);
             Console.WriteLine(" Opened Files:");
-            foreach (KeyValuePair<String, File> name in Files)
+            foreach (KeyValuePair<String, File> entry in Files)
             {
-                Console.WriteLine("\t " + name.Value);
+                File file = entry.Value;
+                Console.WriteLine("\t File: " + file.FileName + ", Contents: " + System.Text.Encoding.UTF8.GetString(file.Content));
             }
             Console.WriteLine();
         }

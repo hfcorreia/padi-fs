@@ -21,7 +21,7 @@ namespace Client
 
         public void runScriptFile()
         {
-            Console.WriteLine("\r\n#Client: Running Script " + ScriptName);
+            Console.WriteLine("\r\n#Client: Running Script " + ScriptName + " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             System.IO.StreamReader fileReader = new System.IO.StreamReader(ScriptLocation);
 
             String line = fileReader.ReadLine();
@@ -58,34 +58,42 @@ namespace Client
             String command = newLine[0];
             String[] newInput = newLine.Skip(2).ToArray<String>();
 
-           switch (command)
+            try
             {
-                case "OPEN":
-                    open(newInput);
-                    break;
-                case "CLOSE":
-                    close(newInput);
-                    break;
-                case "CREATE":
-                    create(newInput);
-                    break;
-                case "DELETE":
-                    delete(newInput);
-                    break;
-                case "WRITE":
-                    write(newInput);
-                    break;
-                case "READ":
-                    read(newInput);
-                    break;
-                case "DUMP":
-                    dump(newInput);
-                    break;
-                default:
-                    Console.WriteLine("#Client: No such command: " + command + "!");
-                    break;
+                switch (command)
+                {
+                    case "OPEN":
+                        open(newInput);
+                        break;
+                    case "CLOSE":
+                        close(newInput);
+                        break;
+                    case "CREATE":
+                        create(newInput);
+                        break;
+                    case "DELETE":
+                        delete(newInput);
+                        break;
+                    case "WRITE":
+                        write(newInput);
+                        break;
+                    case "READ":
+                        read(newInput);
+                        break;
+                    case "DUMP":
+                        dump(newInput);
+                        break;
+                    default:
+                        Console.WriteLine("#Client: No such command: " + command + "!");
+                        break;
+                }
             }
-        }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error on ClientScriptExecutor: " + e.Message);
+            }
+
+            }
 
         private String[] parseLine(string line)
         {
