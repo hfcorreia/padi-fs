@@ -9,13 +9,13 @@ namespace MetaDataServer
     {
         private List<MetaDataOperation> log { get; set; }
         private MetaDataServer MetadataServer { get; set; }
-        public int Status { get; set; }
+        public int MaxId { get; set; }
 
         public MetaDataLog(MetaDataServer md)
         {
             log = new List<MetaDataOperation>();
             MetadataServer = md;
-            Status = 0;
+            MaxId = 0;
         }
 
         public void registerOperationAndExecute(MetaDataOperation operation)
@@ -29,10 +29,14 @@ namespace MetaDataServer
             int operationId;
             lock (typeof(MetaDataLog))
             {
-                operationId = Status++;
+                operationId = MaxId++;
             }
             operation.OperationId = operationId;
             log.Add(operation);
+        }
+
+        public void recover()
+        {
         }
 
         public void printLog()
