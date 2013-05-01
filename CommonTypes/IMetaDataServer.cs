@@ -61,6 +61,10 @@ namespace CommonTypes
          **/
         void recover();
 
+        /**
+         * registDataServer
+         * Saves the new dataserver
+         **/
         void registDataServer(string id, string host, int port);
 
         /*

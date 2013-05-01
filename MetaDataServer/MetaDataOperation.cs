@@ -12,5 +12,9 @@ namespace MetaDataServer
         public int OperationId { get; set; }
 
         public abstract void execute(MetaDataServer md);
+        public override string ToString()
+        {
+            return "Operation - [ id: " + OperationId + " , type: " + GetType() + " ]";
+        }
     }
 }

@@ -26,5 +26,15 @@ namespace MetaDataServer
             Operations = operations;
         }
 
+        public override string ToString()
+        {
+            String result = "[ MetaDataServerAliveMessage - metadataServer: " + MetadataServerId + ", ismaster: " + IsMaster + ", operations: ";
+            foreach (MetaDataOperation op in Operations)
+            {
+                result += op + ", ";
+            }
+            result += " ]";
+            return result;
+        }
     }
 }

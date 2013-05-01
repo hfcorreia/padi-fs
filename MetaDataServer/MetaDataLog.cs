@@ -43,7 +43,7 @@ namespace MetaDataServer
             
         }
 
-        public void recover() 
+        public void recover()
         {
             while (Status < MaxId)
             {
@@ -101,7 +101,7 @@ namespace MetaDataServer
             }
         }
 
-        public void printLog()
+        public void dump()
         {
             Console.WriteLine("Log from MD " + MetadataServer.Id + " com " + log.Count + " operacoes registadas");
             foreach(MetaDataOperation op in log)

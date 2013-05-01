@@ -44,6 +44,27 @@ namespace Client.services
 
         }
 
+        private Task closeFileTask()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[1].getObject<IMetaDataServer>();
+                bool found = false;
+                while (!found)
+                {
+                    try
+                    {
+                        metadataServer.close(State.Id, FileName);
+                        found = true;
+                    }
+                    catch (NotMasterException exception)
+                    {
+                        metadataServer = MetaInformationReader.Instance.MetaDataServers[exception.MasterId].getObject<IMetaDataServer>();
+                    }
+                }
+            });
+        }
+
         private Task createCloseFileTask()
         {
             return Task.Factory.StartNew(() => {

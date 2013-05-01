@@ -11,6 +11,7 @@ using System.Collections;
 using CommonTypes.Exceptions;
 using System.Threading;
 using System.Timers;
+using System.Diagnostics;
 
 namespace MetaDataServer
 {
@@ -93,6 +94,13 @@ namespace MetaDataServer
             String[] parsedId = id.Split('-');
             int mdId = Int32.Parse(parsedId[1]);
             ReplicationHandler = new PassiveReplicationHandler(mdId);
+
+
+            //atach a debugger - we should add some parameter to enable/disable this!
+            if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
         }
 
 
@@ -114,7 +122,6 @@ namespace MetaDataServer
             Log.incrementStatus();*/
             executeOperation(new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort));
         }
-
 
         public FileMetadata open(String clientID, string filename)
         {
@@ -180,6 +187,7 @@ namespace MetaDataServer
                     FileMetadataLocks[fileName].Set();
                 }
             }
+
         }
 
         private void executeOperation(MetaDataOperation operation)
@@ -211,6 +219,12 @@ namespace MetaDataServer
         **/
 
         #region OperationsThatDontChangeState
+
+
+        public int getMasterId()
+        {
+            return ReplicationHandler.MetadataServerId;
+        }
 
         public FileMetadata updateReadMetadata(string clientId, string filename)
         {

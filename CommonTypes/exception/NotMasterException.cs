@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace CommonTypes
-{
-        namespace Exceptions
+namespace CommonTypes {
+
+    namespace Exceptions
     {
         [Serializable]
         public class NotMasterException : PadiFsException
