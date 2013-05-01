@@ -18,6 +18,7 @@ namespace MetaDataServer
             log = new List<MetaDataOperation>();
             MetadataServer = md;
             MaxId = 0;
+            Status = 0;
         }
 
         public void registerOperation(MetaDataOperation operation)
@@ -29,9 +30,17 @@ namespace MetaDataServer
             log.Add(operation);
         }
 
+        public void recover() 
+        {
+            while (Status < MaxId)
+            {
+
+            }
+        }
+
         public void loadLog(String filename)
         {
-
+            //TODO - load the log from a xml file and deserialize
         }
 
         public void saveLog() 
