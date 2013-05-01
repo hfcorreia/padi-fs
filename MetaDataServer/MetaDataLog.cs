@@ -34,8 +34,19 @@ namespace MetaDataServer
         {
             while (Status < MaxId)
             {
-
+                getOperation(Status).execute(MetadataServer);
             }
+        }
+
+        public MetaDataOperation getOperation(int operationId)
+        {
+            foreach (MetaDataOperation op in log)
+            {
+                if (op.OperationId == operationId) {
+                    return op;
+                }
+            }
+            return null;
         }
 
         public void loadLog(String filename)
@@ -54,10 +65,6 @@ namespace MetaDataServer
             {
                 Status++;
             }
-        }
-
-        public void recover()
-        {
         }
 
         public void printLog()
