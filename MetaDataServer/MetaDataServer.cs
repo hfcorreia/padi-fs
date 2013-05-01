@@ -143,14 +143,16 @@ namespace MetaDataServer
 
         public void delete(string clientId, string filename)
         {
-            if (!FileMetadata.ContainsKey(filename))
-            {
-                throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
-            }
+            //if (!FileMetadata.ContainsKey(filename))
+            //{
+            //    throw new CommonTypes.Exceptions.DeleteFileException("#MDS.delete - File " + filename + " does not exist");
+            //}
 
-            FileMetadata.Remove(filename);
-            Console.WriteLine("#MDS: Deleted file: " + filename);
-            makeCheckpoint();
+            //FileMetadata.Remove(filename);
+            //Console.WriteLine("#MDS: Deleted file: " + filename);
+            //makeCheckpoint();
+            MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
+            deleteOperation.execute(this);
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
