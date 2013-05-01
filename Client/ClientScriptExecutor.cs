@@ -90,7 +90,7 @@ namespace Client
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error on ClientScriptExecutor: " + e.Message);
+                Console.WriteLine("Error on ClientScriptExecutor: " + e.Message + e.StackTrace);
             }
 
             }
