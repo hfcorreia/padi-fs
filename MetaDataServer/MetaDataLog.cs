@@ -35,6 +35,7 @@ namespace MetaDataServer
             while (Status < MaxId)
             {
                 getOperation(Status).execute(MetadataServer);
+                incrementStatus();
             }
         }
 

@@ -100,6 +100,7 @@ namespace MetaDataServer
             MetaDataRegisterServerOperation registerOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
             Log.registerOperation(registerOperation);
             registerOperation.execute(this);
+            Log.incrementStatus();
         }
 
         public FileMetadata open(String clientID, string filename)
@@ -107,7 +108,7 @@ namespace MetaDataServer
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
             Log.registerOperation(openOperation);
             openOperation.execute(this);
-
+            Log.incrementStatus();
             return openOperation.Result;
         }
 
@@ -116,6 +117,7 @@ namespace MetaDataServer
             MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename); 
             Log.registerOperation(closeOperation);
             closeOperation.execute(this);
+            Log.incrementStatus();
         }
 
         public void delete(string clientId, string filename)
@@ -123,16 +125,22 @@ namespace MetaDataServer
             MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
             Log.registerOperation(deleteOperation);
             deleteOperation.execute(this);
+            Log.incrementStatus();
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
             MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
             Log.registerOperation(createOperation);
+            
             createOperation.execute(this);
+
+            Log.incrementStatus();
 
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename); 
             Log.registerOperation(openOperation);
+
+            Log.incrementStatus();
 
             return createOperation.Result;
         }
