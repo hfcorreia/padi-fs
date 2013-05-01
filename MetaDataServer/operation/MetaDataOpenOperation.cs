@@ -8,6 +8,7 @@ using System.Threading;
 
 namespace MetaDataServer
 {
+    [Serializable]
     class MetaDataOpenOperation : MetaDataOperation
     {
 

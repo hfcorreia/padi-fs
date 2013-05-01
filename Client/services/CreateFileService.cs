@@ -9,6 +9,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization.Formatters;
 using System.Threading.Tasks;
 using CommonTypes;
+using CommonTypes.Exceptions;
 
 namespace Client.services
 {
@@ -34,17 +35,43 @@ namespace Client.services
         override public void execute()
         {
             Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);
-
+            /*
             Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum); });
-            }
+            }*/
+            Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createFileTask() };
 
-            CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, WriteQuorum);
+            CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
             FileRegisterId = State.FileMetadataContainer.addFileMetadata(CreatedFileMetadata);
+        }
+
+        private Task<FileMetadata> createFileTask()
+        {
+            return Task<FileMetadata>.Factory.StartNew(() =>
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
+                FileMetadata result = null;
+                bool found = false;
+                int masterId = 0;
+                while (!found)
+                {
+                    try
+                    {
+                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
+                        result = metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum);
+                        found = true;
+                    }
+                    catch (NotMasterException exception)
+                    {
+                        masterId = exception.MasterId;
+                    }
+                }
+                return result;
+            });
         }
     }
 }

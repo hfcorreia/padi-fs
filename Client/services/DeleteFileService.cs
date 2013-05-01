@@ -27,17 +27,41 @@ namespace Client.services
         override public void execute()
         {
             Console.WriteLine("#Client: Deleting file " + FileName);
-            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
+            /*Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.delete(State.Id, FileName); });
-            }
+            }*/
+            Task[] tasks = new Task[] { deleteFileTask() };
 
-            waitVoidQuorum(tasks, 1); 
+            waitVoidQuorum(tasks, 1);
 
             State.FileMetadataContainer.removeFileMetadata(FileName);
             // State.fileContentContainer.removeFileContent(FileName); DEVE RETIRAR-SE O STRING REGISTER QUANDO HA UM DELETE???
+        }
+
+        private Task deleteFileTask()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
+                bool found = false;
+                int masterId = 0;
+                while (!found)
+                {
+                    try
+                    {
+                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
+                        metadataServer.delete(State.Id, FileName);
+                        found = true;
+                    }
+                    catch (NotMasterException exception)
+                    {
+                        masterId = exception.MasterId;
+                    }
+                }
+            });
         }
     }
 }

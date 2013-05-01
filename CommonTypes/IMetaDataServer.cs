@@ -63,6 +63,8 @@ namespace CommonTypes
 
         void registDataServer(string id, string host, int port);
 
+        /*
         void receiveHeartbeat(HeartbeatMessage heartbeat);
+         */ 
     }
 }

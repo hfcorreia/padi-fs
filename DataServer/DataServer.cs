@@ -100,12 +100,37 @@ namespace DataServer
         public void registInMetadataServers()
         {
             Console.WriteLine("#DS: registering in MetadataServers");
+            /*
             Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.registDataServer(Id, Host, Port); });
-            }
+            }*/
+            Task.WaitAll(new Task[] { registInMetadataServersTask() });
+        }
+
+        private Task registInMetadataServersTask()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
+                bool found = false;
+                int masterId = 0;
+                while (!found)
+                {
+                    try
+                    {
+                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
+                        metadataServer.registDataServer(Id, Host, Port);
+                        found = true;
+                    }
+                    catch (NotMasterException exception)
+                    {
+                        masterId = exception.MasterId;
+                    }
+                }
+            });
         }
 
         public int readFileVersion(string filename)
@@ -198,6 +223,7 @@ namespace DataServer
 
         void sendHeartbeat(object source, ElapsedEventArgs e)
         {
+            /*
             Console.WriteLine("#DS: heartbeating");
             HeartbeatMessage heartbeat = new HeartbeatMessage(Id, "um heartbeat");
 
@@ -207,7 +233,9 @@ namespace DataServer
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.receiveHeartbeat(heartbeat); });
             }
+             */ 
         }
+
 
     }
 }

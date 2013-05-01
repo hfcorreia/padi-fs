@@ -29,7 +29,6 @@ namespace Client.services
             File file = null;
 
             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
-            
 
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {

@@ -28,14 +28,19 @@ namespace MetaDataServer
             Status = 0;
         }
 
-        public void registerOperation(MetaDataOperation operation)
+        public void registerOperation(MetaDataServer md, MetaDataOperation operation)
         {
+            Console.WriteLine("#MD " + md + "Log - registerOperation - " + operation);
+
+            md.ReplicationHandler.syncOperation(operation);
+
+            log.Add(operation);
+
             lock (typeof(MetaDataLog))
             {
                 MaxId++;
             }
-            log.Add(operation);
-            saveLog();
+            
         }
 
         public void recover() 

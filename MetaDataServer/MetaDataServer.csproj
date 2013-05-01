@@ -48,14 +48,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MetaDataServerAliveMessage.cs" />
+    <Compile Include="MetaDataOperation.cs" />
     <Compile Include="operation\MetaDataRegisterServerOperation.cs" />
     <Compile Include="operation\MetaDataCloseOperation.cs" />
     <Compile Include="operation\MetaDataDeleteOperation.cs" />
     <Compile Include="operation\MetaDataOpenOperation.cs" />
     <Compile Include="operation\MetaDataCreateOperation.cs" />
     <Compile Include="MetaDataLog.cs" />
-    <Compile Include="operation\MetaDataOperation.cs" />
     <Compile Include="MetaDataServer.cs" />
+    <Compile Include="PassiveReplicationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

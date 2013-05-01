@@ -21,6 +21,7 @@ namespace MetaDataServer
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         public MetaDataLog Log { get; set; }
+       
 
 
 
@@ -35,6 +36,10 @@ namespace MetaDataServer
          *  ***/
 
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
+
+        public PassiveReplicationHandler ReplicationHandler { get; set; }
+
+        private int CheckpointCounter;
 
         /**
         * Implementation of all the initilization stuff
@@ -83,8 +88,12 @@ namespace MetaDataServer
             FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
             DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
             Log = new MetaDataLog();
-            Log.init(this);
-         }
+			Log.init(this);
+			
+            String[] parsedId = id.Split('-');
+            int mdId = Int32.Parse(parsedId[1]);
+            ReplicationHandler = new PassiveReplicationHandler(mdId);
+        }
 
 
 
@@ -98,51 +107,64 @@ namespace MetaDataServer
 
         public void registDataServer(String dataserverId, string dataserverHost, int dataserverPort)
         {
+            /*
             MetaDataRegisterServerOperation registerOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
-            Log.registerOperation(registerOperation);
+            Log.registerOperation(this, registerOperation);
             registerOperation.execute(this);
-            Log.incrementStatus();
+            Log.incrementStatus();*/
+            executeOperation(new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort));
         }
+
 
         public FileMetadata open(String clientID, string filename)
         {
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
-            Log.registerOperation(openOperation);
+            executeOperation(openOperation);
+            /*Log.registerOperation(this,openOperation);
             openOperation.execute(this);
-            Log.incrementStatus();
+            Log.incrementStatus();*/
             return openOperation.Result;
         }
 
         public void close(String clientID, string filename)
         {
+            /*
             MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename); 
-            Log.registerOperation(closeOperation);
+            Log.registerOperation(this,closeOperation);
             closeOperation.execute(this);
-            Log.incrementStatus();
+            Log.incrementStatus();*/
+            executeOperation(new MetaDataCloseOperation(clientID, filename));
         }
 
         public void delete(string clientId, string filename)
         {
+            /*
             MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
-            Log.registerOperation(deleteOperation);
+            Log.registerOperation(this,deleteOperation);
             deleteOperation.execute(this);
-            Log.incrementStatus();
+            Log.incrementStatus();*/
+            executeOperation(new MetaDataDeleteOperation(clientId, filename));
         }
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
-            Log.registerOperation(createOperation);
             
-            createOperation.execute(this);
+            MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
+            /* Log.registerOperation(this,createOperation);
+            
+             createOperation.execute(this);
 
-            Log.incrementStatus();
+             Log.incrementStatus();*/
+            executeOperation(createOperation);
 
-            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename); 
-            Log.registerOperation(openOperation);
+            /*
+            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
+			Log.registerOperation(this,openOperation);
             openOperation.execute(this);
+            
 
-            Log.incrementStatus();
+            Log.incrementStatus();*/
+            executeOperation(new MetaDataOpenOperation(clientID, filename));
 
             return createOperation.Result;
         }
@@ -158,6 +180,28 @@ namespace MetaDataServer
                     FileMetadataLocks[fileName].Set();
                 }
             }
+        }
+
+        private void executeOperation(MetaDataOperation operation)
+        {
+            if (ReplicationHandler.IsMaster)
+            {
+                safeExecuteOperation(operation);
+            }
+            else
+            {
+                Console.WriteLine("#MDS " + Id + " [SLAVE] - " + " executeOperation " + operation);
+                int masterId = ReplicationHandler.MetadataServerId;
+                throw new NotMasterException("please execute the operation on the master: " + masterId, masterId);
+            }
+        }
+
+        private void safeExecuteOperation(MetaDataOperation operation)
+        {
+            Console.WriteLine("#MDS " + Id + " [MASTER] - " + " executeOperation " + operation);
+            Log.registerOperation(this, operation);
+            operation.execute(this);
+            Log.incrementStatus();
         }
 
         #endregion OperationsThatChangeTheState
@@ -194,6 +238,17 @@ namespace MetaDataServer
             return FileMetadata[filename];
         }
 
+        public void receiveAliveMessage(MetaDataServerAliveMessage aliveMessage)
+        {
+            if (aliveMessage.IsMaster)
+            {
+                foreach (MetaDataOperation operation in aliveMessage.Operations)
+                {
+                    safeExecuteOperation(operation);
+                }
+            }
+        }
+
         #endregion OperationsThatDontChangeState
         
         /**
@@ -217,6 +272,7 @@ namespace MetaDataServer
         /**
          * CheckPoint opperations
          **/
+
         #region Checkpoint
         
         public void makeCheckpoint()
@@ -258,6 +314,7 @@ namespace MetaDataServer
 
         #endregion Checkpoint
 
+        #region otherCode
         public void dump()
         {
             Console.WriteLine("#MDS: Dumping!\r\n");
@@ -296,11 +353,13 @@ namespace MetaDataServer
             return null;
         }
 
+        /*
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
             Console.WriteLine("#MD: Heartbeat received from " + heartbeat.ServerId + " with message: " + heartbeat.Message);
         }
-
+         */ 
+		#endregion otherCode
     }
 
 }

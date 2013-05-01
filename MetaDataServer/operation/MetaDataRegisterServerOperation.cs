@@ -6,9 +6,9 @@ using CommonTypes;
 
 namespace MetaDataServer
 {
+    [Serializable]
     class MetaDataRegisterServerOperation : MetaDataOperation
     {
-
         String DataServerId { get; set; }
         String DataServerHost { get; set; }
         int DataServerPort { get; set; }
