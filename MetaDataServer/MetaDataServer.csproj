@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="operation\MetaRegisterDataServerOperation.cs" />
+    <Compile Include="operation\MetaDataCloseOperation.cs" />
     <Compile Include="operation\MetaDataDeleteOperation.cs" />
     <Compile Include="operation\MetaDataOpenOperation.cs" />
     <Compile Include="operation\MetaDataCreateOperation.cs" />

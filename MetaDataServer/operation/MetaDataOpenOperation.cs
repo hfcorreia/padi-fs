@@ -38,8 +38,12 @@ namespace MetaDataServer
             else
             {
                 Console.WriteLine("#MDS: opening file: " + Filename);
+                
+                md.FileMetadata[Filename].IsOpen = true;
                 md.FileMetadata[Filename].Clients.Add(ClientID);
+
                 md.makeCheckpoint();
+                
                 Result = md.FileMetadata[Filename];
             }
         }      

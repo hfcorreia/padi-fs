@@ -76,16 +76,18 @@ namespace MetaDataServer
             RemotingServices.Marshal(metadataServer, Id, typeof(MetaDataServer));
         }
 
-        public void registDataServer(String id, string host, int port)
+        public void registDataServer(String dataserverId, string dataserverHost, int dataserverPort)
         {
-            Console.WriteLine("#MDS: Registering DS " + id);
-            ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
-            DataServers.Add(id, remoteObjectWrapper);
-            addServerToUnbalancedFiles(id);
-            makeCheckpoint();
+            //Console.WriteLine("#MDS: Registering DS " + id);
+            //ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(port, id, host);
+            //DataServers.Add(id, remoteObjectWrapper);
+            //addServerToUnbalancedFiles(id);
+            //makeCheckpoint();
+            MetaDataRegisterServerOperation registerDataserverOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
+            registerDataserverOperation.execute(this);
         }
 
-        private void addServerToUnbalancedFiles(string id)
+        public void addServerToUnbalancedFiles(string id)
         {
             foreach (String fileName in FileMetadata.Keys)
             {
@@ -123,21 +125,23 @@ namespace MetaDataServer
 
         public void close(String clientID, string filename)
         {
-            if (!FileMetadata.ContainsKey(filename))
-            {
-                throw new CloseFileException("#MDS.close - File " + filename + " does not exist");
-            }
+            //if (!FileMetadata.ContainsKey(filename))
+            //{
+            //    throw new CloseFileException("#MDS.close - File " + filename + " does not exist");
+            //}
 
-            if (FileMetadata.ContainsKey(filename) && !FileMetadata[filename].Clients.Contains(clientID))
-            {
-                //throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
-                Console.WriteLine("#MDS.close - File " + filename + " is allready closed for user " + clientID);
-                return;
-            }
+            //if (FileMetadata.ContainsKey(filename) && !FileMetadata[filename].Clients.Contains(clientID))
+            //{
+            //    //throw new CloseFileException("#MDS.close - File " + filename + " is not open for user " + clientID);
+            //    Console.WriteLine("#MDS.close - File " + filename + " is allready closed for user " + clientID);
+            //    return;
+            //}
 
-            Console.WriteLine("#MDS: closing file " + filename + "...");
-            FileMetadata[filename].Clients.Remove(clientID);
-            makeCheckpoint();
+            //Console.WriteLine("#MDS: closing file " + filename + "...");
+            //FileMetadata[filename].Clients.Remove(clientID);
+            //makeCheckpoint();
+            MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename);
+            closeOperation.execute(this);
 
         }
 
@@ -284,13 +288,16 @@ namespace MetaDataServer
             Console.WriteLine(" Opened Files: ");
             foreach (KeyValuePair<String, FileMetadata> files in FileMetadata)
             {
-                Console.Write("\t" + files.Key + " - Clients[ ");
-                foreach (String name in files.Value.Clients)
+                if (files.Value.IsOpen)
                 {
-                    Console.Write(name + " ");
+                    Console.Write("\t" + files.Key + " - Clients[ ");
+                    foreach (String name in files.Value.Clients)
+                    {
+                        Console.Write(name + " ");
+                    }
+                    Console.WriteLine("]");
+                    Console.WriteLine("nb " + files.Value.NumServers + " rq " + files.Value.ReadQuorum + " wq" + files.Value.WriteQuorum);
                 }
-                Console.WriteLine("]");
-                Console.WriteLine("nb " + files.Value.NumServers + " rq " + files.Value.ReadQuorum + " wq" + files.Value.WriteQuorum);
             }
             Console.WriteLine();
 
