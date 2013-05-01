@@ -45,6 +45,7 @@
     <Compile Include="exception\PadiFsException.cs" />
     <Compile Include="exception\ReadFileException.cs" />
     <Compile Include="exception\WriteFileException.cs" />
+    <Compile Include="HeartbeatMessage.cs" />
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="exception\ServerDownException.cs" />
     <Compile Include="FileContentContainer.cs" />

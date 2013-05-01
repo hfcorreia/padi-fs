@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Timers;
 
 namespace DataServer
 {
@@ -33,6 +34,8 @@ namespace DataServer
         private DSstate State { get; set; }
 
         internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
+
+        private System.Timers.Timer Timer { get; set; }
 
         static void Main(string[] args)
         {
@@ -62,6 +65,10 @@ namespace DataServer
             State = new DSstateNormal(this);
             FileLocks = new Dictionary<string, ReaderWriterLockSlim>();
             CheckpointCounter = 0;
+
+            Timer = new System.Timers.Timer(2000);
+            Timer.Elapsed += new ElapsedEventHandler(sendHeartbeat);
+            Timer.Enabled = true;
         }
 
         public void startConnection(DataServer dataServer)
@@ -188,5 +195,19 @@ namespace DataServer
         {
             return null;
         }
+
+        void sendHeartbeat(object source, ElapsedEventArgs e)
+        {
+            Console.WriteLine("#DS: heartbeating");
+            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, "um heartbeat");
+
+            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
+            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
+                tasks[md] = Task.Factory.StartNew(() => { metadataServer.receiveHeartbeat(heartbeat); });
+            }
+        }
+
     }
 }

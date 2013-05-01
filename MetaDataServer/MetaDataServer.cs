@@ -10,6 +10,7 @@ using CommonTypes;
 using System.Collections;
 using CommonTypes.Exceptions;
 using System.Threading;
+using System.Timers;
 
 namespace MetaDataServer
 {
@@ -20,6 +21,8 @@ namespace MetaDataServer
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         public MetaDataLog Log { get; set; }
+
+
 
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
 
@@ -81,7 +84,7 @@ namespace MetaDataServer
             DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
             Log = new MetaDataLog();
             Log.init(this);
-        }
+         }
 
 
 
@@ -291,6 +294,11 @@ namespace MetaDataServer
         public override object InitializeLifetimeService()
         {
             return null;
+        }
+
+        public void receiveHeartbeat(HeartbeatMessage heartbeat)
+        {
+            Console.WriteLine("#MD: Heartbeat received from " + heartbeat.ServerId + " with message: " + heartbeat.Message);
         }
 
     }

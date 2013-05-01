@@ -62,5 +62,7 @@ namespace CommonTypes
         void recover();
 
         void registDataServer(string id, string host, int port);
+
+        void receiveHeartbeat(HeartbeatMessage heartbeat);
     }
 }
