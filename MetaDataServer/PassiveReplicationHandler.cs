@@ -11,7 +11,7 @@ namespace MetaDataServer
     public class PassiveReplicationHandler
     {
         public int MetadataServerId { get; set; }
-        public int MasterNodeId { get { return AliveServers.Min(); } }
+        public int MasterNodeId { get; set; }
         public bool IsMaster { get { return MetadataServerId == MasterNodeId; } }
         public HashSet<int> AliveServers { get; set; }
         private Timer[] NodeAliveTimers { get; set; }
@@ -23,7 +23,8 @@ namespace MetaDataServer
         public PassiveReplicationHandler(int metadataServerId)
         {
             MetadataServerId = metadataServerId;
-            
+            MasterNodeId = 0;
+
             NodeAliveTimers = new Timer[NUMBER_OF_METADATA_SERVERS];
 
             AliveServers = new HashSet<int>();
@@ -50,6 +51,7 @@ namespace MetaDataServer
 
         public void electMaster()
         {
+            MasterNodeId = AliveServers.Min();
             Console.WriteLine("#MD " + "ReplicationHandler - The new master is the node - " + MasterNodeId);
         }
 

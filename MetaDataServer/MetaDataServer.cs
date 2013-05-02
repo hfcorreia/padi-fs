@@ -23,6 +23,8 @@ namespace MetaDataServer
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         public MetaDataLog Log { get; set; }
 
+        private bool isFailing;
+
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
 
         /***
@@ -87,10 +89,10 @@ namespace MetaDataServer
             DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
             Log = new MetaDataLog();
 			Log.init(this);
-			
-            String[] parsedId = id.Split('-');
-            int mdId = Int32.Parse(parsedId[1]);
-            ReplicationHandler = new PassiveReplicationHandler(mdId);
+            isFailing = false;
+
+
+            ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
 
 
             //atach a debugger - we should add some parameter to enable/disable this!
@@ -173,6 +175,10 @@ namespace MetaDataServer
 
         private void safeExecuteOperation(MetaDataOperation operation)
         {
+            if (isFailing)
+            {
+                throw new Exception("the mds " + Id + " is failing");
+            }
             Console.WriteLine("#MDS " + Id + " [MASTER] - " + " executeOperation " + operation);
             Log.registerOperation(this, operation);
             operation.execute(this);
@@ -190,11 +196,19 @@ namespace MetaDataServer
 
         public int getMasterId()
         {
+            if (isFailing)
+            {
+                throw new Exception("the mds " + Id + " is failing");
+            }
             return ReplicationHandler.MetadataServerId;
         }
 
         public FileMetadata updateReadMetadata(string clientId, string filename)
         {
+            if (isFailing)
+            {
+                throw new Exception("the mds " + Id + " is failing");
+            }
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
             {
                 FileMetadataLocks[filename].WaitOne();
@@ -205,6 +219,10 @@ namespace MetaDataServer
 
         public FileMetadata updateWriteMetadata(string clientId, string filename)
         {
+            if (isFailing)
+            {
+                throw new Exception("the mds " + Id + " is failing");
+            }
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
             {
                 FileMetadataLocks[filename].WaitOne();
@@ -215,7 +233,10 @@ namespace MetaDataServer
 
         public void receiveAliveMessage(MetaDataServerAliveMessage aliveMessage)
         {
-           
+            if (isFailing)
+            {
+                throw new Exception("the mds " + Id + " is failing");
+            }
             ReplicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
 
             if (aliveMessage.IsMaster && aliveMessage.Operations!=null)
@@ -237,12 +258,15 @@ namespace MetaDataServer
 
         public void fail()
         {
-            Console.WriteLine("Fail not implemented in MD yet");
+            Console.WriteLine("Fail...");
+            isFailing = true;
         }
 
         public void recover()
         {
             Console.WriteLine("Recover not implemented in MD yet");
+            isFailing = false;
+            ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
         }
 
         #endregion FailAndRecover
@@ -318,6 +342,15 @@ namespace MetaDataServer
             }
             Console.WriteLine();
 
+        }
+
+        public int IdAsNumber
+        {
+            get
+            {
+                String[] parsedId = Id.Split('-');
+                return Int32.Parse(parsedId[1]);
+            }
         }
 
         public void exit()
