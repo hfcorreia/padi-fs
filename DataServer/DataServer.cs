@@ -19,6 +19,9 @@ namespace DataServer
 {
     public class DataServer : MarshalByRefObject, IDataServer, IRemote
     {
+        //private static int HEARTBEAT_INTERVAL = Int32.Parse(Properties.Resources.HEARTBEAT_INTERVAL);
+        private static int HEARTBEAT_INTERVAL = 10000;
+
         private int CheckpointCounter { get; set; }
 
         public String Id { get; set; }
@@ -36,6 +39,10 @@ namespace DataServer
         internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
 
         private System.Timers.Timer Timer { get; set; }
+
+        private int ReadCounter { get; set; }
+        private int ReadVersionCounter { get; set; }
+        private int WriteCounter { get; set; }
 
         static void Main(string[] args)
         {
@@ -68,9 +75,13 @@ namespace DataServer
 
             Console.Title = "DS " + Id;
 
-            Timer = new System.Timers.Timer(2000);
+            Timer = new System.Timers.Timer(HEARTBEAT_INTERVAL);
             Timer.Elapsed += new ElapsedEventHandler(sendHeartbeat);
             Timer.Enabled = true;
+
+            ReadCounter = 0;
+            ReadVersionCounter = 0;
+            WriteCounter = 0;
         }
 
         public void startConnection(DataServer dataServer)
@@ -90,11 +101,13 @@ namespace DataServer
 
         public void write(File file)
         {
+            WriteCounter++;
             State.write(file);
         }
 
         public File read(string filename)
         {
+            ReadCounter++;
             return State.read(filename);
         }
 
@@ -139,6 +152,7 @@ namespace DataServer
 
         public int readFileVersion(string filename)
         {
+            ReadVersionCounter++;
             return State.readFileVersion(filename);
         }
 
@@ -228,8 +242,8 @@ namespace DataServer
         void sendHeartbeat(object source, ElapsedEventArgs e)
         {
             
-            Console.WriteLine("#DS: heartbeating");
-            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, "um heartbeat");
+            Console.WriteLine("#DS: heartbeating at each " + HEARTBEAT_INTERVAL + " ms");
+            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, "um heartbeat", ReadCounter, ReadVersionCounter, WriteCounter);
 
             Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
@@ -237,6 +251,10 @@ namespace DataServer
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.receiveHeartbeat(heartbeat); });
             }
+
+            ReadCounter = 0;
+            ReadVersionCounter = 0;
+            WriteCounter = 0;
              
         }
 

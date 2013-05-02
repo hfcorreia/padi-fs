@@ -372,7 +372,7 @@ namespace MetaDataServer
 
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
-            Console.WriteLine("#MD: Heartbeat received from " + heartbeat.ServerId + " with message: " + heartbeat.Message);
+            Console.WriteLine("#MD: Heartbeat received: " + heartbeat.ToString());
         }
           
 		#endregion otherCode
