@@ -83,6 +83,11 @@ namespace Client.services
                     {
                         masterId = exception.MasterId;
                     }
+                    catch (Exception exception)
+                    {
+                        //consider as the server being down - try another server
+                        masterId = (masterId + 1) % 3;
+                    }
                 }
             });
         }

@@ -50,7 +50,7 @@ namespace MetaDataServer
 
         public void electMaster()
         {
-            //MasterNodeId = 
+            
         }
 
         public void registerAliveMessage(int metadataServerId)
