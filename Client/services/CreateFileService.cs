@@ -36,13 +36,23 @@ namespace Client.services
         {
             Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);
 
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createFileTask() };
+            //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createFileTask() };
 
+            Func<IMetaDataServer, FileMetadata> createFileFunc = (IMetaDataServer metadataServer) => {
+                return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum);
+            };
+
+            Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(createFileFunc) };
+            
             CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
             FileRegisterId = State.FileMetadataContainer.addFileMetadata(CreatedFileMetadata);
+
         }
 
+
+
+        /* ORIGINAL CODE:
         private Task<FileMetadata> createFileTask()
         {
             return Task<FileMetadata>.Factory.StartNew(() =>
@@ -71,6 +81,6 @@ namespace Client.services
                 }
                 return result;
             });
-        }
+        }*/
     }
 }

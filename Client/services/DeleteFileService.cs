@@ -28,13 +28,24 @@ namespace Client.services
         {
             Console.WriteLine("#Client: Deleting file " + FileName);
 
-            Task[] tasks = new Task[] { deleteFileTask() };
+            //Task[] tasks = new Task[] { deleteFileTask() };
+
+
+            Func<IMetaDataServer, Object> deleteFileFunc = (IMetaDataServer metadataServer) =>
+            {
+                metadataServer.delete(State.Id, FileName);
+                return null;
+            };
+
+            //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(deleteFileFunc) };
+
+            Task[] tasks = new Task[] { createExecuteOnMDSTask(deleteFileFunc)};
 
             waitVoidQuorum(tasks, 1);
 
             State.FileMetadataContainer.removeFileMetadata(FileName);
         }
-
+        /*
         private Task deleteFileTask()
         {
             return Task.Factory.StartNew(() =>
@@ -61,6 +72,6 @@ namespace Client.services
                     }
                 }
             });
-        }
+        }*/
     }
 }

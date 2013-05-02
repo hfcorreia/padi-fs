@@ -84,6 +84,41 @@ namespace Client.services
             }
         }
 
+        public Task<T> createExecuteOnMDSTask<T>(Func<IMetaDataServer, T> lambdaTask)
+        {
+            return Task<T>.Factory.StartNew(() =>
+            {
+                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
+                T result = default(T);
+                bool found = false;
+                int masterId = 0;
+                while (!found)
+                {
+                    try
+                    {
+                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
+                        result = lambdaTask(metadataServer);
+                        found = true;
+                    }
+                    catch (NotMasterException exception)
+                    {
+                        masterId = exception.MasterId;
+                    }
+                    catch (PadiFsException exception)
+                    {
+                        //its an exception that should be treated by the client himself!
+                        throw exception;
+                    }
+                    catch (Exception exception)
+                    {
+                        //consider as the server being down - try another server
+                        masterId = (masterId + 1) % 3;
+                    }
+                }
+                return result;
+            });
+        }
+
         public ClientService(ClientState clientState){
             State = clientState;
         }

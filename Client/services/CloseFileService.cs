@@ -29,14 +29,24 @@ namespace Client.services
         {
             Console.WriteLine("#Client: closing file " + FileName);
 
-            Task[] tasks = new Task[] { createCloseFileTask() };
+            //Task[] tasks = new Task[] { createCloseFileTask() };
             
+            Func<IMetaDataServer, Object> closeFileFunc = (IMetaDataServer metadataServer) =>
+            {
+                metadataServer.close(State.Id, FileName);
+                return null;
+            };
+
+            Task[] tasks = new Task[] { createExecuteOnMDSTask(closeFileFunc) };
+
+            //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(deleteFileFunc) };
+
             State.FileMetadataContainer.markClosedFile(FileName);
 
             waitVoidQuorum(tasks, 1);
 
         }
-
+        /*
         private Task closeFileTask()
         {
             return Task.Factory.StartNew(() =>
@@ -84,5 +94,6 @@ namespace Client.services
                 }
             });
         }
+         */ 
     }
 }

@@ -35,7 +35,14 @@ namespace Client.services
             {
                 //if we don't have metadata of the file, we go get it on the MetadataServers
 
-                Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { openFileTask() };
+                //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { openFileTask() };
+
+                Func<IMetaDataServer, FileMetadata> openFileFunc = (IMetaDataServer metadataServer) =>
+                {
+                    return metadataServer.open(State.Id, FileName);
+                };
+
+                Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(openFileFunc) };
 
                 FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
@@ -43,7 +50,7 @@ namespace Client.services
                 Console.WriteLine("#Client: metadata saved in position " + position);
             }
         }
-
+        /*
         private Task<FileMetadata> openFileTask()
         {
             return Task<FileMetadata>.Factory.StartNew(() =>
@@ -73,5 +80,6 @@ namespace Client.services
                 return result;
             });
         }
+         */ 
     }
 }
