@@ -22,9 +22,6 @@ namespace MetaDataServer
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         public MetaDataLog Log { get; set; }
-       
-
-
 
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
 
@@ -115,11 +112,6 @@ namespace MetaDataServer
 
         public void registDataServer(String dataserverId, string dataserverHost, int dataserverPort)
         {
-            /*
-            MetaDataRegisterServerOperation registerOperation = new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort);
-            Log.registerOperation(this, registerOperation);
-            registerOperation.execute(this);
-            Log.incrementStatus();*/
             executeOperation(new MetaDataRegisterServerOperation(dataserverId, dataserverHost, dataserverPort));
         }
 
@@ -127,29 +119,16 @@ namespace MetaDataServer
         {
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
             executeOperation(openOperation);
-            /*Log.registerOperation(this,openOperation);
-            openOperation.execute(this);
-            Log.incrementStatus();*/
             return openOperation.Result;
         }
 
         public void close(String clientID, string filename)
         {
-            /*
-            MetaDataCloseOperation closeOperation = new MetaDataCloseOperation(clientID, filename); 
-            Log.registerOperation(this,closeOperation);
-            closeOperation.execute(this);
-            Log.incrementStatus();*/
             executeOperation(new MetaDataCloseOperation(clientID, filename));
         }
 
         public void delete(string clientId, string filename)
         {
-            /*
-            MetaDataDeleteOperation deleteOperation = new MetaDataDeleteOperation(clientId, filename);
-            Log.registerOperation(this,deleteOperation);
-            deleteOperation.execute(this);
-            Log.incrementStatus();*/
             executeOperation(new MetaDataDeleteOperation(clientId, filename));
         }
 
@@ -157,20 +136,8 @@ namespace MetaDataServer
         {
             
             MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
-            /* Log.registerOperation(this,createOperation);
-            
-             createOperation.execute(this);
-
-             Log.incrementStatus();*/
             executeOperation(createOperation);
 
-            /*
-            MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
-			Log.registerOperation(this,openOperation);
-            openOperation.execute(this);
-            
-
-            Log.incrementStatus();*/
             executeOperation(new MetaDataOpenOperation(clientID, filename));
 
             return createOperation.Result;
@@ -230,11 +197,8 @@ namespace MetaDataServer
         {
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
             {
-               // Console.WriteLine("updateReadMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
                 FileMetadataLocks[filename].WaitOne();
             }
-
-           // Console.WriteLine("updateReadMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].ReadQuorum);
 
             return FileMetadata[filename];
         }
@@ -243,11 +207,8 @@ namespace MetaDataServer
         {
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
             {
-                //Console.WriteLine("updateWriteMetadata - WAITING [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
                 FileMetadataLocks[filename].WaitOne();
             }
-
-            //Console.WriteLine("updateWriteMetadata - FOUND [filename: " + filename + ", #server: " + FileMetadata[filename].FileServers.Count + ", quorum: " + FileMetadata[filename].WriteQuorum);
 
             return FileMetadata[filename];
         }

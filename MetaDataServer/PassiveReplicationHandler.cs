@@ -50,7 +50,7 @@ namespace MetaDataServer
 
         public void electMaster()
         {
-            
+            Console.WriteLine("#MD " + "ReplicationHandler - The new master is the node - " + MasterNodeId);
         }
 
         public void registerAliveMessage(int metadataServerId)
@@ -75,7 +75,6 @@ namespace MetaDataServer
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.Message + "\n" + e.StackTrace);
                             Console.WriteLine("#MDS " + MetadataServerId + " - sendAliveMessage - server " + slaveId + "is down.");
                         }
                     });
