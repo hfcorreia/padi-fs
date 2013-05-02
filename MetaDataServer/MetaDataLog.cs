@@ -110,5 +110,22 @@ namespace MetaDataServer
             }
         }
 
+
+        public List<MetaDataOperation> getOperationsFrom(int status)
+        {
+            List<MetaDataOperation> logCopy = new List<MetaDataOperation>(log);
+            List<MetaDataOperation> operations = new List<MetaDataOperation>();
+            while (status < MaxId)
+            {
+                operations.Add(getOperation(status));
+                status++;
+            }
+            return operations;
+        }
+
+        public void registerOperations(List<MetaDataOperation> list)
+        {
+            log.AddRange(list);
+        }
     }
 }

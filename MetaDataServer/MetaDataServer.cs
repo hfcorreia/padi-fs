@@ -250,8 +250,15 @@ namespace MetaDataServer
         public void recover()
         {
             Console.WriteLine("Recover not implemented in MD yet");
+            Log.registerOperations(ReplicationHandler.synchOperations());
+            Log.dump();
             isFailing = false;
             ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
+        }
+
+        public List<MetaDataOperation> getOperationsFrom(int status)
+        {
+            return Log.getOperationsFrom(status);
         }
 
         #endregion FailAndRecover
