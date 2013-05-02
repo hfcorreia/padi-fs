@@ -45,6 +45,8 @@ namespace Client
         public void initialize(int port, string id)
         {
             ClientState = new ClientState(port, id);
+
+            Console.Title = "Client " + id;
             
             //atach a debugger - we should add some parameter to enable/disable this!
             if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)

@@ -66,6 +66,8 @@ namespace DataServer
             FileLocks = new Dictionary<string, ReaderWriterLockSlim>();
             CheckpointCounter = 0;
 
+            Console.Title = "DS " + Id;
+
             Timer = new System.Timers.Timer(2000);
             Timer.Elapsed += new ElapsedEventHandler(sendHeartbeat);
             Timer.Enabled = true;

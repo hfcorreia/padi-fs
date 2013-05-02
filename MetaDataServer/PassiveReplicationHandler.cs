@@ -60,6 +60,7 @@ namespace MetaDataServer
             resetAliveTimer(metadataServerId);
             if (!AliveServers.Contains(metadataServerId))
             {
+                //is a reborn of a node that could be the one with the smallest id
                 AliveServers.Add(metadataServerId);
                 electMaster();
             }
@@ -75,13 +76,16 @@ namespace MetaDataServer
 
                     Task.Factory.StartNew(() =>
                     {
+                        int nodeId = slaveId;
                         try
                         {
                             metadataServer.receiveAliveMessage(aliveMessage);
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("#MDS " + MetadataServerId + " - sendAliveMessage - server " + slaveId + " is down.");
+                            Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                            Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
+                            registerNodeDie(nodeId);
                         }
                     });
                 }

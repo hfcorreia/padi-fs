@@ -91,6 +91,8 @@ namespace MetaDataServer
 			Log.init(this);
             isFailing = false;
 
+            Console.Title = "MDS " + Id;
+
             ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
 
             //atach a debugger - we should add some parameter to enable/disable this!
@@ -175,7 +177,7 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
-            Console.WriteLine("#MDS " + Id + " [MASTER] - " + " executeOperation " + operation);
+            Console.WriteLine("#MDS " + Id + (ReplicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + " executeOperation " + operation);
             Log.registerOperation(this, operation);
             operation.execute(this);
             Log.incrementStatus();
