@@ -36,8 +36,6 @@ namespace Client.services
         {
             Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);
 
-            //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createFileTask() };
-
             Func<IMetaDataServer, FileMetadata> createFileFunc = (IMetaDataServer metadataServer) => {
                 return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum);
             };
@@ -50,37 +48,5 @@ namespace Client.services
 
         }
 
-
-
-        /* ORIGINAL CODE:
-        private Task<FileMetadata> createFileTask()
-        {
-            return Task<FileMetadata>.Factory.StartNew(() =>
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
-                FileMetadata result = null;
-                bool found = false;
-                int masterId = 0;
-                while (!found)
-                {
-                    try
-                    {
-                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
-                        result = metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum);
-                        found = true;
-                    }
-                    catch (NotMasterException exception)
-                    {
-                        masterId = exception.MasterId;
-                    }
-                    catch (Exception exception)
-                    {
-                        //consider as the server being down - try another server
-                        masterId = (masterId + 1) % 3;
-                    }
-                }
-                return result;
-            });
-        }*/
     }
 }

@@ -46,18 +46,17 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MD " + "ReplicationHandler - node - " + metadataServerId + "died");
 
-
             AliveServers.Remove(metadataServerId);
             NodeAliveTimers[metadataServerId].Stop();
             electMaster();
-
+            /*
             string aliveServersString = "#MD alive servers: [ ";
             foreach (int id in AliveServers)
             {
                 aliveServersString += id + ", ";
             }
             aliveServersString += " ]";
-            Console.WriteLine(aliveServersString);
+            Console.WriteLine(aliveServersString);*/
         }
 
         public void electMaster()
@@ -69,6 +68,7 @@ namespace MetaDataServer
         public void registerAliveMessage(int metadataServerId)
         {
             resetAliveTimer(metadataServerId);
+
             if (!AliveServers.Contains(metadataServerId))
             {
                 Console.WriteLine("#MD " + "the server " + metadataServerId + " has reborn");
@@ -82,13 +82,13 @@ namespace MetaDataServer
         {
             foreach (int slaveId in AliveServers)
             {
-                if (slaveId != MetadataServerId)
+                int nodeId = slaveId;
+                Task.Factory.StartNew(() =>
                 {
-                    MetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[slaveId].getObject<MetaDataServer>();
-
-                    Task.Factory.StartNew(() =>
+                    
+                    if (nodeId != MetadataServerId)
                     {
-                        int nodeId = slaveId;
+                        MetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[nodeId].getObject<MetaDataServer>();
                         try
                         {
                             metadataServer.receiveAliveMessage(aliveMessage);
@@ -102,8 +102,8 @@ namespace MetaDataServer
                             Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
                             //registerNodeDie(nodeId);
                         }
-                    });
-                }
+                    }
+                });
             }
             resetMyTimer();
         }
@@ -112,8 +112,6 @@ namespace MetaDataServer
         {
             if (IsMaster)
             {
-                Console.WriteLine("#MD " + "ReplicationHandler - syncOperation - " + operation);
-
                 List<MetaDataOperation> operations = new List<MetaDataOperation>();
                 operations.Add(operation);
                 sendAliveMessage(new MetaDataServerAliveMessage(MetadataServerId, IsMaster, operations));
