@@ -6,12 +6,12 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization.Formatters;
-using CommonTypes;
 using System.Collections;
 using CommonTypes.Exceptions;
 using System.Threading;
 using System.Timers;
 using System.Diagnostics;
+using CommonTypes;
 
 namespace MetaDataServer
 {
@@ -353,12 +353,12 @@ namespace MetaDataServer
             return null;
         }
 
-        /*
+
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
             Console.WriteLine("#MD: Heartbeat received from " + heartbeat.ServerId + " with message: " + heartbeat.Message);
         }
-         */ 
+          
 		#endregion otherCode
     }
 

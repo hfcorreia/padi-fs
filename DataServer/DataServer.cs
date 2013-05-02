@@ -234,7 +234,7 @@ namespace DataServer
 
         void sendHeartbeat(object source, ElapsedEventArgs e)
         {
-            /*
+            
             Console.WriteLine("#DS: heartbeating");
             HeartbeatMessage heartbeat = new HeartbeatMessage(Id, "um heartbeat");
 
@@ -244,7 +244,7 @@ namespace DataServer
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.receiveHeartbeat(heartbeat); });
             }
-             */ 
+             
         }
 
 

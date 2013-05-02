@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CommonTypes;
 
 namespace CommonTypes
 {
@@ -67,8 +68,7 @@ namespace CommonTypes
          **/
         void registDataServer(string id, string host, int port);
 
-        /*
         void receiveHeartbeat(HeartbeatMessage heartbeat);
-         */ 
+         
     }
 }
