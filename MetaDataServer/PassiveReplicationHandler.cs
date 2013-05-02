@@ -40,7 +40,41 @@ namespace MetaDataServer
 
             resetMyTimer();
             
-        }   
+        }
+
+
+        public List<MetaDataOperation> synchOperations()
+        {
+            List<MetaDataOperation> result = null;
+            bool found = false;
+            int masterId = (MasterNodeId + 1) % 3 ;
+            while (!found)
+            { // we assume that at least one MDS is allways available
+                try
+                {
+                    if (masterId != MetadataServerId)
+                    {
+                        MetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<MetaDataServer>();
+                        result = metadataServer.getOperationsFrom(0);
+                        found = true;
+                    }
+                }
+                catch (NotMasterException exception)
+                {
+                    masterId = exception.MasterId;
+                }
+                catch (PadiFsException exception)
+                {
+                    throw exception;
+                }
+                catch (Exception exception)
+                {
+                    //consider as the server being down - try another server
+                }
+                masterId = (masterId + 1) % 3;
+            }
+            return result;
+        }
 
         public void registerNodeDie(int metadataServerId)
         {

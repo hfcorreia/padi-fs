@@ -102,13 +102,6 @@ namespace DataServer
         public void registInMetadataServers()
         {
             Console.WriteLine("#DS: registering in MetadataServers");
-            /*
-            Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task.Factory.StartNew(() => { metadataServer.registDataServer(Id, Host, Port); });
-            }*/
             Task.WaitAll(new Task[] { registInMetadataServersTask() });
         }
 
