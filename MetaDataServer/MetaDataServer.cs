@@ -199,7 +199,7 @@ namespace MetaDataServer
             else
             {
                 Console.WriteLine("#MDS " + Id + " [SLAVE] - " + " executeOperation " + operation);
-                int masterId = ReplicationHandler.MetadataServerId;
+                int masterId = ReplicationHandler.MasterNodeId;
                 throw new NotMasterException("please execute the operation on the master: " + masterId, masterId);
             }
         }
@@ -254,7 +254,10 @@ namespace MetaDataServer
 
         public void receiveAliveMessage(MetaDataServerAliveMessage aliveMessage)
         {
-            if (aliveMessage.IsMaster)
+           
+            ReplicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
+
+            if (aliveMessage.IsMaster && aliveMessage.Operations!=null)
             {
                 foreach (MetaDataOperation operation in aliveMessage.Operations)
                 {

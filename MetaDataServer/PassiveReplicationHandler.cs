@@ -4,38 +4,58 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommonTypes;
+using System.Timers;
 
 namespace MetaDataServer
 {
     public class PassiveReplicationHandler
     {
         public int MetadataServerId { get; set; }
-        public bool IsMaster { get; set; }
+        public int MasterNodeId { get { return AliveServers.Min(); } }
+        public bool IsMaster { get { return MetadataServerId == MasterNodeId; } }
         public HashSet<int> AliveServers { get; set; }
+        private Timer[] NodeAliveTimers { get; set; }
 
-        //TODOOOOO
-        //Timer[3] -> timers que controlam o tempo que passou desde a ultima vez que
-        //recebeu uma mensagem de i'm alive de um dado metadataserver.
-        ////quando o timer do metadataserver 'id' despara -> registerDieMessage(id)
-        ////quando chega uma mensage de i'm alive do metadataServer 'id' -> registerAliveMessage(id) 
+        private static int NUMBER_OF_METADATA_SERVERS = 3;
+        private static double ALIVE_PERIOD = 4 * 1000; //4 seconds
+        private static double MY_TIMER_PERIOD = 1 * 1000; //1 second
 
         public PassiveReplicationHandler(int metadataServerId)
         {
             MetadataServerId = metadataServerId;
-            IsMaster = (MetadataServerId == 0);         //WARNING !!!!!!! THIS IS JUST FOR DEBUG!!!!! <<<------
+            
+            NodeAliveTimers = new Timer[NUMBER_OF_METADATA_SERVERS];
+
             AliveServers = new HashSet<int>();
-            AliveServers.Add(0);
-            AliveServers.Add(1);
-            AliveServers.Add(2);
+            for (int serverId = 0; serverId < NUMBER_OF_METADATA_SERVERS; ++serverId)
+            {
+                if (serverId != MetadataServerId)
+                {
+                    resetAliveTimer(serverId);
+                }
+                AliveServers.Add(serverId); //all servers are alive at the begin of life
+            }
+
+            resetMyTimer();
+            
         }
 
-        public void registerDieMessage(int metadataServerId)
+        public void registerNodeDie(int metadataServerId)
         {
+            Console.WriteLine("#MD " + "ReplicationHandler - node - " + metadataServerId + "died");
             AliveServers.Remove(metadataServerId);
+            NodeAliveTimers[metadataServerId].Stop();
+            electMaster();
+        }
+
+        public void electMaster()
+        {
+            //MasterNodeId = 
         }
 
         public void registerAliveMessage(int metadataServerId)
         {
+            resetAliveTimer(metadataServerId);
             AliveServers.Add(metadataServerId);
         }
 
@@ -49,7 +69,6 @@ namespace MetaDataServer
 
                     Task.Factory.StartNew(() =>
                     {
-                        Console.WriteLine("#MD " + "ReplicationHandler - sendAliveMessage - " + aliveMessage);
                         try
                         {
                             metadataServer.receiveAliveMessage(aliveMessage);
@@ -62,11 +81,11 @@ namespace MetaDataServer
                     });
                 }
             }
+            resetMyTimer();
         }
 
         public void syncOperation(MetaDataOperation operation)
         {
-            
             if (IsMaster)
             {
                 Console.WriteLine("#MD " + "ReplicationHandler - syncOperation - " + operation);
@@ -74,6 +93,38 @@ namespace MetaDataServer
                 List<MetaDataOperation> operations = new List<MetaDataOperation>();
                 operations.Add(operation);
                 sendAliveMessage(new MetaDataServerAliveMessage(MetadataServerId, IsMaster, operations));
+            }
+        }
+
+        public void resetAliveTimer(int nodeId)
+        {
+            if (NodeAliveTimers[nodeId] == null)
+            {
+                NodeAliveTimers[nodeId] = new Timer();
+                NodeAliveTimers[nodeId].Interval = ALIVE_PERIOD;
+                NodeAliveTimers[nodeId].Elapsed += (sender, args) => registerNodeDie(nodeId);
+                NodeAliveTimers[nodeId].Enabled = true;
+                NodeAliveTimers[nodeId].Start();
+            }
+            else
+            {
+                NodeAliveTimers[nodeId].Stop();
+                NodeAliveTimers[nodeId].Start();
+            }
+        }
+
+        public void resetMyTimer()
+        {
+            if (NodeAliveTimers[MetadataServerId] == null)
+            {
+                NodeAliveTimers[MetadataServerId] = new Timer();
+                NodeAliveTimers[MetadataServerId].Interval = MY_TIMER_PERIOD;
+                NodeAliveTimers[MetadataServerId].Elapsed += (sender, args) => sendAliveMessage(new MetaDataServerAliveMessage(MetadataServerId, IsMaster));
+                NodeAliveTimers[MetadataServerId].Enabled = true;
+                NodeAliveTimers[MetadataServerId].Start();
+            } else {
+                NodeAliveTimers[MetadataServerId].Stop();
+                NodeAliveTimers[MetadataServerId].Start();
             }
         }
     }

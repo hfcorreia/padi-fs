@@ -16,7 +16,7 @@ namespace MetaDataServer
         {
             MetadataServerId = metadataServerId;
             IsMaster = isMaster;
-            Operations = null;
+            Operations = new List<MetaDataOperation>();
         }
 
         public MetaDataServerAliveMessage(int metadataServerId, Boolean isMaster, List<MetaDataOperation> operations)
