@@ -43,14 +43,7 @@ namespace MetaDataServer
             
         }
 
-        public void recover()
-        {
-            while (Status < MaxId)
-            {
-                getOperation(Status).execute(MetadataServer);
-                incrementStatus();
-            }
-        }
+
 
         public MetaDataOperation getOperation(int operationId)
         {

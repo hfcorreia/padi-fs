@@ -251,9 +251,17 @@ namespace MetaDataServer
         {
             Console.WriteLine("Recover not implemented in MD yet");
             Log.registerOperations(ReplicationHandler.synchOperations());
-            Log.dump();
             isFailing = false;
+            recoverFromLog();
             ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
+        }
+
+        public void recoverFromLog()
+        {
+            while (Log.Status <= Log.MaxId)
+            {
+                safeExecuteOperation(Log.getOperation(Log.Status));
+            }
         }
 
         public List<MetaDataOperation> getOperationsFrom(int status)
@@ -322,20 +330,21 @@ namespace MetaDataServer
             {
                 Console.WriteLine("\t" + dataServer.Key);
             }
+
             Console.WriteLine(" Opened Files: ");
             foreach (KeyValuePair<String, FileMetadata> files in FileMetadata)
             {
                 if (files.Value.IsOpen)
                 {
-                    Console.Write("\t" + files.Key + " - Clients[ ");
+                    Console.Write("\t" + files.Key + " - Clients: ");
                     foreach (String name in files.Value.Clients)
                     {
-                        Console.Write(name + " ");
+                        Console.WriteLine("\t" + name + " ");
                     }
-                    Console.WriteLine("]");
                     Console.WriteLine("nb " + files.Value.NumServers + " rq " + files.Value.ReadQuorum + " wq" + files.Value.WriteQuorum);
                 }
             }
+
             Console.WriteLine();
 
         }

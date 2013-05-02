@@ -9,7 +9,7 @@ namespace CommonTypes {
     namespace Exceptions
     {
         [Serializable]
-        public class NotMasterException : PadiFsException
+        public class NotMasterException : PadiFsException   
         {
             public int MasterId { get; set; }
             public NotMasterException(String message, int masterId) : base(message) { MasterId = masterId; }
