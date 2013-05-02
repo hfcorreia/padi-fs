@@ -22,23 +22,11 @@ namespace MetaDataServer
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
         public MetaDataLog Log { get; set; }
-
         private bool isFailing;
-
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
-
-        /***
-         * PUBLIC => erro
-         * ***/
         public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
-        /***
-         * fim de erro
-         *  ***/
-
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
-
         public PassiveReplicationHandler ReplicationHandler { get; set; }
-
         private int CheckpointCounter;
 
         /**
@@ -191,7 +179,6 @@ namespace MetaDataServer
 
         #region OperationsThatDontChangeState
 
-
         public int getMasterId()
         {
             if (isFailing)
@@ -313,7 +300,11 @@ namespace MetaDataServer
         }
 
         #endregion Checkpoint
-
+        
+        /**
+         * Auxiliar code
+         **/
+        
         #region otherCode
         public void dump()
         {

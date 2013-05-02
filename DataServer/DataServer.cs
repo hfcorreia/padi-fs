@@ -131,6 +131,10 @@ namespace DataServer
                     {
                         masterId = exception.MasterId;
                     }
+                    catch (PadiFsException exception)
+                    {
+                        throw exception;
+                    }
                     catch (Exception exception)
                     {
                         //consider as the server being down - try another server

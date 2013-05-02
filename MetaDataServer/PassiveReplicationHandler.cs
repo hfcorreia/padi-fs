@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommonTypes;
 using System.Timers;
+using CommonTypes.Exceptions;
 
 namespace MetaDataServer
 {
@@ -44,9 +45,19 @@ namespace MetaDataServer
         public void registerNodeDie(int metadataServerId)
         {
             Console.WriteLine("#MD " + "ReplicationHandler - node - " + metadataServerId + "died");
+
+
             AliveServers.Remove(metadataServerId);
             NodeAliveTimers[metadataServerId].Stop();
             electMaster();
+
+            string aliveServersString = "#MD alive servers: [ ";
+            foreach (int id in AliveServers)
+            {
+                aliveServersString += id + ", ";
+            }
+            aliveServersString += " ]";
+            Console.WriteLine(aliveServersString);
         }
 
         public void electMaster()
@@ -60,6 +71,7 @@ namespace MetaDataServer
             resetAliveTimer(metadataServerId);
             if (!AliveServers.Contains(metadataServerId))
             {
+                Console.WriteLine("#MD " + "the server " + metadataServerId + " has reborn");
                 //is a reborn of a node that could be the one with the smallest id
                 AliveServers.Add(metadataServerId);
                 electMaster();
@@ -81,11 +93,14 @@ namespace MetaDataServer
                         {
                             metadataServer.receiveAliveMessage(aliveMessage);
                         }
+                        catch (PadiFsException exception)
+                        {
+                            throw exception;
+                        }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.Message + "\n" + e.StackTrace);
                             Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
-                            registerNodeDie(nodeId);
+                            //registerNodeDie(nodeId);
                         }
                     });
                 }
@@ -111,7 +126,7 @@ namespace MetaDataServer
             {
                 NodeAliveTimers[nodeId] = new Timer();
                 NodeAliveTimers[nodeId].Interval = ALIVE_PERIOD;
-                NodeAliveTimers[nodeId].Elapsed += (sender, args) => registerNodeDie(nodeId);
+                NodeAliveTimers[nodeId].Elapsed += (sender, args) => { int deadNode = nodeId; registerNodeDie(deadNode); };
                 NodeAliveTimers[nodeId].Enabled = true;
                 NodeAliveTimers[nodeId].Start();
             }
