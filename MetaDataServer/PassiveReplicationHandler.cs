@@ -16,9 +16,9 @@ namespace MetaDataServer
         public HashSet<int> AliveServers { get; set; }
         private Timer[] NodeAliveTimers { get; set; }
 
-        private static int NUMBER_OF_METADATA_SERVERS = 3;
-        private static double ALIVE_PERIOD = 4 * 1000; //4 seconds
-        private static double MY_TIMER_PERIOD = 1 * 1000; //1 second
+        private static int NUMBER_OF_METADATA_SERVERS = Int32.Parse(Properties.Resources.NUMBER_OF_METADATA_SERVERS);
+        private static double ALIVE_PERIOD = Int32.Parse(Properties.Resources.ALIVE_PERIOD);
+        private static double MY_TIMER_PERIOD = ALIVE_PERIOD / 4;
 
         public PassiveReplicationHandler(int metadataServerId)
         {
@@ -58,7 +58,11 @@ namespace MetaDataServer
         public void registerAliveMessage(int metadataServerId)
         {
             resetAliveTimer(metadataServerId);
-            AliveServers.Add(metadataServerId);
+            if (!AliveServers.Contains(metadataServerId))
+            {
+                AliveServers.Add(metadataServerId);
+                electMaster();
+            }
         }
 
         public void sendAliveMessage(MetaDataServerAliveMessage aliveMessage)

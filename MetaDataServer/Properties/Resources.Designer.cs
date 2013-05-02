@@ -61,6 +61,24 @@ namespace MetaDataServer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 4000.
+        /// </summary>
+        internal static string ALIVE_PERIOD {
+            get {
+                return ResourceManager.GetString("ALIVE_PERIOD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3.
+        /// </summary>
+        internal static string NUMBER_OF_METADATA_SERVERS {
+            get {
+                return ResourceManager.GetString("NUMBER_OF_METADATA_SERVERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to false.
         /// </summary>
         internal static string RUN_IN_DEBUG_MODE {

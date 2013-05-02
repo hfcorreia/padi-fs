@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ALIVE_PERIOD" xml:space="preserve">
+    <value>4000</value>
+    <comment>Max amout of time (ms) that a server can be without sending alive messages before being considered as died</comment>
+  </data>
+  <data name="NUMBER_OF_METADATA_SERVERS" xml:space="preserve">
+    <value>3</value>
+    <comment>number of dataservers</comment>
+  </data>
   <data name="RUN_IN_DEBUG_MODE" xml:space="preserve">
     <value>false</value>
     <comment>True if the metadata should should run in debug mode</comment>
