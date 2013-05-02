@@ -77,7 +77,7 @@ namespace MetaDataServer
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("#MDS " + MetadataServerId + " - sendAliveMessage - server " + slaveId + "is down.");
+                            Console.WriteLine("#MDS " + MetadataServerId + " - sendAliveMessage - server " + slaveId + " is down.");
                         }
                     });
                 }
