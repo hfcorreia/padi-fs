@@ -91,9 +91,7 @@ namespace MetaDataServer
 			Log.init(this);
             isFailing = false;
 
-
             ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
-
 
             //atach a debugger - we should add some parameter to enable/disable this!
             if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
@@ -101,8 +99,6 @@ namespace MetaDataServer
                 Debugger.Launch();
             }
         }
-
-
 
         #endregion Initilization
 

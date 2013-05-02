@@ -31,17 +31,11 @@ namespace Client.services
             ReadQuorum = readQuorum;
             WriteQuorum = writeQuorum;
         }
-        
-                override public void execute()
+
+        override public void execute()
         {
             Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);
-            /*
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
-            for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum); });
-            }*/
+
             Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createFileTask() };
 
             CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, 1);

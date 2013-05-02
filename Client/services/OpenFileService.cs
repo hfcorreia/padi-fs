@@ -34,12 +34,6 @@ namespace Client.services
             else
             {
                 //if we don't have metadata of the file, we go get it on the MetadataServers
-                /*Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
-                for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
-                {
-                    IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                    tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.open(State.Id, FileName); });
-                }*/
 
                 Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { openFileTask() };
 

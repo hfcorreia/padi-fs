@@ -39,7 +39,7 @@ namespace MetaDataServer
 
             resetMyTimer();
             
-        }
+        }   
 
         public void registerNodeDie(int metadataServerId)
         {
