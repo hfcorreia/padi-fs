@@ -21,11 +21,14 @@ namespace MetaDataServer
         public int Port { get; set; }
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
+
         public MetaDataLog Log { get; set; }
         private bool isFailing;
+        
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
         public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
+        public SerializableDictionary<String, HeartbeatMessage> Heartbeats { get; set; }
         public PassiveReplicationHandler ReplicationHandler { get; set; }
         private int CheckpointCounter;
 
@@ -75,6 +78,7 @@ namespace MetaDataServer
             FileMetadata = new SerializableDictionary<String, FileMetadata>();
             FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
             DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
+            Heartbeats = new SerializableDictionary<string, HeartbeatMessage>();
             Log = new MetaDataLog();
 			Log.init(this);
             isFailing = false;
@@ -373,8 +377,23 @@ namespace MetaDataServer
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
             Console.WriteLine("#MD: Heartbeat received: " + heartbeat.ToString());
+            Heartbeats[heartbeat.ServerId] = heartbeat;
+
+            //debug
+            //foreach (KeyValuePair<String, HeartbeatMessage> serverHeartbeat in Heartbeats)
+            //{
+            //    Console.WriteLine(serverHeartbeat.ToString());
+            //}
+             
         }
-          
+
+
+        public int calculateServerWeight(String id)
+        {
+            HeartbeatMessage heartbeat = Heartbeats[id];
+            return heartbeat.ReadCounter + heartbeat.ReadVersionCounter + heartbeat.WriteCounter;
+        }
+
 		#endregion otherCode
     }
 

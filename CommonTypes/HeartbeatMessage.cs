@@ -11,9 +11,9 @@ namespace CommonTypes
         public string Message { get; set; }
         public string ServerId { get; set; }
 
-        private int ReadCounter { get; set; }
-        private int ReadVersionCounter { get; set; }
-        private int WriteCounter { get; set; }
+        public int ReadCounter { get; set; }
+        public int ReadVersionCounter { get; set; }
+        public int WriteCounter { get; set; }
 
         public HeartbeatMessage(string serverID, string msg, int readCounter, int readVersionCounter, int writeCounter)
         {

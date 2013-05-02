@@ -20,7 +20,7 @@ namespace DataServer
     public class DataServer : MarshalByRefObject, IDataServer, IRemote
     {
         //private static int HEARTBEAT_INTERVAL = Int32.Parse(Properties.Resources.HEARTBEAT_INTERVAL);
-        private static int HEARTBEAT_INTERVAL = 10000;
+        private static int HEARTBEAT_INTERVAL = 30000;
 
         private int CheckpointCounter { get; set; }
 
