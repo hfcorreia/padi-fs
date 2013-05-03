@@ -142,18 +142,9 @@ namespace MetaDataServer
         {
             public int Compare(MetaDataOperation x, MetaDataOperation y)
             {
-                if (x == null)
-                {
-                    return 1;
-                }
-                else if (y == null)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return x.OperationId - y.OperationId;
-                }
+                return (x == null) ? 1 : 
+                        ((y == null) ? -1 : 
+                             x.OperationId - y.OperationId);
             }
         }
     }

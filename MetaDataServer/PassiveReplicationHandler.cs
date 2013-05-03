@@ -23,9 +23,9 @@ namespace MetaDataServer
         private static double ALIVE_PERIOD = Int32.Parse(Properties.Resources.ALIVE_PERIOD);
         private static double MY_TIMER_PERIOD = ALIVE_PERIOD / 4;
 
-        public PassiveReplicationHandler(int metadataServerId)
+        public void init()
         {
-            MetadataServerId = metadataServerId;
+            
             MasterNodeId = 0;
 
             NodeAliveTimers = new Timer[NUMBER_OF_METADATA_SERVERS];
@@ -41,7 +41,12 @@ namespace MetaDataServer
             }
 
             resetMyTimer();
-            
+        }
+
+        public PassiveReplicationHandler(int metadataServerId)
+        {
+            MetadataServerId = metadataServerId;
+            init();
         }
 
         /**
