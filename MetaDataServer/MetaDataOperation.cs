@@ -16,5 +16,18 @@ namespace MetaDataServer
         {
             return "Operation - [ id: " + OperationId + " , type: " + GetType() + " ]";
         }
+
+        /***
+         * operations are equal if they have the same operation id
+         * the operationId must be unique
+         ***/ 
+        public override bool Equals(object obj)
+        {
+            if (obj != null && typeof(object) == typeof(MetaDataOperation))
+            {
+                return ((MetaDataOperation)obj).OperationId == this.OperationId;
+            }
+            return false;
+        }
     }
 }

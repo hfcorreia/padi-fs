@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommonTypes;
 using System.Timers;
 using CommonTypes.Exceptions;
+using System.Collections.Concurrent;
 
 namespace MetaDataServer
 {
@@ -14,7 +15,8 @@ namespace MetaDataServer
         public int MetadataServerId { get; set; }
         public int MasterNodeId { get; set; }
         public bool IsMaster { get { return MetadataServerId == MasterNodeId; } }
-        public HashSet<int> AliveServers { get; set; }
+        private HashSet<int> aliveServers;
+
         private Timer[] NodeAliveTimers { get; set; }
 
         private static int NUMBER_OF_METADATA_SERVERS = Int32.Parse(Properties.Resources.NUMBER_OF_METADATA_SERVERS);
@@ -35,15 +37,18 @@ namespace MetaDataServer
                 {
                     resetAliveTimer(serverId);
                 }
-                AliveServers.Add(serverId); //all servers are alive at the begin of life
+                synchronizedAddAliveServer(serverId); //all servers are alive at the begin of life
             }
 
             resetMyTimer();
             
         }
 
-
-        public List<MetaDataOperation> synchOperations()
+        /**
+         * synchOperations
+         * gets all the operations in fault from another MDS
+         **/ 
+        public List<MetaDataOperation> synchOperations(int fromOperation)
         {
             List<MetaDataOperation> result = null;
             bool found = false;
@@ -55,8 +60,12 @@ namespace MetaDataServer
                     if (masterId != MetadataServerId)
                     {
                         MetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<MetaDataServer>();
-                        result = metadataServer.getOperationsFrom(0);
+                        result = metadataServer.getOperationsFrom(fromOperation);
                         found = true;
+                    }
+                    else
+                    {
+                        masterId = (masterId + 1) % 3;
                     }
                 }
                 catch (NotMasterException exception)
@@ -67,11 +76,12 @@ namespace MetaDataServer
                 {
                     throw exception;
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     //consider as the server being down - try another server
+                    masterId = (masterId + 1) % 3;
                 }
-                masterId = (masterId + 1) % 3;
+                
             }
             return result;
         }
@@ -80,7 +90,7 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MD " + "ReplicationHandler - node - " + metadataServerId + "died");
 
-            AliveServers.Remove(metadataServerId);
+            synchronizedRemoveAliveServer(metadataServerId);
             NodeAliveTimers[metadataServerId].Stop();
             electMaster();
             /*
@@ -107,7 +117,7 @@ namespace MetaDataServer
             {
                 Console.WriteLine("#MD " + "the server " + metadataServerId + " has reborn");
                 //is a reborn of a node that could be the one with the smallest id
-                AliveServers.Add(metadataServerId);
+                synchronizedAddAliveServer(metadataServerId);
                 electMaster();
             }
         }
@@ -131,9 +141,9 @@ namespace MetaDataServer
                         {
                             throw exception;
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
+                            //Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
                             //registerNodeDie(nodeId);
                         }
                     }
@@ -181,6 +191,43 @@ namespace MetaDataServer
             } else {
                 NodeAliveTimers[MetadataServerId].Stop();
                 NodeAliveTimers[MetadataServerId].Start();
+            }
+        }
+
+        public void synchronizedAddAliveServer(int serverId)
+        {
+            HashSet<int> tmp = new HashSet<int>(AliveServers);
+            tmp.Add(serverId);
+            AliveServers = tmp;
+        }
+
+        public void synchronizedRemoveAliveServer(int serverId)
+        {
+            HashSet<int> tmp = new HashSet<int>(AliveServers);
+            if (tmp.Contains(serverId))
+            {
+                tmp.Remove(serverId);
+                AliveServers = tmp;
+            }
+        }
+
+        public HashSet<int> AliveServers
+        {
+            get
+            {
+                HashSet<int> tmp = null;
+                lock (this)
+                {
+                    tmp = new HashSet<int>(aliveServers);
+                }
+                return tmp;
+            }
+            set
+            {
+                lock (this)
+                {
+                    aliveServers = value;
+                }
             }
         }
     }

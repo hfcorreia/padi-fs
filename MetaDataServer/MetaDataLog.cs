@@ -10,11 +10,12 @@ namespace MetaDataServer
     [Serializable]
     public class MetaDataLog
     {
-        public List<MetaDataOperation> log { get; set; }
+        //public List<MetaDataOperation> log { get; set; }
+        public SortedSet<MetaDataOperation> log { get; set; }
         private MetaDataServer MetadataServer { get; set; }
 
         public int Status { get; set; }
-        public int MaxId { get; set; }
+        public int NextId { get; set; }
 
         //private static readonly XmlSerializer xmlSerializer = new XmlSerializer(typeof(MetaDataLog));
 
@@ -22,38 +23,51 @@ namespace MetaDataServer
 
         public void init(MetaDataServer md)
         {
-            log = new List<MetaDataOperation>();
+            log = new SortedSet<MetaDataOperation>(new LogOperationComparer());
             MetadataServer = md;
-            MaxId = 0;
+            NextId = 0;
             Status = 0;
         }
 
         public void registerOperation(MetaDataServer md, MetaDataOperation operation)
         {
             Console.WriteLine("#MD " + md + "Log - registerOperation - " + operation);
+            if (md == null || operation == null)
+            {
+                throw new ArgumentNullException("registerOperation - expected a MDS and an operation, given [ MDS:" + md + "Operation: " + operation + "]");
+            }
 
-            md.ReplicationHandler.syncOperation(operation);
-
-            log.Add(operation);
+            int operationId;
 
             lock (typeof(MetaDataLog))
             {
-                MaxId++;
+                operationId = NextId++;
             }
-            
+
+            if (md.ReplicationHandler.IsMaster)
+            {
+                operation.OperationId = operationId;
+            }
+
+            log.Add(operation);
+
+            md.ReplicationHandler.syncOperation(operation);
         }
-
-
 
         public MetaDataOperation getOperation(int operationId)
         {
-            foreach (MetaDataOperation op in log)
+            try
             {
-                if (op.OperationId == operationId) {
-                    return op;
-                }
+                return log.First(operation => operation.OperationId == operationId);
             }
-            return null;
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+            catch (ArgumentNullException)
+            {
+                return null;
+            }
         }
 
         public void loadLog(String filename)
@@ -104,21 +118,43 @@ namespace MetaDataServer
         }
 
 
-        public List<MetaDataOperation> getOperationsFrom(int status)
+        public List<MetaDataOperation> getOperationsFrom(int fromStatus)
         {
+            if (Status < fromStatus)
+            {
+                throw new ArgumentNullException("Log.getOperationsFrom - trying to get operations from " + fromStatus + "but the actual status is " + Status);
+            }
             List<MetaDataOperation> logCopy = new List<MetaDataOperation>(log);
             List<MetaDataOperation> operations = new List<MetaDataOperation>();
-            while (status < MaxId)
-            {
-                operations.Add(getOperation(status));
-                status++;
-            }
+            operations.AddRange(logCopy.FindAll(operation => operation.OperationId >= fromStatus));
             return operations;
         }
 
-        public void registerOperations(List<MetaDataOperation> list)
+        public void registerOperations(MetaDataServer md, List<MetaDataOperation> list)
         {
-            log.AddRange(list);
+            foreach (MetaDataOperation operation in list)
+            {
+                registerOperation(md, operation);
+            }
+        }
+
+        public class LogOperationComparer : IComparer<MetaDataOperation>
+        {
+            public int Compare(MetaDataOperation x, MetaDataOperation y)
+            {
+                if (x == null)
+                {
+                    return 1;
+                }
+                else if (y == null)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return x.OperationId - y.OperationId;
+                }
+            }
         }
     }
 }

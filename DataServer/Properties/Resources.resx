@@ -119,5 +119,9 @@
   </resheader>
   <data name="HEARTBEAT_INTERVAL" xml:space="preserve">
     <value>30000</value>
+</data>
+  <data name="RUN_IN_DEBUG_MODE" xml:space="preserve">
+    <value>false</value>
+    <comment>True if the metadata should should run in debug mode</comment>
   </data>
 </root>

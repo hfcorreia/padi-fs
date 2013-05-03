@@ -226,8 +226,14 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
-            ReplicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
-
+            try
+            {
+                ReplicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             if (aliveMessage.IsMaster && aliveMessage.Operations!=null)
             {
                 foreach (MetaDataOperation operation in aliveMessage.Operations)
@@ -253,16 +259,29 @@ namespace MetaDataServer
 
         public void recover()
         {
-            Console.WriteLine("Recover not implemented in MD yet");
-            Log.registerOperations(ReplicationHandler.synchOperations());
-            isFailing = false;
-            recoverFromLog();
-            ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
+            if (isFailing)
+            {
+                Console.WriteLine("Recovering...");
+                List<MetaDataOperation> operations = ReplicationHandler.synchOperations(Log.Status);
+                Console.WriteLine("MDS recover - the server has " + operations.Count + " operations in fault ");
+                Log.registerOperations(this, operations);
+                while (Log.Status < Log.NextId)
+                {
+                    Log.getOperation(Log.Status).execute(this);
+                    Log.incrementStatus();
+                }
+                isFailing = false;
+                Console.WriteLine("Recover - good morning =D");
+            }
+            else
+            {
+                Console.WriteLine("MDS is already alive");
+            }
         }
 
         public void recoverFromLog()
         {
-            while (Log.Status <= Log.MaxId)
+            while (Log.Status < Log.NextId)
             {
                 safeExecuteOperation(Log.getOperation(Log.Status));
             }

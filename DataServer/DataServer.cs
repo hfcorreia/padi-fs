@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Timers;
+using System.Diagnostics;
 
 namespace DataServer
 {
@@ -86,6 +87,11 @@ namespace DataServer
 
         public void startConnection(DataServer dataServer)
         {
+            if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+
             Console.WriteLine("#DS: starting connection " + Id);
             BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -115,6 +121,7 @@ namespace DataServer
         public void registInMetadataServers()
         {
             Console.WriteLine("#DS: registering in MetadataServers");
+            
             Task.WaitAll(new Task[] { registInMetadataServersTask() });
         }
 
@@ -127,6 +134,7 @@ namespace DataServer
                 int masterId = 0;
                 while (!found)
                 {
+                    Console.WriteLine("#DS: tying to register in MetadataServer " + masterId);
                     try
                     {
                         metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
