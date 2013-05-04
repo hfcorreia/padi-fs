@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OperationComparer.cs" />
     <Compile Include="MetaDataServerAliveMessage.cs" />
     <Compile Include="MetaDataOperation.cs" />
     <Compile Include="operation\MetaDataRegisterServerOperation.cs" />

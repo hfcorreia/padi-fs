@@ -23,7 +23,7 @@ namespace MetaDataServer
 
         public void init(MetaDataServer md)
         {
-            log = new SortedSet<MetaDataOperation>(new LogOperationComparer());
+            log = new SortedSet<MetaDataOperation>(new OperationComparer());
             MetadataServer = md;
             NextId = 0;
             Status = 0;
@@ -138,14 +138,6 @@ namespace MetaDataServer
             }
         }
 
-        public class LogOperationComparer : IComparer<MetaDataOperation>
-        {
-            public int Compare(MetaDataOperation x, MetaDataOperation y)
-            {
-                return (x == null) ? 1 : 
-                        ((y == null) ? -1 : 
-                             x.OperationId - y.OperationId);
-            }
-        }
+
     }
 }

@@ -24,6 +24,8 @@ namespace MetaDataServer
 
         public MetaDataLog Log { get; set; }
         private bool isFailing;
+        private bool isRecovering;
+        private Queue<MetaDataOperation> requestsQueue;
         
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
         public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
@@ -82,6 +84,8 @@ namespace MetaDataServer
             Log = new MetaDataLog();
 			Log.init(this);
             isFailing = false;
+            isRecovering = false;
+            requestsQueue = new Queue<MetaDataOperation>();
 
             Console.Title = "MDS " + Id;
 
@@ -169,6 +173,10 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
+            if (isRecovering)
+            {
+                requestsQueue.Enqueue(operation);
+            }
             Console.WriteLine("#MDS " + Id + (ReplicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + " executeOperation " + operation);
             Log.registerOperation(this, operation);
             operation.execute(this);
@@ -194,7 +202,7 @@ namespace MetaDataServer
 
         public FileMetadata updateReadMetadata(string clientId, string filename)
         {
-            if (isFailing)
+            if (isFailing || isRecovering)
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
@@ -208,12 +216,12 @@ namespace MetaDataServer
 
         public FileMetadata updateWriteMetadata(string clientId, string filename)
         {
-            if (isFailing)
-            {
-                throw new Exception("the mds " + Id + " is failing");
-            }
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].WriteQuorum)
             {
+                if (isFailing || isRecovering)
+                {
+                    throw new Exception("the mds " + Id + " is failing");
+                }
                 FileMetadataLocks[filename].WaitOne();
             }
 
@@ -226,6 +234,16 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
+            if(isRecovering)
+            {
+                aliveMessage.Operations.Sort(new OperationComparer());
+                foreach (MetaDataOperation op in aliveMessage.Operations)
+                {
+                   requestsQueue.Enqueue(op);
+                }
+                return;
+            }
+
             try
             {
                 ReplicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
@@ -234,6 +252,7 @@ namespace MetaDataServer
             {
                 throw;
             }
+            
             if (aliveMessage.IsMaster && aliveMessage.Operations!=null)
             {
                 foreach (MetaDataOperation operation in aliveMessage.Operations)
@@ -262,6 +281,10 @@ namespace MetaDataServer
             if (isFailing)
             {
                 Console.WriteLine("Recovering...");
+                isRecovering = true;
+                isFailing = false;
+
+                ReplicationHandler.init();
                 List<MetaDataOperation> operations = ReplicationHandler.synchOperations(Log.Status);
                 Console.WriteLine("MDS recover - the server has " + operations.Count + " operations in fault ");
                 Log.registerOperations(this, operations);
@@ -270,20 +293,25 @@ namespace MetaDataServer
                     Log.getOperation(Log.Status).execute(this);
                     Log.incrementStatus();
                 }
-                isFailing = false;
+
+
+                while (requestsQueue.Count != 0)
+                {
+                    MetaDataOperation operation = requestsQueue.Dequeue();
+                    Log.registerOperation(this, operation);
+                    operation.execute(this);
+                    Log.incrementStatus();
+                }
+
+
+
+                isRecovering = false;
+                
                 Console.WriteLine("Recover - good morning =D");
             }
             else
             {
                 Console.WriteLine("MDS is already alive");
-            }
-        }
-
-        public void recoverFromLog()
-        {
-            while (Log.Status < Log.NextId)
-            {
-                safeExecuteOperation(Log.getOperation(Log.Status));
             }
         }
 
