@@ -42,8 +42,8 @@ namespace MetaDataServer
                 throw new CreateFileException("#MDS.create - The file " + Filename + " already exists ");
             }
 
-            List<ServerObjectWrapper> newFileDataServers = getFirstServers(md, NumberOfDataServers);
-             //List<ServerObjectWrapper> newFileDataServersSorted = getSortedServers(md, NumberOfDataServers); isto ia dar uma cena ordenada...mas nao consigo testar por causa do borges :(
+           // List<ServerObjectWrapper> newFileDataServers = getFirstServers(md, NumberOfDataServers);
+            List<ServerObjectWrapper> newFileDataServers = getSortedServers(md, NumberOfDataServers);
 
             FileMetadata newFileMetadata = new FileMetadata(Filename, NumberOfDataServers, ReadQuorum, WriteQuorum, newFileDataServers);
 
@@ -79,7 +79,7 @@ namespace MetaDataServer
                     serversWeight.Add(new ListElem(new ServerObjectWrapper(dataserverWrapper), md.calculateServerWeight(dataserverWrapper.Id)));
              }
 
-             serversWeight = serversWeight.OrderByDescending(q => q.Weight).ToList();
+             serversWeight = serversWeight.OrderBy(q => q.Weight).ToList();
 
              foreach (ListElem elem in serversWeight)
              {
@@ -95,9 +95,9 @@ namespace MetaDataServer
          private class ListElem
          {
              public ServerObjectWrapper Server {get;set;}
-             public int Weight { get; set; }
+             public double Weight { get; set; }
 
-             public ListElem(ServerObjectWrapper server, int weight) {
+             public ListElem(ServerObjectWrapper server, double weight) {
                  Server = server;
                  Weight = weight;
              }

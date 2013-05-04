@@ -121,6 +121,10 @@
     <value>4000</value>
     <comment>Max amout of time (ms) that a server can be without sending alive messages before being considered as died</comment>
   </data>
+  <data name="MAX_HEARTBEATS" xml:space="preserve">
+    <value>5</value>
+    <comment>Number of heartbeats saved for cargo calculations</comment>
+  </data>
   <data name="NUMBER_OF_METADATA_SERVERS" xml:space="preserve">
     <value>3</value>
     <comment>number of dataservers</comment>

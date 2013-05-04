@@ -20,8 +20,7 @@ namespace DataServer
 {
     public class DataServer : MarshalByRefObject, IDataServer, IRemote
     {
-        //private static int HEARTBEAT_INTERVAL = Int32.Parse(Properties.Resources.HEARTBEAT_INTERVAL);
-        private static int HEARTBEAT_INTERVAL = 30000;
+        private static int HEARTBEAT_INTERVAL = Int32.Parse(Properties.Resources.HEARTBEAT_INTERVAL);
 
         private int CheckpointCounter { get; set; }
 
@@ -78,7 +77,7 @@ namespace DataServer
 
             Timer = new System.Timers.Timer(HEARTBEAT_INTERVAL);
             Timer.Elapsed += new ElapsedEventHandler(sendHeartbeat);
-            Timer.Enabled = true;
+            Timer.Start();
 
             ReadCounter = 0;
             ReadVersionCounter = 0;
@@ -102,6 +101,7 @@ namespace DataServer
 
             RemotingServices.Marshal(dataServer, Id, typeof(DataServer));
             registInMetadataServers();
+           Timer.Start();
         }
 
 
@@ -251,7 +251,7 @@ namespace DataServer
         {
             
             Console.WriteLine("#DS: heartbeating at each " + HEARTBEAT_INTERVAL + " ms");
-            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, "um heartbeat", ReadCounter, ReadVersionCounter, WriteCounter);
+            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, Files.Count, ReadCounter, ReadVersionCounter, WriteCounter);
 
             Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)

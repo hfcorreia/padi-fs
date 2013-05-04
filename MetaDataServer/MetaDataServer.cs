@@ -18,6 +18,8 @@ namespace MetaDataServer
     [Serializable]
     public class MetaDataServer : MarshalByRefObject, IMetaDataServer
     {
+        private static int MAX_HEARTBEATS = Int32.Parse(Properties.Resources.MAX_HEARTBEATS);
+
         public int Port { get; set; }
         public String Id { get; set; }
         public string Url { get { return "tcp://localhost:" + Port + "/" + Id; } }
@@ -30,7 +32,8 @@ namespace MetaDataServer
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
         public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
-        public SerializableDictionary<String, HeartbeatMessage> Heartbeats { get; set; }
+        //public SerializableDictionary<String, HeartbeatMessage> Heartbeats { get; set; }
+        public SerializableDictionary<String, Queue<HeartbeatMessage>> Heartbeats { get; set; }
         public PassiveReplicationHandler ReplicationHandler { get; set; }
         private int CheckpointCounter;
 
@@ -79,8 +82,8 @@ namespace MetaDataServer
             Id = id;
             FileMetadata = new SerializableDictionary<String, FileMetadata>();
             FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
-            DataServers = new Dictionary<String, ServerObjectWrapper>(); // <serverID, DataServerWrapper>
-            Heartbeats = new SerializableDictionary<string, HeartbeatMessage>();
+            DataServers = new Dictionary<String, ServerObjectWrapper>(); 
+            Heartbeats = new SerializableDictionary<string, Queue<HeartbeatMessage>>();
             Log = new MetaDataLog();
 			Log.init(this);
             isFailing = false;
@@ -424,21 +427,33 @@ namespace MetaDataServer
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
             Console.WriteLine("#MD: Heartbeat received: " + heartbeat.ToString());
-            Heartbeats[heartbeat.ServerId] = heartbeat;
 
-            //debug
-            //foreach (KeyValuePair<String, HeartbeatMessage> serverHeartbeat in Heartbeats)
-            //{
-            //    Console.WriteLine(serverHeartbeat.ToString());
-            //}
-             
+            if (!Heartbeats.ContainsKey(heartbeat.ServerId))
+            {
+                Heartbeats.Add(heartbeat.ServerId, new Queue<HeartbeatMessage>());
+            }
+
+            if (Heartbeats[heartbeat.ServerId].Count == MAX_HEARTBEATS)
+            {
+                Heartbeats[heartbeat.ServerId].Dequeue();
+            }
+
+            Heartbeats[heartbeat.ServerId].Enqueue(heartbeat);
         }
 
 
-        public int calculateServerWeight(String id)
+        public double calculateServerWeight(String id)
         {
-            HeartbeatMessage heartbeat = Heartbeats[id];
-            return heartbeat.ReadCounter + heartbeat.ReadVersionCounter + heartbeat.WriteCounter;
+            double result = 0;
+            Queue<HeartbeatMessage> heartbeats = Heartbeats[id];
+
+            foreach (HeartbeatMessage heartbeat in heartbeats)
+            {
+                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.2)  + (heartbeat.WriteCounter * 0.4)) * 0.6) 
+                          + ((heartbeat.FileCounter) * 0.4);
+            }
+
+            return result;
         }
 
 		#endregion otherCode

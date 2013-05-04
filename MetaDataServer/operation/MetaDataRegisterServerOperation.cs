@@ -26,6 +26,9 @@ namespace MetaDataServer
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(DataServerPort, DataServerId, DataServerHost);
             md.DataServers.Add(DataServerId, remoteObjectWrapper);
             md.addServerToUnbalancedFiles(DataServerId);
+
+            HeartbeatMessage heartbeat = new HeartbeatMessage(DataServerId, 0 , 0, 0, 0);
+            md.receiveHeartbeat(heartbeat);
             md.makeCheckpoint();
         }      
     }
