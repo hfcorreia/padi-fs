@@ -5,6 +5,7 @@ using System.Text;
 
 namespace MetaDataServer
 {
+    [Serializable]
     public class OperationComparer : IComparer<MetaDataOperation>
     {
         public int Compare(MetaDataOperation x, MetaDataOperation y)

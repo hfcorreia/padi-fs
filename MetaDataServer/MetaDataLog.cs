@@ -3,27 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CommonTypes;
-using System.Xml.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace MetaDataServer
 {
     [Serializable]
-    public class MetaDataLog
+    public class MetaDataLog 
     {
-        //public List<MetaDataOperation> log { get; set; }
-        public SortedSet<MetaDataOperation> log { get; set; }
-        private MetaDataServer MetadataServer { get; set; }
+        [NonSerialized()]
+        private MetaDataServer mdsField;
+        private MetaDataServer MetadataServer { get { return mdsField; } set { mdsField = value; } }
+
+        //public SortedSet<MetaDataOperation> log { get; set; }
+        public List<MetaDataOperation> log { get; set; }
+
+        public MetaDataLog() { }
 
         public int Status { get; set; }
         public int NextId { get; set; }
 
         //private static readonly XmlSerializer xmlSerializer = new XmlSerializer(typeof(MetaDataLog));
 
-        public MetaDataLog() { }
-
         public void init(MetaDataServer md)
         {
-            log = new SortedSet<MetaDataOperation>(new OperationComparer());
+            //log = new SortedSet<MetaDataOperation>(new OperationComparer());
+            log = new List<MetaDataOperation>();
             MetadataServer = md;
             NextId = 0;
             Status = 0;
@@ -48,10 +54,13 @@ namespace MetaDataServer
             {
                 operation.OperationId = operationId;
             }
-
-            log.Add(operation);
+            if (!log.Contains(operation))
+            {
+                log.Add(operation);
+            }
 
             md.ReplicationHandler.syncOperation(operation);
+            saveLog(this);
         }
 
         public MetaDataOperation getOperation(int operationId)
@@ -75,29 +84,11 @@ namespace MetaDataServer
             //TODO - load the log from a xml file and deserialize
         }
 
-        public void saveLog() 
+        private static void saveLog(MetaDataLog obj) 
         {
 
-            //lock (typeof(MetaDataLog))
-            //{
-            //    //GC.Collect();
-            //    //GC.WaitForPendingFinalizers();
+            
 
-            //    String metadataServerId = MetadataServer.Id;
-            //    Console.WriteLine("#MDS Log: saving log " + Status + " from MD server " + metadataServerId);
-
-            //    string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
-            //    Util.createDir(dirName);
-
-            //    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataLog));
-
-            //    System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\log.xml");
-            //    writer.Serialize(fileWriter, this);
-
-            //    fileWriter.Close();
-
-            //    Console.WriteLine("#MDS Log: log " + Status + " from MD server " + metadataServerId + " saved");
-            //}
         }
 
         public void incrementStatus() 
@@ -126,7 +117,7 @@ namespace MetaDataServer
             }
             List<MetaDataOperation> logCopy = new List<MetaDataOperation>(log);
             List<MetaDataOperation> operations = new List<MetaDataOperation>();
-            operations.AddRange(logCopy.FindAll(operation => operation.OperationId >= fromStatus));
+            operations.AddRange(logCopy.FindAll(operation => (operation.OperationId >= fromStatus) && !operations.Contains(operation)));
             return operations;
         }
 

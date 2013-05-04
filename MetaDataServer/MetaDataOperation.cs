@@ -6,7 +6,7 @@ using CommonTypes;
 
 namespace MetaDataServer
 {
-    [Serializable]
+    [Serializable()]
     public abstract class MetaDataOperation
     {
         public int OperationId { get; set; }

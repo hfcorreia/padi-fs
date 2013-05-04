@@ -13,7 +13,8 @@ namespace CommonTypes
         public String Id { get; set; }
         public string Host { get; set; }
         public string URL { get { return "tcp://" + Host + ":" + Port + "/" + Id; } }
-
+       
+        [NonSerialized]
         private Object wrappedObject = null;
 
         public ServerObjectWrapper(ServerObjectWrapper original) : this(original.Port, original.Id, original.Host) { }
