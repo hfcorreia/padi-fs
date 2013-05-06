@@ -54,17 +54,16 @@ namespace PuppetForm
 
         public void createDataServer(String id)
         {
-            if (dataServers.ContainsKey(id))
+            if (!dataServers.ContainsKey(id))
             {
-                dataServers.Remove(id);
-            }
-            int port = Util.getNewPort();
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-            Process.Start(path + "\\DataServer.exe", port + " " + id);
-            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
+                int port = Util.getNewPort();
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+                Process.Start(path + "\\DataServer.exe", port + " " + id);
+                ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
 
-            dataServers.Add(id, dataServerWrapper);
-            ControlBoard.printCommand("CREATE " + id);
+                dataServers.Add(id, dataServerWrapper);
+                ControlBoard.printCommand("CREATE " + id);
+            }
         }
 
         public void startMetaDataServers(int numServers)
