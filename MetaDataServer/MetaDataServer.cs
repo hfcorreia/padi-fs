@@ -439,6 +439,12 @@ namespace MetaDataServer
             }
 
             Heartbeats[heartbeat.ServerId].Enqueue(heartbeat);
+
+            Console.WriteLine("actual file access at " + heartbeat.ServerId + " w/ size: " + heartbeat.AccessCounter.Count);
+            foreach (KeyValuePair<String, FileAccessCounter> entry in heartbeat.AccessCounter)
+            {
+                Console.WriteLine("AcessCounter: " +  entry.Value.ToString());
+            }
         }
 
 
@@ -456,7 +462,54 @@ namespace MetaDataServer
             return result;
         }
 
+    
+
 		#endregion otherCode
+
+
+
+        #region migration
+
+        /*
+         * se servidor com muitos pedidos (o que sao muitos? => mais que a media dos servidores?)
+         *   ve que ficheiros pode retirar do servidor
+         *   escolher melhor ficheiro (mais acessos?)
+         *    mete no outro
+         *    remove do antigo
+         *    MD's actualizados
+         */
+
+
+
+        public List<FileMetadata> getClosedFiles(String dsID) //ficheiros que pode retirar do server
+        {
+            List<FileMetadata> closedFiles = new List<FileMetadata>();
+            foreach (KeyValuePair<String, FileMetadata> entry in FileMetadata)
+            {
+                if (!entry.Value.IsOpen && fileInDS(entry.Value, dsID))
+                {
+                    closedFiles.Add(entry.Value);
+                }
+            }
+
+            return closedFiles;
+        }
+
+        public bool fileInDS(FileMetadata fileMetaData, string dsID)
+        {
+            foreach (ServerObjectWrapper server in fileMetaData.FileServers)
+            {
+                if (server.Id == dsID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        #endregion migration
     }
 
 }

@@ -20,7 +20,8 @@ namespace DataServer
 {
     public class DataServer : MarshalByRefObject, IDataServer, IRemote
     {
-        private static int HEARTBEAT_INTERVAL = Int32.Parse(Properties.Resources.HEARTBEAT_INTERVAL);
+        //private static int HEARTBEAT_INTERVAL = Int32.Parse(Properties.Resources.HEARTBEAT_INTERVAL);
+        private static int HEARTBEAT_INTERVAL = 10000;
 
         private int CheckpointCounter { get; set; }
 
@@ -37,6 +38,8 @@ namespace DataServer
         private DSstate State { get; set; }
 
         internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
+
+        internal Dictionary<string, FileAccessCounter> AccessCounter { get; set; }
 
         private System.Timers.Timer Timer { get; set; }
 
@@ -71,6 +74,7 @@ namespace DataServer
             Files = new SerializableDictionary<string, File>();
             State = new DSstateNormal(this);
             FileLocks = new Dictionary<string, ReaderWriterLockSlim>();
+            AccessCounter = new Dictionary<string, FileAccessCounter>();
             CheckpointCounter = 0;
 
             Console.Title = "DS " + Id;
@@ -108,12 +112,38 @@ namespace DataServer
         public void write(File file)
         {
             WriteCounter++;
+
+            if (AccessCounter.ContainsKey(file.FileName))
+            {
+                FileAccessCounter counter = AccessCounter[file.FileName];
+                counter.WriteCounter++;
+            }
+           else
+            {
+                FileAccessCounter fileCounter = new FileAccessCounter(file.FileName);
+                fileCounter.WriteCounter++;
+                AccessCounter[file.FileName] = fileCounter;
+            }
+
             State.write(file);
         }
 
         public File read(string filename)
         {
             ReadCounter++;
+
+            if (AccessCounter.ContainsKey(filename))
+            {
+                FileAccessCounter counter = AccessCounter[filename];
+                counter.ReadCounter++;
+            }
+            else
+            {
+                FileAccessCounter fileCounter = new FileAccessCounter(filename);
+                fileCounter.ReadCounter++;
+                AccessCounter[filename] = fileCounter;
+            }
+
             return State.read(filename);
         }
 
@@ -161,6 +191,19 @@ namespace DataServer
         public int readFileVersion(string filename)
         {
             ReadVersionCounter++;
+
+            if (AccessCounter.ContainsKey(filename))
+            {
+                FileAccessCounter counter = AccessCounter[filename];
+                counter.ReadVersionCounter++;
+            }
+            else
+            {
+                FileAccessCounter fileCounter = new FileAccessCounter(filename);
+                fileCounter.ReadVersionCounter++;
+                AccessCounter[filename] = fileCounter;
+            }
+
             return State.readFileVersion(filename);
         }
 
@@ -251,7 +294,8 @@ namespace DataServer
         {
             
             Console.WriteLine("#DS: heartbeating at each " + HEARTBEAT_INTERVAL + " ms");
-            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, Files.Count, ReadCounter, ReadVersionCounter, WriteCounter);
+            Console.WriteLine("#DS: heartbeat w/ " + AccessCounter.Count);
+            HeartbeatMessage heartbeat = new HeartbeatMessage(Id, Files.Count, ReadCounter, ReadVersionCounter, WriteCounter, AccessCounter);
 
             Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
@@ -260,12 +304,15 @@ namespace DataServer
                 tasks[md] = Task.Factory.StartNew(() => { metadataServer.receiveHeartbeat(heartbeat); });
             }
 
+            Task.WaitAll(tasks);
+
             ReadCounter = 0;
             ReadVersionCounter = 0;
             WriteCounter = 0;
+
+            Console.WriteLine("#DS: heartbeat sent :" + heartbeat.ToString());
              
         }
-
 
     }
 }

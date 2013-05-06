@@ -27,7 +27,7 @@ namespace MetaDataServer
             md.DataServers.Add(DataServerId, remoteObjectWrapper);
             md.addServerToUnbalancedFiles(DataServerId);
 
-            HeartbeatMessage heartbeat = new HeartbeatMessage(DataServerId, 0 , 0, 0, 0);
+            HeartbeatMessage heartbeat = new HeartbeatMessage(DataServerId, 0 , 0, 0, 0, new Dictionary<string,FileAccessCounter>());
             md.receiveHeartbeat(heartbeat);
             md.makeCheckpoint();
         }      

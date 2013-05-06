@@ -15,13 +15,16 @@ namespace CommonTypes
         public int ReadVersionCounter { get; set; }
         public int WriteCounter { get; set; }
 
-        public HeartbeatMessage(string serverID, int fileCounter, int readCounter, int readVersionCounter, int writeCounter)
+        public Dictionary<string, FileAccessCounter> AccessCounter { get; set; }
+
+        public HeartbeatMessage(string serverID, int fileCounter, int readCounter, int readVersionCounter, int writeCounter, Dictionary<string, FileAccessCounter> accessCounter)
         {
             ServerId = serverID;
             FileCounter = fileCounter;
             ReadCounter = readCounter;
             ReadVersionCounter = readVersionCounter;
             WriteCounter = writeCounter;
+            AccessCounter = accessCounter;
         }
 
         public override string ToString()
