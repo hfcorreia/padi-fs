@@ -22,7 +22,12 @@ namespace MetaDataServer
 
          public override void execute(MetaDataServer md)
         {
+            
             Console.WriteLine("#MDS: Registering DS " + DataServerId);
+            if ( md.DataServers.ContainsKey(DataServerId) ) 
+            {
+                md.DataServers.Remove(DataServerId);
+            }
             ServerObjectWrapper remoteObjectWrapper = new ServerObjectWrapper(DataServerPort, DataServerId, DataServerHost);
             md.DataServers.Add(DataServerId, remoteObjectWrapper);
             md.addServerToUnbalancedFiles(DataServerId);

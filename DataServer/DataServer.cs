@@ -33,7 +33,7 @@ namespace DataServer
         public string Url { get { return "tcp://" + Host + ":" + Port + "/" + Id; }}
 
         public SerializableDictionary<string, File> Files { get; set; }
-
+    
         private DSstate State { get; set; }
 
         internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
@@ -82,6 +82,8 @@ namespace DataServer
             ReadCounter = 0;
             ReadVersionCounter = 0;
             WriteCounter = 0;
+
+            getCheckpoint(id);
         }
 
         public void startConnection(DataServer dataServer)
@@ -187,21 +189,31 @@ namespace DataServer
             Console.WriteLine("#DS: checkpoint " + CheckpointCounter + " from server " + Id + " done");
         }
 
-        public static DataServer getCheckpoint(String dataServerId)
+        public void getCheckpoint(String dataServerId)
         {
-            /*
-            Console.WriteLine("#DS: getting checkpoint");
-            System.Xml.Serialization.XmlSerializer reader =
-                        new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+            try
+            {
+                Console.WriteLine("#DS: getting checkpoint");
+                System.Xml.Serialization.XmlSerializer reader =
+                            new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId + "\\checkpoint.xml";
-            System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
+                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId + "\\checkpoint.xml";
+                System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
 
-            DataServer dataServer = new DataServer();
-            dataServer = (DataServer)reader.Deserialize(fileReader);
-            
-            return dataServer;*/
-            return new DataServer();
+                DataServer dataServer = new DataServer();
+                dataServer = (DataServer)reader.Deserialize(fileReader);
+                Files = dataServer.Files;
+                CheckpointCounter = dataServer.CheckpointCounter;
+                Port = dataServer.Port;
+                foreach(String filename in Files.Keys ){
+                 FileLocks.Add(filename, new System.Threading.ReaderWriterLockSlim());
+                }
+                fileReader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("#DS: No checkpoint");
+            }
         }
 
         public void dump()

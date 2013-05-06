@@ -16,6 +16,7 @@ namespace DataServer
         public override File read(string filename)
         {
             File file = null;
+
             if (filename == null || !Ds.Files.ContainsKey(filename) || !Ds.FileLocks.ContainsKey(filename))
             {
                 Console.WriteLine("#DS: read error - the server does not have the file " + filename);
@@ -25,7 +26,7 @@ namespace DataServer
             try
             {
                 Console.WriteLine("#DS: read fileName: " + filename);
-                file = Util.readFileFromDisk("DS" + Ds.Id, filename, Ds.Files[filename].Version);
+                file = Util.readFileFromDisk(Ds.Id, filename, Ds.Files[filename].Version);
             }
             finally
             {
@@ -87,7 +88,7 @@ namespace DataServer
             try
             {
                 Console.WriteLine("#DS: write fileName: " + file.FileName + ", version: " + file.Version + ", content: " + System.Text.Encoding.UTF8.GetString(file.Content));
-                Util.writeFileToDisk(file, "" + "DS" + Ds.Id);
+                Util.writeFileToDisk(file, "" + Ds.Id);
                 Ds.makeCheckpoint();
             }
             finally

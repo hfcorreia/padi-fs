@@ -23,8 +23,9 @@ namespace PuppetForm
         public Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
         public PuppetScriptExecutor ScriptExecutor { get; set; }
         public ControlBoard ControlBoard { get; set; }
-       
-        public PuppetMaster(ControlBoard cb) {
+
+        public PuppetMaster(ControlBoard cb)
+        {
             ControlBoard = cb;
         }
 
@@ -35,7 +36,7 @@ namespace PuppetForm
                 int clientPort = Util.getNewPort();
 
                 string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                
+
                 try
                 {
                     Process.Start(path + "\\Client.exe", clientPort + " " + clientId);
@@ -53,16 +54,17 @@ namespace PuppetForm
 
         public void createDataServer(String id)
         {
-            if (!dataServers.ContainsKey(id))
+            if (dataServers.ContainsKey(id))
             {
-                int port = Util.getNewPort();
-                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                Process.Start(path + "\\DataServer.exe", port + " " + id);
-                ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
-
-                dataServers.Add(id, dataServerWrapper);
-                ControlBoard.printCommand("CREATE " + id);
+                dataServers.Remove(id);
             }
+            int port = Util.getNewPort();
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+            Process.Start(path + "\\DataServer.exe", port + " " + id);
+            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
+
+            dataServers.Add(id, dataServerWrapper);
+            ControlBoard.printCommand("CREATE " + id);
         }
 
         public void startMetaDataServers(int numServers)
@@ -78,14 +80,14 @@ namespace PuppetForm
         public void open(String clientId, string filename)
         {
             startProcess(clientId);
-            
+
             ServerObjectWrapper sow = clients[clientId];
 
             IClient client = sow.getObject<IClient>();
             try
             {
                 client.open(filename);
-                
+
             }
             catch (Exception e)
             {
@@ -163,7 +165,7 @@ namespace PuppetForm
 
                 dataServer.fail();
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 System.Windows.Forms.MessageBox.Show("Error failing DS" + process + ":" + e.Message + " :\n" + e.StackTrace);
             }
@@ -231,7 +233,7 @@ namespace PuppetForm
             ControlBoard.printCommand("RECOVER " + process);
         }
 
-        public void freeze(string process) 
+        public void freeze(string process)
         {
             try
             {
@@ -250,7 +252,7 @@ namespace PuppetForm
             ControlBoard.printCommand("FREEZE " + process);
         }
 
-        public void unfreeze(string process) 
+        public void unfreeze(string process)
         {
             try
             {
@@ -283,7 +285,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error read file" + fileRegisterId+ ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error read file" + fileRegisterId + ":" + e.Message + " :\n" + e.StackTrace);
             }
 
             ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics + " " + stringRegisterId);
@@ -306,7 +308,7 @@ namespace PuppetForm
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
-            ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics );
+            ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics);
         }
 
         public void write(string process, int fileRegisterId, string contents)
@@ -364,9 +366,9 @@ namespace PuppetForm
 
                 client.copy(fileRegister1, semantics, fileRegister2, salt);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error copying file" + fileRegister1 + " to " +fileRegister2 + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error copying file" + fileRegister1 + " to " + fileRegister2 + ":" + e.Message + " :\n" + e.StackTrace);
             }
             ControlBoard.printCommand("COPY " + process + " " + fileRegister1 + " " + semantics + " " + fileRegister2 + " " + salt);
         }
@@ -382,7 +384,7 @@ namespace PuppetForm
             {
                 obj.dump();
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 System.Windows.Forms.MessageBox.Show("Error dumping process " + process + ":" + e.Message + " :\n" + e.StackTrace);
             }
@@ -401,7 +403,7 @@ namespace PuppetForm
             }
             else if (process.StartsWith("m-"))
             {
-                return  MetaInformationReader.Instance.getMetadataById(process);
+                return MetaInformationReader.Instance.getMetadataById(process);
             }
             //change this
             return null;
@@ -483,26 +485,26 @@ namespace PuppetForm
             for (int id = 0; id < allRemoteObjects.Count; id++)
             {
 
-                    IRemote remoteObject = allRemoteObjects[id].getObject<IRemote>();
-                    tasks[id] = Task.Factory.StartNew(() =>
+                IRemote remoteObject = allRemoteObjects[id].getObject<IRemote>();
+                tasks[id] = Task.Factory.StartNew(() =>
+                {
+                    try
                     {
-                        try
-                        {
-                            remoteObject.exit();
-                        }
-                        catch (IOException e) { /*DO NOTHING*/ }
-                        catch (Exception e) { /*DO NOTHING*/ }
-                    });
+                        remoteObject.exit();
+                    }
+                    catch (IOException e) { /*DO NOTHING*/ }
+                    catch (Exception e) { /*DO NOTHING*/ }
+                });
             }
-            
+
             try
             {
                 Task.WaitAll(tasks);
             }
-            catch (Exception e) {}
+            catch (Exception e) { }
         }
-        
-       public List<string> stringRegistersForClient(string clientId)
+
+        public List<string> stringRegistersForClient(string clientId)
         {
             createClient(clientId);
 
@@ -522,32 +524,32 @@ namespace PuppetForm
             return new List<string>();
         }
 
-       public List<string> fileRegistersForClient(string clientId)
-       {
-           createClient(clientId);
+        public List<string> fileRegistersForClient(string clientId)
+        {
+            createClient(clientId);
 
-           ServerObjectWrapper sow = clients[clientId];
+            ServerObjectWrapper sow = clients[clientId];
 
-           IClient client = sow.getObject<IClient>();
+            IClient client = sow.getObject<IClient>();
 
-           try
-           {
-               return client.getAllFileRegisters();
-           }
-           catch (Exception e)
-           {
-               System.Windows.Forms.MessageBox.Show("Error getting file Registers For Client " + clientId + ":" + e.Message + " :\n" + e.StackTrace);
-           }
+            try
+            {
+                return client.getAllFileRegisters();
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("Error getting file Registers For Client " + clientId + ":" + e.Message + " :\n" + e.StackTrace);
+            }
 
-           return new List<string>();
-       }
+            return new List<string>();
+        }
 
-       public void dumpAllMds()
-       {
-           foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
-           {
-               dump(metaDataWrapper.Id);
-           }
-       }
+        public void dumpAllMds()
+        {
+            foreach (ServerObjectWrapper metaDataWrapper in MetaInformationReader.Instance.MetaDataServers)
+            {
+                dump(metaDataWrapper.Id);
+            }
+        }
     }
 }
