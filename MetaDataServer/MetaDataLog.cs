@@ -87,8 +87,6 @@ namespace MetaDataServer
         private static void saveLog(MetaDataLog obj) 
         {
 
-            
-
         }
 
         public void incrementStatus() 

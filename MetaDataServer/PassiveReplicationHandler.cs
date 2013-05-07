@@ -23,6 +23,7 @@ namespace MetaDataServer
         private static double ALIVE_PERIOD = Int32.Parse(Properties.Resources.ALIVE_PERIOD);
         private static double MY_TIMER_PERIOD = ALIVE_PERIOD / 4;
 
+        public PassiveReplicationHandler() { }
         public void init()
         {
             

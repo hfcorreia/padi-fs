@@ -17,6 +17,7 @@ namespace CommonTypes
         [NonSerialized]
         private Object wrappedObject = null;
 
+        public ServerObjectWrapper() { }
         public ServerObjectWrapper(ServerObjectWrapper original) : this(original.Port, original.Id, original.Host) { }
 
         public ServerObjectWrapper( int port, string id, string host) 

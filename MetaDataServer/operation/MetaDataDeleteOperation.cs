@@ -9,14 +9,15 @@ using System.Threading;
 namespace MetaDataServer
 {
     [Serializable]
-    class MetaDataDeleteOperation : MetaDataOperation
+    public class MetaDataDeleteOperation : MetaDataOperation
     {
 
-        String ClientID {get;set;}
-        String Filename { get; set; }
+        public String ClientID {get;set;}
+        public String Filename { get; set; }
 
         public FileMetadata Result { get; set; }
 
+        public MetaDataDeleteOperation() { }
 
         public MetaDataDeleteOperation(String clientID, string filename)
         {

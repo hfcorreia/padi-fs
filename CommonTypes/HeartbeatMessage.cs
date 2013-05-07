@@ -17,6 +17,7 @@ namespace CommonTypes
 
         public Dictionary<string, FileAccessCounter> AccessCounter { get; set; }
 
+        public HeartbeatMessage() { }
         public HeartbeatMessage(string serverID, int fileCounter, int readCounter, int readVersionCounter, int writeCounter, Dictionary<string, FileAccessCounter> accessCounter)
         {
             ServerId = serverID;

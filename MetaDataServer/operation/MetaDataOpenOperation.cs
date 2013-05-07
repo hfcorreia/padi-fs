@@ -9,15 +9,15 @@ using System.Threading;
 namespace MetaDataServer
 {
     [Serializable]
-    class MetaDataOpenOperation : MetaDataOperation
+    public class MetaDataOpenOperation : MetaDataOperation
     {
 
-        String ClientID {get;set;}
-        String Filename { get; set; }
+        public String ClientID {get;set;}
+        public String Filename { get; set; }
 
         public FileMetadata Result { get; set; }
 
-
+        public MetaDataOpenOperation() { }
         public MetaDataOpenOperation(String clientID, string filename)
         {
             ClientID = clientID;

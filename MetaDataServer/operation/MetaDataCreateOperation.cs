@@ -9,18 +9,18 @@ using System.Threading;
 namespace MetaDataServer
 {
     [Serializable]
-    class MetaDataCreateOperation : MetaDataOperation
+    public class MetaDataCreateOperation : MetaDataOperation
     {
 
-        String ClientID {get;set;}
-        string Filename {get;set;}
-        int NumberOfDataServers {get;set;}
-        int ReadQuorum {get;set;}
-        int WriteQuorum { get; set; }
+        public String ClientID {get;set;}
+        public string Filename {get;set;}
+        public int NumberOfDataServers {get;set;}
+        public int ReadQuorum {get;set;}
+        public int WriteQuorum { get; set; }
 
         public FileMetadata Result { get; set; }
 
-
+        public MetaDataCreateOperation() { }
         public MetaDataCreateOperation(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
             ClientID = clientID;
@@ -48,7 +48,7 @@ namespace MetaDataServer
             FileMetadata newFileMetadata = new FileMetadata(Filename, NumberOfDataServers, ReadQuorum, WriteQuorum, newFileDataServers);
 
             md.FileMetadata.Add(Filename, newFileMetadata);
-            md.FileMetadataLocks.Add(Filename, new ManualResetEvent(false));
+            md.addMetadataLock(Filename, new ManualResetEvent(false));
             Console.WriteLine("#MDS: Created " + Filename);
             md.makeCheckpoint();
 

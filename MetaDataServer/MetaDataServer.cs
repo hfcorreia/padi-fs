@@ -27,15 +27,21 @@ namespace MetaDataServer
         public MetaDataLog Log { get; set; }
         private bool isFailing;
         private bool isRecovering;
+        [NonSerialized]
         private Queue<MetaDataOperation> requestsQueue;
-        
-        public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
+
+        public SerializableDictionary<String, ServerObjectWrapper> DataServers { get; set; }
         public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
-        public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
-        //public SerializableDictionary<String, HeartbeatMessage> Heartbeats { get; set; }
-        public SerializableDictionary<String, Queue<HeartbeatMessage>> Heartbeats { get; set; }
-        public PassiveReplicationHandler ReplicationHandler { get; set; }
-        private int CheckpointCounter;
+
+        private Dictionary<String, ManualResetEvent> fileMetadataLocks;
+
+        [NonSerialized]
+        private SerializableDictionary<String, Queue<HeartbeatMessage>> heartbeats;
+
+        [NonSerialized]
+        private PassiveReplicationHandler replicationHandler;
+        public int CheckpointCounter { get; set; }
+
 
         /**
         * Implementation of all the initilization stuff
@@ -81,14 +87,15 @@ namespace MetaDataServer
             Port = port;
             Id = id;
             FileMetadata = new SerializableDictionary<String, FileMetadata>();
-            FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
-            DataServers = new Dictionary<String, ServerObjectWrapper>(); 
+            fileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
+            DataServers = new SerializableDictionary<String, ServerObjectWrapper>();
             Heartbeats = new SerializableDictionary<string, Queue<HeartbeatMessage>>();
             Log = new MetaDataLog();
-			Log.init(this);
+            Log.init(this);
             isFailing = false;
             isRecovering = false;
             requestsQueue = new Queue<MetaDataOperation>();
+            CheckpointCounter = 0;
 
             Console.Title = "MDS " + Id;
 
@@ -133,7 +140,7 @@ namespace MetaDataServer
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            
+
             MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
             executeOperation(createOperation);
 
@@ -150,7 +157,7 @@ namespace MetaDataServer
                 if (metadata.FileServers.Count < metadata.NumServers)
                 {
                     metadata.FileServers.Add(DataServers[id]);
-                    FileMetadataLocks[fileName].Set();
+                    getMetdataLock(fileName).Set();
                 }
             }
 
@@ -187,7 +194,7 @@ namespace MetaDataServer
         }
 
         #endregion OperationsThatChangeTheState
-        
+
         /**
         * Operations that don't change the state of the metadata
         **/
@@ -211,7 +218,7 @@ namespace MetaDataServer
             }
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
             {
-                FileMetadataLocks[filename].WaitOne();
+                getMetdataLock(filename).WaitOne();
             }
 
             return FileMetadata[filename];
@@ -225,7 +232,7 @@ namespace MetaDataServer
                 {
                     throw new Exception("the mds " + Id + " is failing");
                 }
-                FileMetadataLocks[filename].WaitOne();
+                getMetdataLock(filename).WaitOne();
             }
 
             return FileMetadata[filename];
@@ -237,12 +244,12 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
-            if(isRecovering)
+            if (isRecovering)
             {
                 aliveMessage.Operations.Sort(new OperationComparer());
                 foreach (MetaDataOperation op in aliveMessage.Operations)
                 {
-                   requestsQueue.Enqueue(op);
+                    requestsQueue.Enqueue(op);
                 }
                 return;
             }
@@ -255,8 +262,8 @@ namespace MetaDataServer
             {
                 throw;
             }
-            
-            if (aliveMessage.IsMaster && aliveMessage.Operations!=null)
+
+            if (aliveMessage.IsMaster && aliveMessage.Operations != null)
             {
                 foreach (MetaDataOperation operation in aliveMessage.Operations)
                 {
@@ -266,7 +273,7 @@ namespace MetaDataServer
         }
 
         #endregion OperationsThatDontChangeState
-        
+
         /**
          * implementation of all the fail and recover operations
          **/
@@ -309,7 +316,7 @@ namespace MetaDataServer
 
 
                 isRecovering = false;
-                
+
                 Console.WriteLine("Recover - good morning =D");
             }
             else
@@ -330,27 +337,39 @@ namespace MetaDataServer
          **/
 
         #region Checkpoint
-        
+
         public void makeCheckpoint()
         {
-            //lock (typeof(MetaDataServer))
-            //{
+            try
+            {
+                String metadataServerId = Id;
+                Console.WriteLine("#MDS: making checkpoint " + CheckpointCounter++ + " from server " + Id);
 
-            //    String metadataServerId = Id;
-            //    Console.WriteLine("#MDS: making checkpoint " + CheckpointCounter++ + " from server " + Id);
+                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
+                Util.createDir(dirName);
 
-            //    string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
-            //    Util.createDir(dirName);
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer), 
+                    new Type[]{ typeof(MetaDataCloseOperation), typeof(MetaDataCreateOperation), typeof(MetaDataDeleteOperation),
+                        typeof(MetaDataRegisterServerOperation), typeof(MetaDataOpenOperation)});
+                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
 
-            //    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+                writer.Serialize(fileWriter, this);
 
-            //    System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
-            //    writer.Serialize(fileWriter, this);
+                fileWriter.Close();
 
-            //    fileWriter.Close();
+                Console.WriteLine("#MDS: checkpoint " + CheckpointCounter + " from metaDataServer " + Id + " done");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("##############    MESSAGE  #######################");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("############## INNER EXCEPTION  ##################");
+                Console.WriteLine(e.InnerException);
+                Console.WriteLine("############## STACK TRACE #######################");
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("##################################################");
+            }
 
-            //    Console.WriteLine("#MDS: checkpoint " + CheckpointCounter + " from metaDataServer " + Id + " done");
-            //}
         }
 
         public static MetaDataServer getCheckpoint(String metadataServerId)
@@ -369,11 +388,11 @@ namespace MetaDataServer
         }
 
         #endregion Checkpoint
-        
+
         /**
          * Auxiliar code
          **/
-        
+
         #region otherCode
         public void dump()
         {
@@ -423,6 +442,28 @@ namespace MetaDataServer
             return null;
         }
 
+        private SerializableDictionary<String, Queue<HeartbeatMessage>> Heartbeats
+        {
+            get { return heartbeats; }
+            set { heartbeats = value; }
+        }
+
+
+        public void addMetadataLock(string filename, ManualResetEvent e)
+        {
+            fileMetadataLocks.Add(filename, e);
+        }
+
+        public ManualResetEvent getMetdataLock(string filename)
+        {
+            return fileMetadataLocks[filename];
+        }
+
+        public PassiveReplicationHandler ReplicationHandler
+        {
+            get { return replicationHandler; }
+            set { replicationHandler = value; }
+        }
 
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
@@ -443,7 +484,7 @@ namespace MetaDataServer
             Console.WriteLine("actual file access at " + heartbeat.ServerId + " w/ size: " + heartbeat.AccessCounter.Count);
             foreach (KeyValuePair<String, FileAccessCounter> entry in heartbeat.AccessCounter)
             {
-                Console.WriteLine("AcessCounter: " +  entry.Value.ToString());
+                Console.WriteLine("AcessCounter: " + entry.Value.ToString());
             }
         }
 
@@ -455,16 +496,16 @@ namespace MetaDataServer
 
             foreach (HeartbeatMessage heartbeat in heartbeats)
             {
-                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.2)  + (heartbeat.WriteCounter * 0.4)) * 0.6) 
+                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.2) + (heartbeat.WriteCounter * 0.4)) * 0.6)
                           + ((heartbeat.FileCounter) * 0.4);
             }
 
             return result;
         }
 
-    
 
-		#endregion otherCode
+
+        #endregion otherCode
 
 
 

@@ -14,6 +14,7 @@ namespace CommonTypes
         public int WriteCounter { get; set; }
         public string FileName { get; set; }
 
+        public FileAccessCounter() { }
         public FileAccessCounter(string fileName)
         {
             ReadCounter = 0;

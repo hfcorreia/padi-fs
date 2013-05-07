@@ -7,12 +7,13 @@ using CommonTypes;
 namespace MetaDataServer
 {
     [Serializable]
-    class MetaDataRegisterServerOperation : MetaDataOperation
+    public class MetaDataRegisterServerOperation : MetaDataOperation
     {
-        String DataServerId { get; set; }
-        String DataServerHost { get; set; }
-        int DataServerPort { get; set; }
+        public String DataServerId { get; set; }
+        public String DataServerHost { get; set; }
+        public int DataServerPort { get; set; }
 
+        public MetaDataRegisterServerOperation() { }
         public MetaDataRegisterServerOperation(String dataServerId, String dataServerHost, int dataServerPort)
         {
             DataServerId = dataServerId;
