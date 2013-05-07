@@ -44,6 +44,9 @@ namespace MetaDataServer
         public int CheckpointCounter { get; set; }
 
 
+        private Dictionary<string, Dictionary<string, FileAccessCounter>> FileAccesses { get; set; }
+
+
         /**
         * Implementation of all the initilization stuff
         **/
@@ -91,6 +94,7 @@ namespace MetaDataServer
             fileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
             DataServers = new SerializableDictionary<String, ServerObjectWrapper>();
             Heartbeats = new SerializableDictionary<string, Queue<HeartbeatMessage>>();
+            FileAccesses = new Dictionary<string, Dictionary<string, FileAccessCounter>>();
             Log = new MetaDataLog();
             Log.init(this);
             isFailing = false;
@@ -510,22 +514,41 @@ namespace MetaDataServer
                 Console.WriteLine("AcessCounter: " + entry.Value.ToString());
             }
 
+            Dictionary<string, FileAccessCounter> heartbeatAccesses = heartbeat.AccessCounter;
+            foreach (KeyValuePair<string, FileAccessCounter> entry in heartbeatAccesses)
+            {
+                addAccesses(serverID, entry.Key, entry.Value);
+            }
+
+
 
             double avg = calculateAverageWeight();
             if (calculateServerWeight(serverID) > (avg * OVERLOAD_MULTIPLIER))
             {
-                //migration!!!
+                //migration:
+
                 Console.WriteLine("Server within overload: " + serverID);
+
                 List<FileMetadata> closedFiles = getClosedFiles(serverID);
                 Console.WriteLine("files to move: " + closedFiles.Count);
+
                 List<ServerObjectWrapper> servers = getSortedServers(DataServers.Count);
-                //escolher ficheiro!!!
-                List<ServerObjectWrapper> cleanServers = getUnderweightServersWithoutFile(servers, avg, closedFiles[0].FileName);
+                string filename = getMostAccessedFile(closedFiles).FileName;
+                List<ServerObjectWrapper> cleanServers = getUnderweightServersWithoutFile(servers, avg, filename);
+
                 Console.WriteLine("servers available: " + cleanServers.Count);
                 foreach (ServerObjectWrapper srv in cleanServers)
                 {
                     Console.WriteLine("server avail: " + srv.Id);
                 }
+
+                //verificar listas vazias
+
+                //read from serverID
+
+                //write to choosen server
+
+                //update MD's
             }
         }
 
@@ -621,7 +644,6 @@ namespace MetaDataServer
                 }
             }
 
-            //ORDENAR
             return closedFiles;
         }
 
@@ -662,6 +684,56 @@ namespace MetaDataServer
             return result;
         }
 
+
+        public void addAccesses(string server, string filename, FileAccessCounter accessCounter)
+        {
+            if (!FileAccesses.ContainsKey(filename))
+            {
+                FileAccesses.Add(filename, new Dictionary<string, FileAccessCounter>());
+            }
+
+            if (!FileAccesses[filename].ContainsKey(server))
+            {
+                FileAccesses[filename].Add(server, new FileAccessCounter(filename));
+            }
+
+            FileAccesses[filename][server] = accessCounter;
+        }
+
+        public double getFileAccesses(FileMetadata file)
+        {
+            double weight = 0;
+
+            if (FileAccesses.ContainsKey(file.FileName))
+            {
+                foreach (KeyValuePair<String, FileAccessCounter> entry in FileAccesses[file.FileName])
+                {
+                    FileAccessCounter fileCounter = entry.Value;
+                    weight += (fileCounter.ReadCounter) + (fileCounter.ReadVersionCounter) + (fileCounter.WriteCounter);
+                }
+            }
+
+            return weight;
+        }
+
+        public FileMetadata getMostAccessedFile(List<FileMetadata> files)
+        {
+            FileMetadata result = files[0];
+            double weight = 0;
+
+            foreach (FileMetadata file in files)
+            {
+                double fileAccesses = getFileAccesses(file);
+                Console.WriteLine("File and weight: " + file.FileName + " " + fileAccesses);
+                if (fileAccesses >= weight)
+                {
+                    result = file;
+                    weight = fileAccesses;
+                }
+            }
+
+            return result;
+        }
 
         #endregion migration
     }

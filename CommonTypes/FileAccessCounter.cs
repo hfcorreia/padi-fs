@@ -23,7 +23,7 @@ namespace CommonTypes
             FileName = fileName;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return "AccessCounter (F,R,RV,W): " + "(" + FileName + "," + ReadCounter + "," + ReadVersionCounter + "," + WriteCounter + ")"; 
         }
