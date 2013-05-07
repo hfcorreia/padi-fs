@@ -43,7 +43,7 @@ namespace MetaDataServer
             }
 
            // List<ServerObjectWrapper> newFileDataServers = getFirstServers(md, NumberOfDataServers);
-            List<ServerObjectWrapper> newFileDataServers = getSortedServers(md, NumberOfDataServers);
+            List<ServerObjectWrapper> newFileDataServers = md.getSortedServers(NumberOfDataServers);
 
             FileMetadata newFileMetadata = new FileMetadata(Filename, NumberOfDataServers, ReadQuorum, WriteQuorum, newFileDataServers);
 
@@ -69,41 +69,5 @@ namespace MetaDataServer
              return firstDataServers;
          }
 
-         private List<ServerObjectWrapper> getSortedServers(MetaDataServer md, int numDataServers)
-         {
-             List<ServerObjectWrapper> servers = new List<ServerObjectWrapper>();
-             List<ListElem> serversWeight = new List<ListElem>();
-
-             foreach (ServerObjectWrapper dataserverWrapper in md.DataServers.Values)
-             {
-                    serversWeight.Add(new ListElem(new ServerObjectWrapper(dataserverWrapper), md.calculateServerWeight(dataserverWrapper.Id)));
-             }
-
-             serversWeight = serversWeight.OrderBy(q => q.Weight).ToList();
-
-             foreach (ListElem elem in serversWeight)
-             {
-                 if (servers.Count < numDataServers)
-                 {
-                     servers.Add(elem.Server);
-                 }
-             }
-
-             return servers;
-         }
-
-         private class ListElem
-         {
-             public ServerObjectWrapper Server {get;set;}
-             public double Weight { get; set; }
-
-             public ListElem(ServerObjectWrapper server, double weight) {
-                 Server = server;
-                 Weight = weight;
-             }
-         }
-
-
-         
     }
 }

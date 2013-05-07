@@ -19,6 +19,7 @@ namespace MetaDataServer
     public class MetaDataServer : MarshalByRefObject, IMetaDataServer
     {
         private static int MAX_HEARTBEATS = Int32.Parse(Properties.Resources.MAX_HEARTBEATS);
+        private static double OVERLOAD_MULTIPLIER = 1.3;
 
         public int Port { get; set; }
         public String Id { get; set; }
@@ -469,22 +470,42 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MD: Heartbeat received: " + heartbeat.ToString());
 
-            if (!Heartbeats.ContainsKey(heartbeat.ServerId))
+            string serverID = heartbeat.ServerId;
+
+            if (!Heartbeats.ContainsKey(serverID))
             {
-                Heartbeats.Add(heartbeat.ServerId, new Queue<HeartbeatMessage>());
+                Heartbeats.Add(serverID, new Queue<HeartbeatMessage>());
             }
 
-            if (Heartbeats[heartbeat.ServerId].Count == MAX_HEARTBEATS)
+            if (Heartbeats[serverID].Count == MAX_HEARTBEATS)
             {
-                Heartbeats[heartbeat.ServerId].Dequeue();
+                Heartbeats[serverID].Dequeue();
             }
 
-            Heartbeats[heartbeat.ServerId].Enqueue(heartbeat);
+            Heartbeats[serverID].Enqueue(heartbeat);
 
-            Console.WriteLine("actual file access at " + heartbeat.ServerId + " w/ size: " + heartbeat.AccessCounter.Count);
+            Console.WriteLine("actual file access at " + serverID + " w/ size: " + heartbeat.AccessCounter.Count);
             foreach (KeyValuePair<String, FileAccessCounter> entry in heartbeat.AccessCounter)
             {
                 Console.WriteLine("AcessCounter: " + entry.Value.ToString());
+            }
+
+
+            double avg = calculateAverageWeight();
+            if (calculateServerWeight(serverID) > (avg * OVERLOAD_MULTIPLIER))
+            {
+                //migration!!!
+                Console.WriteLine("Server within overload: " + serverID);
+                List<FileMetadata> closedFiles = getClosedFiles(serverID);
+                Console.WriteLine("files to move: " + closedFiles.Count);
+                List<ServerObjectWrapper> servers = getSortedServers(DataServers.Count);
+                //escolher ficheiro!!!
+                List<ServerObjectWrapper> cleanServers = getUnderweightServersWithoutFile(servers, avg, closedFiles[0].FileName);
+                Console.WriteLine("servers available: " + cleanServers.Count);
+                foreach (ServerObjectWrapper srv in cleanServers)
+                {
+                    Console.WriteLine("server avail: " + srv.Id);
+                }
             }
         }
 
@@ -496,14 +517,47 @@ namespace MetaDataServer
 
             foreach (HeartbeatMessage heartbeat in heartbeats)
             {
-                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.2) + (heartbeat.WriteCounter * 0.4)) * 0.6)
+                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.3) + (heartbeat.WriteCounter * 0.5)) * 0.6)
                           + ((heartbeat.FileCounter) * 0.4);
             }
 
             return result;
         }
 
+        public List<ServerObjectWrapper> getSortedServers(int numDataServers)
+        {
+            List<ServerObjectWrapper> servers = new List<ServerObjectWrapper>();
+            List<ListElem> serversWeight = new List<ListElem>();
 
+            foreach (ServerObjectWrapper dataserverWrapper in DataServers.Values)
+            {
+                serversWeight.Add(new ListElem(new ServerObjectWrapper(dataserverWrapper), calculateServerWeight(dataserverWrapper.Id)));
+            }
+
+            serversWeight = serversWeight.OrderBy(q => q.Weight).ToList();
+
+            foreach (ListElem elem in serversWeight)
+            {
+                if (servers.Count < numDataServers)
+                {
+                    servers.Add(elem.Server);
+                }
+            }
+
+            return servers;
+        }
+
+        private class ListElem
+        {
+            public ServerObjectWrapper Server { get; set; }
+            public double Weight { get; set; }
+
+            public ListElem(ServerObjectWrapper server, double weight)
+            {
+                Server = server;
+                Weight = weight;
+            }
+        }
 
         #endregion otherCode
 
@@ -515,14 +569,28 @@ namespace MetaDataServer
          * se servidor com muitos pedidos (o que sao muitos? => mais que a media dos servidores?)
          *   ve que ficheiros pode retirar do servidor
          *   escolher melhor ficheiro (mais acessos?)
+         *    ve que servidores estao ilegiveis para receber ficheiro (sem ficheiro e abaixo da avg)
          *    mete no outro
          *    remove do antigo
          *    MD's actualizados
          */
 
 
+        public double calculateAverageWeight()
+        {
+            double total = 0;
+            int nServers = Heartbeats.Count();
 
-        public List<FileMetadata> getClosedFiles(String dsID) //ficheiros que pode retirar do server
+            foreach (KeyValuePair<string, Queue<HeartbeatMessage>> entry in Heartbeats)
+            {
+                total += calculateServerWeight(entry.Key);
+            }
+
+            return total / nServers;
+        }
+
+
+        public List<FileMetadata> getClosedFiles(String dsID)
         {
             List<FileMetadata> closedFiles = new List<FileMetadata>();
             foreach (KeyValuePair<String, FileMetadata> entry in FileMetadata)
@@ -533,6 +601,7 @@ namespace MetaDataServer
                 }
             }
 
+            //ORDENAR
             return closedFiles;
         }
 
@@ -540,13 +609,37 @@ namespace MetaDataServer
         {
             foreach (ServerObjectWrapper server in fileMetaData.FileServers)
             {
-                if (server.Id == dsID)
+                if (server.Id.Equals(dsID))
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        public List<ServerObjectWrapper> getUnderweightServersWithoutFile(List<ServerObjectWrapper> servers, double avg, string filename)
+        {
+            List<ServerObjectWrapper> result = new List<ServerObjectWrapper>();
+
+            foreach (ServerObjectWrapper s in servers)
+            {
+                bool add = true;
+                foreach (ServerObjectWrapper fileServer in FileMetadata[filename].FileServers)
+                {
+                    if (s.Id.Equals(fileServer.Id))
+                    {
+                        add = false;
+                    }
+                }
+
+                if (add && (calculateServerWeight(s.Id) < avg))
+                {
+                    result.Add(s);
+                }
+            }
+
+            return result;
         }
 
 
