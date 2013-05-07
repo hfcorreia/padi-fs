@@ -41,6 +41,10 @@ namespace MetaDataServer
 
             Console.WriteLine("#MDS: closing file " + Filename + "...");
             md.FileMetadata[Filename].Clients.Remove(ClientID);
+            if (md.FileMetadata[Filename].Clients.Count == 0)
+            {
+                md.FileMetadata[Filename].IsOpen = false;
+            }
             md.makeCheckpoint();
         }      
     }

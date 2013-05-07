@@ -19,6 +19,7 @@ namespace MetaDataServer
     public class MetaDataServer : MarshalByRefObject, IMetaDataServer
     {
         private static int MAX_HEARTBEATS = Int32.Parse(Properties.Resources.MAX_HEARTBEATS);
+        private static double OVERLOAD_MULTIPLIER = 1.3;
 
         public int Port { get; set; }
         public String Id { get; set; }
@@ -28,11 +29,10 @@ namespace MetaDataServer
         private bool isFailing;
         private bool isRecovering;
         private Queue<MetaDataOperation> requestsQueue;
-        
+
         public Dictionary<String, ServerObjectWrapper> DataServers { get; set; }
         public SerializableDictionary<String, FileMetadata> FileMetadata { get; set; }
         public SerializableDictionary<String, ManualResetEvent> FileMetadataLocks { get; set; }
-        //public SerializableDictionary<String, HeartbeatMessage> Heartbeats { get; set; }
         public SerializableDictionary<String, Queue<HeartbeatMessage>> Heartbeats { get; set; }
         public PassiveReplicationHandler ReplicationHandler { get; set; }
         private int CheckpointCounter;
@@ -82,10 +82,10 @@ namespace MetaDataServer
             Id = id;
             FileMetadata = new SerializableDictionary<String, FileMetadata>();
             FileMetadataLocks = new SerializableDictionary<string, ManualResetEvent>();
-            DataServers = new Dictionary<String, ServerObjectWrapper>(); 
+            DataServers = new Dictionary<String, ServerObjectWrapper>();
             Heartbeats = new SerializableDictionary<string, Queue<HeartbeatMessage>>();
             Log = new MetaDataLog();
-			Log.init(this);
+            Log.init(this);
             isFailing = false;
             isRecovering = false;
             requestsQueue = new Queue<MetaDataOperation>();
@@ -133,7 +133,7 @@ namespace MetaDataServer
 
         public FileMetadata create(String clientID, string filename, int numberOfDataServers, int readQuorum, int writeQuorum)
         {
-            
+
             MetaDataCreateOperation createOperation = new MetaDataCreateOperation(clientID, filename, numberOfDataServers, readQuorum, writeQuorum);
             executeOperation(createOperation);
 
@@ -187,7 +187,7 @@ namespace MetaDataServer
         }
 
         #endregion OperationsThatChangeTheState
-        
+
         /**
         * Operations that don't change the state of the metadata
         **/
@@ -237,12 +237,12 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
-            if(isRecovering)
+            if (isRecovering)
             {
                 aliveMessage.Operations.Sort(new OperationComparer());
                 foreach (MetaDataOperation op in aliveMessage.Operations)
                 {
-                   requestsQueue.Enqueue(op);
+                    requestsQueue.Enqueue(op);
                 }
                 return;
             }
@@ -255,8 +255,8 @@ namespace MetaDataServer
             {
                 throw;
             }
-            
-            if (aliveMessage.IsMaster && aliveMessage.Operations!=null)
+
+            if (aliveMessage.IsMaster && aliveMessage.Operations != null)
             {
                 foreach (MetaDataOperation operation in aliveMessage.Operations)
                 {
@@ -266,7 +266,7 @@ namespace MetaDataServer
         }
 
         #endregion OperationsThatDontChangeState
-        
+
         /**
          * implementation of all the fail and recover operations
          **/
@@ -309,7 +309,7 @@ namespace MetaDataServer
 
 
                 isRecovering = false;
-                
+
                 Console.WriteLine("Recover - good morning =D");
             }
             else
@@ -330,7 +330,7 @@ namespace MetaDataServer
          **/
 
         #region Checkpoint
-        
+
         public void makeCheckpoint()
         {
             //lock (typeof(MetaDataServer))
@@ -369,11 +369,11 @@ namespace MetaDataServer
         }
 
         #endregion Checkpoint
-        
+
         /**
          * Auxiliar code
          **/
-        
+
         #region otherCode
         public void dump()
         {
@@ -428,22 +428,34 @@ namespace MetaDataServer
         {
             Console.WriteLine("#MD: Heartbeat received: " + heartbeat.ToString());
 
-            if (!Heartbeats.ContainsKey(heartbeat.ServerId))
+            string serverID = heartbeat.ServerId;
+
+            if (!Heartbeats.ContainsKey(serverID))
             {
-                Heartbeats.Add(heartbeat.ServerId, new Queue<HeartbeatMessage>());
+                Heartbeats.Add(serverID, new Queue<HeartbeatMessage>());
             }
 
-            if (Heartbeats[heartbeat.ServerId].Count == MAX_HEARTBEATS)
+            if (Heartbeats[serverID].Count == MAX_HEARTBEATS)
             {
-                Heartbeats[heartbeat.ServerId].Dequeue();
+                Heartbeats[serverID].Dequeue();
             }
 
-            Heartbeats[heartbeat.ServerId].Enqueue(heartbeat);
+            Heartbeats[serverID].Enqueue(heartbeat);
 
-            Console.WriteLine("actual file access at " + heartbeat.ServerId + " w/ size: " + heartbeat.AccessCounter.Count);
+            Console.WriteLine("actual file access at " + serverID + " w/ size: " + heartbeat.AccessCounter.Count);
             foreach (KeyValuePair<String, FileAccessCounter> entry in heartbeat.AccessCounter)
             {
-                Console.WriteLine("AcessCounter: " +  entry.Value.ToString());
+                Console.WriteLine("AcessCounter: " + entry.Value.ToString());
+            }
+
+
+            double avg = calculateAverageWeight();
+            if (calculateServerWeight(serverID) > (avg * OVERLOAD_MULTIPLIER))
+            {
+                //migration!!!
+                Console.WriteLine("Server within overload: " + serverID);
+                List<FileMetadata> closedFiles = getClosedFiles(serverID);
+                Console.WriteLine("files to move: " + closedFiles.Count);
             }
         }
 
@@ -455,16 +467,14 @@ namespace MetaDataServer
 
             foreach (HeartbeatMessage heartbeat in heartbeats)
             {
-                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.2)  + (heartbeat.WriteCounter * 0.4)) * 0.6) 
+                result += (((heartbeat.ReadCounter * 0.2) + (heartbeat.ReadVersionCounter * 0.3) + (heartbeat.WriteCounter * 0.5)) * 0.6)
                           + ((heartbeat.FileCounter) * 0.4);
             }
 
             return result;
         }
 
-    
-
-		#endregion otherCode
+        #endregion otherCode
 
 
 
@@ -480,8 +490,21 @@ namespace MetaDataServer
          */
 
 
+        public double calculateAverageWeight()
+        {
+            double total = 0;
+            int nServers = Heartbeats.Count();
 
-        public List<FileMetadata> getClosedFiles(String dsID) //ficheiros que pode retirar do server
+            foreach (KeyValuePair<string, Queue<HeartbeatMessage>> entry in Heartbeats)
+            {
+                total += calculateServerWeight(entry.Key);
+            }
+
+            return total / nServers;
+        }
+
+
+        public List<FileMetadata> getClosedFiles(String dsID) 
         {
             List<FileMetadata> closedFiles = new List<FileMetadata>();
             foreach (KeyValuePair<String, FileMetadata> entry in FileMetadata)
@@ -499,7 +522,7 @@ namespace MetaDataServer
         {
             foreach (ServerObjectWrapper server in fileMetaData.FileServers)
             {
-                if (server.Id == dsID)
+                if (server.Id.Equals(dsID))
                 {
                     return true;
                 }

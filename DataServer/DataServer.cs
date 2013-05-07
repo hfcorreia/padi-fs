@@ -306,7 +306,6 @@ namespace DataServer
         {
             
             Console.WriteLine("#DS: heartbeating at each " + HEARTBEAT_INTERVAL + " ms");
-            Console.WriteLine("#DS: heartbeat w/ " + AccessCounter.Count);
             HeartbeatMessage heartbeat = new HeartbeatMessage(Id, Files.Count, ReadCounter, ReadVersionCounter, WriteCounter, AccessCounter);
 
             Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
