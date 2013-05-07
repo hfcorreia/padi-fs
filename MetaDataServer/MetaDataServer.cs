@@ -100,7 +100,8 @@ namespace MetaDataServer
 
             Console.Title = "MDS " + Id;
 
-            ReplicationHandler = new PassiveReplicationHandler(IdAsNumber);
+            this.replicationHandler = new PassiveReplicationHandler(IdAsNumber);
+            getCheckpoint(Id);
 
             //atach a debugger - we should add some parameter to enable/disable this!
             if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
@@ -166,14 +167,14 @@ namespace MetaDataServer
 
         private void executeOperation(MetaDataOperation operation)
         {
-            if (ReplicationHandler.IsMaster)
+            if (replicationHandler.IsMaster)
             {
                 safeExecuteOperation(operation);
             }
             else
             {
                 Console.WriteLine("#MDS " + Id + " [SLAVE] - " + " executeOperation " + operation);
-                int masterId = ReplicationHandler.MasterNodeId;
+                int masterId = replicationHandler.MasterNodeId;
                 throw new NotMasterException("please execute the operation on the master: " + masterId, masterId);
             }
         }
@@ -188,7 +189,7 @@ namespace MetaDataServer
             {
                 requestsQueue.Enqueue(operation);
             }
-            Console.WriteLine("#MDS " + Id + (ReplicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + " executeOperation " + operation);
+            Console.WriteLine("#MDS " + Id + (replicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + " executeOperation " + operation);
             Log.registerOperation(this, operation);
             operation.execute(this);
             Log.incrementStatus();
@@ -208,7 +209,7 @@ namespace MetaDataServer
             {
                 throw new Exception("the mds " + Id + " is failing");
             }
-            return ReplicationHandler.MetadataServerId;
+            return replicationHandler.MetadataServerId;
         }
 
         public FileMetadata updateReadMetadata(string clientId, string filename)
@@ -257,7 +258,7 @@ namespace MetaDataServer
 
             try
             {
-                ReplicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
+                replicationHandler.registerAliveMessage(aliveMessage.MetadataServerId);
             }
             catch (Exception)
             {
@@ -295,8 +296,8 @@ namespace MetaDataServer
                 isRecovering = true;
                 isFailing = false;
 
-                ReplicationHandler.init();
-                List<MetaDataOperation> operations = ReplicationHandler.synchOperations(Log.Status);
+                replicationHandler.init();
+                List<MetaDataOperation> operations = replicationHandler.synchOperations(Log.Status);
                 Console.WriteLine("MDS recover - the server has " + operations.Count + " operations in fault ");
                 Log.registerOperations(this, operations);
                 while (Log.Status < Log.NextId)
@@ -349,7 +350,7 @@ namespace MetaDataServer
                 string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId;
                 Util.createDir(dirName);
 
-                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer), 
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer),
                     new Type[]{ typeof(MetaDataCloseOperation), typeof(MetaDataCreateOperation), typeof(MetaDataDeleteOperation),
                         typeof(MetaDataRegisterServerOperation), typeof(MetaDataOpenOperation)});
                 System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
@@ -362,30 +363,41 @@ namespace MetaDataServer
             }
             catch (Exception e)
             {
-                Console.WriteLine("##############    MESSAGE  #######################");
-                Console.WriteLine(e.Message);
-                Console.WriteLine("############## INNER EXCEPTION  ##################");
-                Console.WriteLine(e.InnerException);
-                Console.WriteLine("############## STACK TRACE #######################");
-                Console.WriteLine(e.StackTrace);
-                Console.WriteLine("##################################################");
+                Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.Message);
+
             }
 
         }
 
-        public static MetaDataServer getCheckpoint(String metadataServerId)
+        public void getCheckpoint(String metadataServerId)
         {
-            //System.Xml.Serialization.XmlSerializer reader =
-            //          new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer));
+            try
+            {
+                Console.WriteLine("#MDS Recovering Checkpoint!");
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer), new Type[]{ typeof(MetaDataCloseOperation), typeof(MetaDataCreateOperation), typeof(MetaDataDeleteOperation),
+                        typeof(MetaDataRegisterServerOperation), typeof(MetaDataOpenOperation)});
 
-            //string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId + "\\checkpoint.xml";
-            //System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
+                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId + "\\checkpoint.xml";
+                System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
 
-            //MetaDataServer metadaServer = new MetaDataServer();
-            //metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
+                MetaDataServer metadaServer = new MetaDataServer();
+                metadaServer = (MetaDataServer)reader.Deserialize(fileReader);
 
-            //return metadaServer;
-            return null;
+                this.CheckpointCounter = metadaServer.CheckpointCounter;
+                this.DataServers = metadaServer.DataServers;
+                this.FileMetadata = metadaServer.FileMetadata;
+                this.Log = metadaServer.Log;
+                this.Port = metadaServer.Port;
+                foreach (String filename in FileMetadata.Keys)
+                {
+                    addMetadataLock(filename, new ManualResetEvent(false));
+                }
+                fileReader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("#MDS: Checkpoint Failed: " + e.Message);
+             }
         }
 
         #endregion Checkpoint
@@ -414,8 +426,11 @@ namespace MetaDataServer
                     foreach (String name in files.Value.Clients)
                     {
                         Console.WriteLine("\t" + name + " ");
+
                     }
-                    Console.WriteLine("nb " + files.Value.NumServers + " rq " + files.Value.ReadQuorum + " wq" + files.Value.WriteQuorum);
+                    Console.WriteLine("\t\tNumber of ds: " + files.Value.NumServers);
+                    Console.WriteLine("\t\tRead Quorum: " + files.Value.ReadQuorum);
+                    Console.WriteLine("\t\tWrite Quorum: " + files.Value.WriteQuorum);
                 }
             }
 
@@ -460,15 +475,20 @@ namespace MetaDataServer
             return fileMetadataLocks[filename];
         }
 
-        public PassiveReplicationHandler ReplicationHandler
+     
+        public PassiveReplicationHandler getReplicationHandler()
         {
-            get { return replicationHandler; }
-            set { replicationHandler = value; }
+            return replicationHandler;
+        }
+
+        public void setReplicationHandler(PassiveReplicationHandler replicationHandler)
+        {
+            this.replicationHandler = replicationHandler;
         }
 
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
-            Console.WriteLine("#MD: Heartbeat received: " + heartbeat.ToString());
+            Console.WriteLine("#MDS: Heartbeat received: " + heartbeat.ToString());
 
             string serverID = heartbeat.ServerId;
 

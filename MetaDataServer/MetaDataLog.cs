@@ -16,7 +16,6 @@ namespace MetaDataServer
         private MetaDataServer mdsField;
         private MetaDataServer MetadataServer { get { return mdsField; } set { mdsField = value; } }
 
-        //public SortedSet<MetaDataOperation> log { get; set; }
         public List<MetaDataOperation> log { get; set; }
 
         public MetaDataLog() { }
@@ -24,11 +23,8 @@ namespace MetaDataServer
         public int Status { get; set; }
         public int NextId { get; set; }
 
-        //private static readonly XmlSerializer xmlSerializer = new XmlSerializer(typeof(MetaDataLog));
-
         public void init(MetaDataServer md)
         {
-            //log = new SortedSet<MetaDataOperation>(new OperationComparer());
             log = new List<MetaDataOperation>();
             MetadataServer = md;
             NextId = 0;
@@ -50,7 +46,7 @@ namespace MetaDataServer
                 operationId = NextId++;
             }
 
-            if (md.ReplicationHandler.IsMaster)
+            if (md.getReplicationHandler().IsMaster)
             {
                 operation.OperationId = operationId;
             }
@@ -59,8 +55,7 @@ namespace MetaDataServer
                 log.Add(operation);
             }
 
-            md.ReplicationHandler.syncOperation(operation);
-            saveLog(this);
+            md.getReplicationHandler().syncOperation(operation);
         }
 
         public MetaDataOperation getOperation(int operationId)
@@ -77,16 +72,6 @@ namespace MetaDataServer
             {
                 return null;
             }
-        }
-
-        public void loadLog(String filename)
-        {
-            //TODO - load the log from a xml file and deserialize
-        }
-
-        private static void saveLog(MetaDataLog obj) 
-        {
-
         }
 
         public void incrementStatus() 
