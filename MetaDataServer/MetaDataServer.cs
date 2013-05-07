@@ -456,6 +456,13 @@ namespace MetaDataServer
                 Console.WriteLine("Server within overload: " + serverID);
                 List<FileMetadata> closedFiles = getClosedFiles(serverID);
                 Console.WriteLine("files to move: " + closedFiles.Count);
+                List<ServerObjectWrapper> servers = getSortedServers(DataServers.Count);
+                List<ServerObjectWrapper> cleanServers = getUnderweightServersWithoutFile(servers, avg, closedFiles[0].FileName);
+                Console.WriteLine("servers available: " + cleanServers.Count);
+                foreach (ServerObjectWrapper srv in cleanServers)
+                {
+                    Console.WriteLine("server avail: " + srv.Id);
+                }
             }
         }
 
@@ -474,6 +481,41 @@ namespace MetaDataServer
             return result;
         }
 
+        public List<ServerObjectWrapper> getSortedServers(int numDataServers)
+        {
+            List<ServerObjectWrapper> servers = new List<ServerObjectWrapper>();
+            List<ListElem> serversWeight = new List<ListElem>();
+
+            foreach (ServerObjectWrapper dataserverWrapper in DataServers.Values)
+            {
+                serversWeight.Add(new ListElem(new ServerObjectWrapper(dataserverWrapper), calculateServerWeight(dataserverWrapper.Id)));
+            }
+
+            serversWeight = serversWeight.OrderBy(q => q.Weight).ToList();
+
+            foreach (ListElem elem in serversWeight)
+            {
+                if (servers.Count < numDataServers)
+                {
+                    servers.Add(elem.Server);
+                }
+            }
+
+            return servers;
+        }
+
+        private class ListElem
+        {
+            public ServerObjectWrapper Server { get; set; }
+            public double Weight { get; set; }
+
+            public ListElem(ServerObjectWrapper server, double weight)
+            {
+                Server = server;
+                Weight = weight;
+            }
+        }
+
         #endregion otherCode
 
 
@@ -484,6 +526,7 @@ namespace MetaDataServer
          * se servidor com muitos pedidos (o que sao muitos? => mais que a media dos servidores?)
          *   ve que ficheiros pode retirar do servidor
          *   escolher melhor ficheiro (mais acessos?)
+         *    ve que servidores estao ilegiveis para receber ficheiro (sem ficheiro e abaixo da avg)
          *    mete no outro
          *    remove do antigo
          *    MD's actualizados
@@ -504,7 +547,7 @@ namespace MetaDataServer
         }
 
 
-        public List<FileMetadata> getClosedFiles(String dsID) 
+        public List<FileMetadata> getClosedFiles(String dsID)
         {
             List<FileMetadata> closedFiles = new List<FileMetadata>();
             foreach (KeyValuePair<String, FileMetadata> entry in FileMetadata)
@@ -515,6 +558,7 @@ namespace MetaDataServer
                 }
             }
 
+            //ORDENAR
             return closedFiles;
         }
 
@@ -529,6 +573,31 @@ namespace MetaDataServer
             }
 
             return false;
+        }
+
+        public List<ServerObjectWrapper> getUnderweightServersWithoutFile(List<ServerObjectWrapper> servers, double avg, string filename)
+        {
+            //ver AVG
+            List<ServerObjectWrapper> result = new List<ServerObjectWrapper>();
+
+            foreach (ServerObjectWrapper s in servers)
+            {
+                bool add = true;
+                foreach (ServerObjectWrapper fileServer in FileMetadata[filename].FileServers)
+                {
+                    if (s.Id.Equals(fileServer.Id))
+                    {
+                        add = false;
+                    }
+                }
+
+                if (add && (calculateServerWeight(s.Id) < avg))
+                {
+                    result.Add(s);
+                }
+            }
+
+            return result;
         }
 
 
