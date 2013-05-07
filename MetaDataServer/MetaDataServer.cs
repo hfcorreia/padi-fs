@@ -99,7 +99,6 @@ namespace MetaDataServer
             CheckpointCounter = 0;
 
             Console.Title = "MDS " + Id;
-
             this.replicationHandler = new PassiveReplicationHandler(IdAsNumber);
             getCheckpoint(Id);
 
@@ -363,7 +362,8 @@ namespace MetaDataServer
             }
             catch (Exception e)
             {
-                Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.Message);
+
+                Console.WriteLine("#MDS: Checkpoint Failed: " + e.Message);
 
             }
 
@@ -396,8 +396,8 @@ namespace MetaDataServer
             }
             catch (Exception e)
             {
-                Console.WriteLine("#MDS: Checkpoint Failed: " + e.Message);
-             }
+                Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.Message);
+            }
         }
 
         #endregion Checkpoint
@@ -475,7 +475,7 @@ namespace MetaDataServer
             return fileMetadataLocks[filename];
         }
 
-     
+
         public PassiveReplicationHandler getReplicationHandler()
         {
             return replicationHandler;

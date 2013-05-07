@@ -31,10 +31,10 @@ namespace DataServer
 
         public string Host { get; set; }
 
-        public string Url { get { return "tcp://" + Host + ":" + Port + "/" + Id; }}
+        public string Url { get { return "tcp://" + Host + ":" + Port + "/" + Id; } }
 
         public SerializableDictionary<string, File> Files { get; set; }
-    
+
         private DSstate State { get; set; }
 
         internal Dictionary<string, ReaderWriterLockSlim> FileLocks { get; set; }
@@ -107,7 +107,7 @@ namespace DataServer
 
             RemotingServices.Marshal(dataServer, Id, typeof(DataServer));
             registInMetadataServers();
-           Timer.Start();
+            Timer.Start();
         }
 
 
@@ -120,7 +120,7 @@ namespace DataServer
                 FileAccessCounter counter = AccessCounter[file.FileName];
                 counter.WriteCounter++;
             }
-           else
+            else
             {
                 FileAccessCounter fileCounter = new FileAccessCounter(file.FileName);
                 fileCounter.WriteCounter++;
@@ -153,7 +153,7 @@ namespace DataServer
         public void registInMetadataServers()
         {
             Console.WriteLine("#DS: registering in MetadataServers");
-            
+
             Task.WaitAll(new Task[] { registInMetadataServersTask() });
         }
 
@@ -217,19 +217,26 @@ namespace DataServer
 
         public void makeCheckpoint()
         {
-            String dataServerId = Id;
-            Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ + " from server " + Id);
+            try
+            {
+                String dataServerId = Id;
+                Console.WriteLine("#DS: making checkpoint " + CheckpointCounter++ + " from server " + Id);
 
-            string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
-            Util.createDir(dirName);
+                string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + dataServerId;
+                Util.createDir(dirName);
 
-            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
-            System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
+                System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DataServer));
+                System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
 
-            writer.Serialize(fileWriter, this);
+                writer.Serialize(fileWriter, this);
 
-            fileWriter.Close();
-            Console.WriteLine("#DS: checkpoint " + CheckpointCounter + " from server " + Id + " done");
+                fileWriter.Close();
+                Console.WriteLine("#DS: checkpoint " + CheckpointCounter + " from server " + Id + " done");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("#DS: Checkpoint Failed: " + e.Message);
+            }
         }
 
         public void getCheckpoint(String dataServerId)
@@ -248,14 +255,15 @@ namespace DataServer
                 Files = dataServer.Files;
                 CheckpointCounter = dataServer.CheckpointCounter;
                 Port = dataServer.Port;
-                foreach(String filename in Files.Keys ){
-                 FileLocks.Add(filename, new System.Threading.ReaderWriterLockSlim());
+                foreach (String filename in Files.Keys)
+                {
+                    FileLocks.Add(filename, new System.Threading.ReaderWriterLockSlim());
                 }
                 fileReader.Close();
             }
             catch (Exception e)
             {
-                Console.WriteLine("#DS: No checkpoint");
+                Console.WriteLine("#DS: GetCheckpoint Failed: " + e.Message);
             }
         }
 
@@ -304,7 +312,7 @@ namespace DataServer
 
         void sendHeartbeat(object source, ElapsedEventArgs e)
         {
-            
+
             Console.WriteLine("#DS: heartbeating at each " + HEARTBEAT_INTERVAL + " ms");
             HeartbeatMessage heartbeat = new HeartbeatMessage(Id, Files.Count, ReadCounter, ReadVersionCounter, WriteCounter, AccessCounter);
 
@@ -322,7 +330,7 @@ namespace DataServer
             WriteCounter = 0;
 
             Console.WriteLine("#DS: heartbeat sent :" + heartbeat.ToString());
-             
+
         }
 
     }

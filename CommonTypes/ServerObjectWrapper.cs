@@ -8,30 +8,30 @@ namespace CommonTypes
     [Serializable]
     public class ServerObjectWrapper
     {
-        
+
         public int Port { get; set; }
         public String Id { get; set; }
         public string Host { get; set; }
         public string URL { get { return "tcp://" + Host + ":" + Port + "/" + Id; } }
-       
+
         [NonSerialized]
         private Object wrappedObject = null;
 
         public ServerObjectWrapper() { }
         public ServerObjectWrapper(ServerObjectWrapper original) : this(original.Port, original.Id, original.Host) { }
 
-        public ServerObjectWrapper( int port, string id, string host) 
+        public ServerObjectWrapper(int port, string id, string host)
         {
             Port = port;
             Id = id;
             Host = host;
         }
 
-        public T getObject<T>() 
+        public T getObject<T>()
         {
-            if ( wrappedObject == null )
+            if (wrappedObject == null)
             {
-                wrappedObject = Activator.GetObject( typeof(T), URL );
+                wrappedObject = Activator.GetObject(typeof(T), URL);
             }
 
             return (T)wrappedObject;

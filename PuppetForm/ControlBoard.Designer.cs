@@ -33,6 +33,7 @@
             this.createDataServerButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
             this.recoverMetadataButton = new System.Windows.Forms.Button();
             this.failMetaDataButton = new System.Windows.Forms.Button();
             this.mdIdTextBox = new System.Windows.Forms.TextBox();
@@ -101,6 +102,7 @@
             this.dataServerIdTextBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.shell = new System.Windows.Forms.TextBox();
+            this.button4 = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.CreateFile.SuspendLayout();
@@ -145,6 +147,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.recoverMetadataButton);
             this.groupBox2.Controls.Add(this.failMetaDataButton);
             this.groupBox2.Controls.Add(this.mdIdTextBox);
@@ -158,11 +161,21 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 53);
+            this.label6.Location = new System.Drawing.Point(10, 23);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(45, 13);
             this.label6.TabIndex = 20;
             this.label6.Text = "MDS ID";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(6, 47);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(171, 23);
+            this.button3.TabIndex = 46;
+            this.button3.Text = "Launch";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.CreateMDS_Click);
             // 
             // recoverMetadataButton
             // 
@@ -186,11 +199,11 @@
             // 
             // mdIdTextBox
             // 
-            this.mdIdTextBox.Location = new System.Drawing.Point(57, 50);
+            this.mdIdTextBox.Location = new System.Drawing.Point(57, 23);
             this.mdIdTextBox.Name = "mdIdTextBox";
             this.mdIdTextBox.Size = new System.Drawing.Size(120, 20);
             this.mdIdTextBox.TabIndex = 2;
-            this.mdIdTextBox.Text = "m-1";
+            this.mdIdTextBox.Text = "m-0";
             // 
             // label4
             // 
@@ -871,12 +884,23 @@
             this.shell.TabIndex = 22;
             this.shell.TextChanged += new System.EventHandler(this.shell_TextChanged);
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(12, 158);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(186, 33);
+            this.button4.TabIndex = 46;
+            this.button4.Text = "Launch MetaDatas";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.startAllMDS_Click);
+            // 
             // ControlBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1083, 692);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.shell);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox6);
@@ -985,6 +1009,8 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button exeClientScriptButton;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }
 

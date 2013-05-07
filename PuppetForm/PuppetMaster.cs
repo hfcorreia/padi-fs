@@ -77,6 +77,31 @@ namespace PuppetForm
             }
         }
 
+        public void createMetadataServer(string mdsId)
+        {
+            int port;
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+
+            switch (mdsId)
+            {
+                case "m-0":
+                    port = Int32.Parse(CommonTypes.Properties.Resources.MDS0_PORT);
+                    break;
+                case "m-1":
+                    port = Int32.Parse(CommonTypes.Properties.Resources.MDS1_PORT);
+                    break;
+                case "m-2":
+                    port = Int32.Parse(CommonTypes.Properties.Resources.MDS2_PORT);
+                    break;
+                default:
+                    throw new PadiFsException("No such MetaData Server: " + mdsId);
+
+            }
+
+
+            Process.Start(path + "\\MetaDataServer.exe", port + " " + mdsId);
+        }
+
         public void open(String clientId, string filename)
         {
             startProcess(clientId);
@@ -177,7 +202,6 @@ namespace PuppetForm
         {
             try
             {
-                //not tested
                 startProcess(process);
 
                 ServerObjectWrapper sow = MetaInformationReader.Instance.getMetadataById(process);
@@ -551,5 +575,7 @@ namespace PuppetForm
                 dump(metaDataWrapper.Id);
             }
         }
+
+
     }
 }

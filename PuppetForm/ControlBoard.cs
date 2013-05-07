@@ -34,11 +34,10 @@ namespace PuppetForm
             try
             {
                 puppetMaster = new PuppetMaster(this);
-                puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers " + exception.Message +" :\n" + exception.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error starting Metadata servers " + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -253,7 +252,7 @@ namespace PuppetForm
                     puppetMaster.read(processId, fileRegisterId, readSemantics);
                 }
 
-                
+
                 updateClientStringRegister(processId);
             }
             catch (Exception exception)
@@ -313,7 +312,7 @@ namespace PuppetForm
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error writing file:" + exception.Message +" :\n" + exception.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error writing file:" + exception.Message + " :\n" + exception.StackTrace);
             }
         }
 
@@ -525,6 +524,29 @@ namespace PuppetForm
             }
         }
 
+        private void CreateMDS_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                puppetMaster.createMetadataServer(mdIdTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing button:" + exception.Message + " :\n" + exception.StackTrace);
+            }
+        }
+
+        private void startAllMDS_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                puppetMaster.startMetaDataServers(NUM_METADATA_SERVERS);
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show("Error failing button:" + exception.Message + " :\n" + exception.StackTrace);
+            }
+        }
         private void recoverMetadataButton_Click(object sender, EventArgs e)
         {
             try
@@ -681,7 +703,7 @@ namespace PuppetForm
         }
         private string getCopySemantics()
         {
-            return (string) copySemanticsComboBox.Items[copySemanticsComboBox.SelectedIndex];
+            return (string)copySemanticsComboBox.Items[copySemanticsComboBox.SelectedIndex];
         }
 
         #endregion getters
