@@ -143,10 +143,10 @@ namespace MetaDataServer
                         {
                             metadataServer.receiveAliveMessage(aliveMessage);
                         }
-                        catch (PadiFsException exception)
-                        {
-                            throw exception;
-                        }
+                        //catch (PadiFsException exception)
+                        //{
+                        //    throw exception;
+                        //}
                         catch (Exception)
                         {
                             //Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
