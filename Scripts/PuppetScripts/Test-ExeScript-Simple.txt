@@ -1,4 +1,0 @@
-#Need to launch the ds!
-DUMP d-1
-#Run the client script
-EXESCRIPT c-1 Simple-Create.txt

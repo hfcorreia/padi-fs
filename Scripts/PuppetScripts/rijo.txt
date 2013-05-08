@@ -1,8 +1,0 @@
-UNFREEZE d-1
-DUMP c-1
-EXESCRIPT c-1 rijoC1.txt
-CREATE c-2, f0, 1, 1, 1
-OPEN c-2, f0
-OPEN c-2, f0
-OPEN c-2, f0
-UNFREEZE d-2

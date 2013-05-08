@@ -1,5 +1,0 @@
-CREATE c-1, f3, 2, 2, 2
-OPEN c-1, f3
-DUMP c-1
-WRITE c-1, 0, "Texdfgdfgdsgagst"
-DUMP c-1

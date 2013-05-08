@@ -1,8 +1,0 @@
-CREATE c-1, fullTest, 1, 1, 1
-OPEN c-1, fullTest
-WRITE c-1, 0, "hello"
-CLOSE c-1
-OPEN c-1
-DUMP c-1
-CLOSE c-1, fullTest
-DELETE c-1, fullTest

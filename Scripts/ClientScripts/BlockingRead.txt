@@ -1,2 +1,0 @@
-CREATE c-1, blockingReadFile, 1, 1, 1
-READ c-1, 0, default, 0
