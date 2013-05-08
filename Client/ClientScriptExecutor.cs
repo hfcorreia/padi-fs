@@ -21,7 +21,7 @@ namespace Client
 
         public void runScriptFile()
         {
-            Console.WriteLine("\r\n#Client: Running Script " + ScriptName + " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            Console.WriteLine("\r\n#Client: Running Script " + ScriptName);
             System.IO.StreamReader fileReader = new System.IO.StreamReader(ScriptLocation);
 
             String line = fileReader.ReadLine();
@@ -38,7 +38,7 @@ namespace Client
                     {
                         exeScriptCommand(line);
                     }
-                    catch (Exception e) 
+                    catch (Exception e)
                     {
                         Console.WriteLine("#ClientScriptExecutor: " + e.Message + "\n\n" + e.StackTrace);
                     }
@@ -93,7 +93,7 @@ namespace Client
                 Console.WriteLine("Error on ClientScriptExecutor: " + e.Message + e.StackTrace);
             }
 
-            }
+        }
 
         private String[] parseLine(string line)
         {
@@ -120,22 +120,22 @@ namespace Client
 
         private void read(string[] input)
         {
-          ClientEntity.read(Int32.Parse(input[0]), input[1], Int32.Parse(input[2]));
+            ClientEntity.read(Int32.Parse(input[0]), input[1], Int32.Parse(input[2]));
         }
 
         private void write(string[] input)
         {
-          int fileRegisterId = Int32.Parse(input[0]);
-          Match mp = Regex.Match(input[1], "\"(.*)\"");
-          if (mp.Success)
-          { 
-              byte[] content = System.Text.Encoding.UTF8.GetBytes(mp.Groups[1].Value);
-              ClientEntity.write(fileRegisterId, content);
-          }
-          else
-          {
-              ClientEntity.write(fileRegisterId, Int32.Parse(input[1]));
-          }
+            int fileRegisterId = Int32.Parse(input[0]);
+            Match mp = Regex.Match(input[1], "\"(.*)\"");
+            if (mp.Success)
+            {
+                byte[] content = System.Text.Encoding.UTF8.GetBytes(mp.Groups[1].Value);
+                ClientEntity.write(fileRegisterId, content);
+            }
+            else
+            {
+                ClientEntity.write(fileRegisterId, Int32.Parse(input[1]));
+            }
         }
 
         private void delete(string[] input)
@@ -145,8 +145,8 @@ namespace Client
 
         private void create(string[] input)
         {
-     
-           ClientEntity.create(input[0], Int32.Parse(input[1]), Int32.Parse(input[2]), Int32.Parse(input[3]));
+
+            ClientEntity.create(input[0], Int32.Parse(input[1]), Int32.Parse(input[2]), Int32.Parse(input[3]));
         }
 
         private void close(string[] input)

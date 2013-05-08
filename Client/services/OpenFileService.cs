@@ -18,7 +18,8 @@ namespace Client.services
         private Client Client { get; set; }
         private String FileName { get; set; }
 
-        public OpenFileService(ClientState clientState, String fileName) : base(clientState) 
+        public OpenFileService(ClientState clientState, String fileName)
+            : base(clientState)
         {
             FileName = fileName;
         }
@@ -31,55 +32,28 @@ namespace Client.services
                 //if we allready have the file in the metadataContainer, we only mark it has being open
                 State.FileMetadataContainer.markOpenFile(FileName);
             }
-            else
-            {
-                //if we don't have metadata of the file, we go get it on the MetadataServers
 
-                //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { openFileTask() };
+            //if we don't have metadata of the file, we go get it on the MetadataServers
+            Func<IMetaDataServer, FileMetadata> openFileFunc = (IMetaDataServer metadataServer) => { return metadataServer.open(State.Id, FileName); };
 
-                Func<IMetaDataServer, FileMetadata> openFileFunc = (IMetaDataServer metadataServer) =>
-                {
-                    return metadataServer.open(State.Id, FileName);
-                };
+            Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(openFileFunc) };
 
-                Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(openFileFunc) };
+            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
-                FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
+            printReceivedDataServers(fileMetadata);
 
-                int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
-                Console.WriteLine("#Client: metadata saved in position " + position);
-            }
+            int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
         }
-        /*
-        private Task<FileMetadata> openFileTask()
+
+        private static void printReceivedDataServers(FileMetadata fileMetadata)
         {
-            return Task<FileMetadata>.Factory.StartNew(() =>
+            Console.Write("#Client: available data servers for " + fileMetadata.FileName + " :\r\n\t[ ");
+            foreach (ServerObjectWrapper server in fileMetadata.FileServers)
             {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
-                FileMetadata result = null;
-                bool found = false;
-                int masterId = 0;
-                while (!found)
-                {
-                    try
-                    {
-                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
-                        result = metadataServer.open(State.Id, FileName);
-                        found = true;
-                    }
-                    catch (NotMasterException exception)
-                    {
-                        masterId = exception.MasterId;
-                    }
-                    catch (Exception exception)
-                    {
-                        //consider as the server being down - try another server
-                        masterId = (masterId + 1) % 3;
-                    }
-                }
-                return result;
-            });
+                Console.Write(server.Id + " ");
+            }
+            Console.WriteLine("]");
         }
-         */ 
+
     }
 }

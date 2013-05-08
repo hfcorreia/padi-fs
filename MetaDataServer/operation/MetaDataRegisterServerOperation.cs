@@ -21,6 +21,10 @@ namespace MetaDataServer
             DataServerPort = dataServerPort;
         }
 
+        public override string ToString()
+        {
+            return "Register Dataserver Operation";
+        }
          public override void execute(MetaDataServer md)
         {
             

@@ -30,6 +30,11 @@ namespace MetaDataServer
             WriteQuorum = writeQuorum;
         }
 
+        public override string ToString()
+        {
+            return "Create Operation";
+        }
+
          public override void execute(MetaDataServer md)
         {
             if ((WriteQuorum > NumberOfDataServers) || (ReadQuorum > NumberOfDataServers))
@@ -49,6 +54,7 @@ namespace MetaDataServer
 
             md.FileMetadata.Add(Filename, newFileMetadata);
             md.addMetadataLock(Filename, new ManualResetEvent(false));
+            md.getMigratingFiles().Add(Filename, new List<Tuple<string, string>>());
             Console.WriteLine("#MDS: Created " + Filename);
             md.makeCheckpoint();
 

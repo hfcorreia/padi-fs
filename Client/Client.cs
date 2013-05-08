@@ -128,7 +128,6 @@ namespace Client
 
         public File read(int fileRegisterId, string semantics, int stringRegisterId)
         {
-            Console.WriteLine("client read in registers (file, string) : (" + fileRegisterId + " , " + stringRegisterId + ")");
             ReadFileService readFileService = new ReadFileService(ClientState, semantics, fileRegisterId);
             readFileService.execute();
 
@@ -161,11 +160,7 @@ namespace Client
 
         public void delete(string filename)
         {
-            //if (ClientState.FileMetadataContainer.containsFileMetadata(filename)) 
-            //{
-            //    close(filename);
-            //}
-
+       
             DeleteFileService deleteFileService = new DeleteFileService(ClientState, filename);
             deleteFileService.execute();
         }

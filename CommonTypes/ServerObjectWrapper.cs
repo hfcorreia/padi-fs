@@ -36,5 +36,10 @@ namespace CommonTypes
 
             return (T)wrappedObject;
         }
+
+        public override bool Equals(object obj)
+        {
+            return (obj.GetType() == typeof(ServerObjectWrapper) && ((ServerObjectWrapper)obj).Id.Equals(this.Id));
+        }
     }
 }

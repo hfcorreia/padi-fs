@@ -12,10 +12,7 @@ namespace MetaDataServer
         public int OperationId { get; set; }
 
         public abstract void execute(MetaDataServer md);
-        public override string ToString()
-        {
-            return "\r\n   Operation - [ id: " + OperationId + " , type: " + GetType() + " ]";
-        }
+        public abstract override string ToString();
 
         /***
          * operations are equal if they have the same operation id

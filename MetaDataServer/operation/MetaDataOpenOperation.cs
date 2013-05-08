@@ -12,7 +12,7 @@ namespace MetaDataServer
     public class MetaDataOpenOperation : MetaDataOperation
     {
 
-        public String ClientID {get;set;}
+        public String ClientID { get; set; }
         public String Filename { get; set; }
 
         public FileMetadata Result { get; set; }
@@ -24,7 +24,11 @@ namespace MetaDataServer
             Filename = filename;
         }
 
-         public override void execute(MetaDataServer md)
+        public override string ToString()
+        {
+            return "Open Operation";
+        }
+        public override void execute(MetaDataServer md)
         {
             if (!md.FileMetadata.ContainsKey(Filename))
             {
@@ -39,14 +43,16 @@ namespace MetaDataServer
             else
             {
                 Console.WriteLine("#MDS: opening file: " + Filename);
-                
-                md.FileMetadata[Filename].IsOpen = true;
-                md.FileMetadata[Filename].Clients.Add(ClientID);
+                lock (Filename)
+                {
+                    md.FileMetadata[Filename].IsOpen = true;
+                    md.FileMetadata[Filename].Clients.Add(ClientID);
 
-                md.makeCheckpoint();
-                
-                Result = md.FileMetadata[Filename];
+                    md.makeCheckpoint();
+
+                    Result = md.FileMetadata[Filename];
+                }
             }
-        }      
+        }
     }
 }

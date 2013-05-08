@@ -24,6 +24,10 @@ namespace MetaDataServer
             Filename = filename;
         }
 
+        public override string ToString()
+        {
+            return "Close Operation";
+        }
          public override void execute(MetaDataServer md)
         {
             if (!md.FileMetadata.ContainsKey(Filename))

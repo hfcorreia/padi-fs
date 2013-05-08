@@ -28,28 +28,26 @@ namespace Client.services
 
         override public void execute()
         {
-            Console.WriteLine("#Client: reading async file version for file '" + FileName + "'");
+            Console.WriteLine("#Client: Get file version for file '" + FileName + "'");
 
             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
             if (!fileMetadata.IsOpen) 
             {
-                throw new ReadFileVersionException("Client - The file " + fileMetadata.FileName + " is closed. Please open the file before reading the version.");
+                throw new ReadFileVersionException("#Client: - The file " + fileMetadata.FileName + " is closed. Please open the file before reading the version.");
             }
             if (fileMetadata.FileServers.Count < fileMetadata.NumServers)
             {
-                Console.WriteLine("Client - trying to read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+                Console.WriteLine("#Client: read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                 updateWriteFileMetadata(FileName);
                 fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
             }
-            Console.WriteLine("Client - creating new tasks for reading file version");
             Task<int>[] tasks = new Task<int>[fileMetadata.FileServers.Count];
             for (int ds = 0; ds < fileMetadata.FileServers.Count; ds++)
             {
                 tasks[ds] = createAsyncTask(fileMetadata, ds);
             }
-            Console.WriteLine("Client - waiting quorum for a quorum of "+ fileMetadata.WriteQuorum + " server for readFileVersion");
             FileVersion = waitReadQuorum(tasks, fileMetadata.WriteQuorum);
-            Console.WriteLine("#Client: file version for file '" + FileName + "' is " + FileVersion);
+            Console.WriteLine("#Client: File version for file: " + FileName + " -> " + FileVersion);
         }
 
 
@@ -60,13 +58,10 @@ namespace Client.services
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                Console.WriteLine("updateReadFileMetadata [filename: " + filename + ", metadataServer: " + md);
                 tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.updateWriteMetadata(State.Id, filename); });
             }
 
-            Console.WriteLine("updateWriteFileMetadata - waitingQuorum");
             FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
-            Console.WriteLine("updateWriteFileMetadata - quorum achieved. Result: " + fileMetadata.FileServers.Count);
             closeUncompletedTasks(tasks);
             int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
             Console.WriteLine("#Client: metadata saved in position " + position);

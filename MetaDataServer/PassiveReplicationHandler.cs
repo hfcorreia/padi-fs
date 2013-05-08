@@ -26,7 +26,7 @@ namespace MetaDataServer
         public PassiveReplicationHandler() { }
         public void init()
         {
-            
+
             MasterNodeId = 0;
 
             NodeAliveTimers = new Timer[NUMBER_OF_METADATA_SERVERS];
@@ -53,12 +53,12 @@ namespace MetaDataServer
         /**
          * synchOperations
          * gets all the operations in fault from another MDS
-         **/ 
+         **/
         public List<MetaDataOperation> synchOperations(int fromOperation)
         {
             List<MetaDataOperation> result = null;
             bool found = false;
-            int masterId = (MasterNodeId + 1) % 3 ;
+            int masterId = (MasterNodeId + 1) % 3;
             while (!found)
             { // we assume that at least one MDS is allways available
                 try
@@ -87,32 +87,24 @@ namespace MetaDataServer
                     //consider as the server being down - try another server
                     masterId = (masterId + 1) % 3;
                 }
-                
+
             }
             return result;
         }
 
         public void registerNodeDie(int metadataServerId)
         {
-            Console.WriteLine("#MD " + "ReplicationHandler - node - " + metadataServerId + "died");
+            Console.WriteLine("#MDS m-" + metadataServerId + " has died");
 
             synchronizedRemoveAliveServer(metadataServerId);
             NodeAliveTimers[metadataServerId].Stop();
             electMaster();
-            /*
-            string aliveServersString = "#MD alive servers: [ ";
-            foreach (int id in AliveServers)
-            {
-                aliveServersString += id + ", ";
-            }
-            aliveServersString += " ]";
-            Console.WriteLine(aliveServersString);*/
         }
 
         public void electMaster()
         {
             MasterNodeId = AliveServers.Min();
-            Console.WriteLine("#MD " + "ReplicationHandler - The new master is the node - " + MasterNodeId);
+            Console.WriteLine("#MDS " + "new master is: m-" + MasterNodeId);
         }
 
         public void registerAliveMessage(int metadataServerId)
@@ -121,7 +113,7 @@ namespace MetaDataServer
 
             if (!AliveServers.Contains(metadataServerId))
             {
-                Console.WriteLine("#MD " + "the server " + metadataServerId + " has reborn");
+                Console.WriteLine("#MDS " + "The server m-" + metadataServerId + " is now up again!");
                 //is a reborn of a node that could be the one with the smallest id
                 synchronizedAddAliveServer(metadataServerId);
                 electMaster();
@@ -135,7 +127,7 @@ namespace MetaDataServer
                 int nodeId = slaveId;
                 Task.Factory.StartNew(() =>
                 {
-                    
+
                     if (nodeId != MetadataServerId)
                     {
                         MetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[nodeId].getObject<MetaDataServer>();
@@ -143,14 +135,10 @@ namespace MetaDataServer
                         {
                             metadataServer.receiveAliveMessage(aliveMessage);
                         }
-                        //catch (PadiFsException exception)
-                        //{
-                        //    throw exception;
-                        //}
+
                         catch (Exception)
                         {
-                            //Console.WriteLine("#MDS " + MetadataServerId + " - error sending alive message to server " + nodeId);
-                            //registerNodeDie(nodeId);
+
                         }
                     }
                 });
@@ -194,7 +182,9 @@ namespace MetaDataServer
                 NodeAliveTimers[MetadataServerId].Elapsed += (sender, args) => sendAliveMessage(new MetaDataServerAliveMessage(MetadataServerId, IsMaster));
                 NodeAliveTimers[MetadataServerId].Enabled = true;
                 NodeAliveTimers[MetadataServerId].Start();
-            } else {
+            }
+            else
+            {
                 NodeAliveTimers[MetadataServerId].Stop();
                 NodeAliveTimers[MetadataServerId].Start();
             }
@@ -237,5 +227,5 @@ namespace MetaDataServer
             }
         }
     }
-    
+
 }

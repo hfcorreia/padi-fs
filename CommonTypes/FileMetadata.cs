@@ -31,7 +31,7 @@ namespace CommonTypes
 
         public override string ToString()
         {
-            return "File: " + FileName + "Nb: " + NumServers+ " RQ: " + ReadQuorum + " WQ: " + WriteQuorum + " Nb_FileServers " + FileServers.Count + " Nb_Clients: " + Clients.Count;
+            return "File: " + FileName + "Nº ds: " + NumServers+ " ReadQ: " + ReadQuorum + " WriteQ: " + WriteQuorum + " Nº available ds: " + FileServers.Count + " Nº Clients: " + Clients.Count;
         }
 
         

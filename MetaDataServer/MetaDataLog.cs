@@ -33,10 +33,9 @@ namespace MetaDataServer
 
         public void registerOperation(MetaDataServer md, MetaDataOperation operation)
         {
-            Console.WriteLine("#MD " + md + "Log - registerOperation - " + operation);
             if (md == null || operation == null)
             {
-                throw new ArgumentNullException("registerOperation - expected a MDS and an operation, given [ MDS:" + md + "Operation: " + operation + "]");
+                throw new ArgumentNullException("RegisterOperation - Expected a MDS and an operation [ MDS:" + md + ", Operation: " + operation + " ]");
             }
 
             int operationId;
@@ -84,10 +83,10 @@ namespace MetaDataServer
 
         public void dump()
         {
-            Console.WriteLine("Log from MD " + MetadataServer.Id + " com " + log.Count + " operacoes registadas");
+            Console.WriteLine("Log from MD " + MetadataServer.Id + " with " + log.Count + " operations");
             foreach(MetaDataOperation op in log)
             {
-                Console.WriteLine("Operation: " + op);
+                Console.WriteLine("\tOperation: " + op);
             }
         }
 
@@ -96,7 +95,7 @@ namespace MetaDataServer
         {
             if (Status < fromStatus)
             {
-                throw new ArgumentNullException("Log.getOperationsFrom - trying to get operations from " + fromStatus + "but the actual status is " + Status);
+                throw new ArgumentNullException("Log - trying to get operations from " + fromStatus + " but the actual status is " + Status);
             }
             List<MetaDataOperation> logCopy = new List<MetaDataOperation>(log);
             List<MetaDataOperation> operations = new List<MetaDataOperation>();

@@ -7,7 +7,7 @@ namespace CommonTypes
 {
     public class FileMetadataContainer
     {
-        private List<FileMetadata> Metadata {get; set;}
+        private List<FileMetadata> Metadata { get; set; }
         private int capacity;
         int writePosition;
 
@@ -17,7 +17,8 @@ namespace CommonTypes
             this.capacity = capacity;
             this.Metadata = new List<FileMetadata>();
             this.writePosition = 0;
-            for (int i = 0; i < capacity; ++i) {
+            for (int i = 0; i < capacity; ++i)
+            {
                 Metadata.Add(null);
             }
         }
@@ -25,20 +26,21 @@ namespace CommonTypes
         //receives a new filemetadata,
         //inserts the file in a roundRobin manner and returns 
         //the position in witch the fileMetadata was saved
-        public int addFileMetadata(FileMetadata fileMetadata){
+        public int addFileMetadata(FileMetadata fileMetadata)
+        {
             int fileMetadataPosition = (containsFileMetadata(fileMetadata.FileName)) ? getPositionOf(fileMetadata.FileName) : findFirstFreePosition();
 
             fileMetadata.IsOpen = true;
             Metadata[fileMetadataPosition] = fileMetadata;
-            
+
             return fileMetadataPosition;
         }
 
         private int findFirstFreePosition()
         {
-            for (int i=0; i < Metadata.Count; ++i)
+            for (int i = 0; i < Metadata.Count; ++i)
             {
-                if (hasNullContent(i)) 
+                if (hasNullContent(i))
                 {
                     return i;
                 }
@@ -50,21 +52,24 @@ namespace CommonTypes
 
         //receives a position in the structure and returns
         //the file metadata that is saved in that position.
-        public FileMetadata getFileMetadata(int position) {
+        public FileMetadata getFileMetadata(int position)
+        {
             return Metadata[position];
         }
 
         public FileMetadata getFileMetadata(string filename)
         {
-            foreach (FileMetadata fileMetadata in Metadata) {
-                if (fileMetadata!=null && fileMetadata.FileName!=null && fileMetadata.FileName.Equals(filename)) {
-                    return fileMetadata;   
+            foreach (FileMetadata fileMetadata in Metadata)
+            {
+                if (fileMetadata != null && fileMetadata.FileName != null && fileMetadata.FileName.Equals(filename))
+                {
+                    return fileMetadata;
                 }
             }
             return null;
         }
 
-        public bool containsFileMetadata(string filename) 
+        public bool containsFileMetadata(string filename)
         {
             return getFileMetadata(filename) != null;
         }
@@ -72,14 +77,17 @@ namespace CommonTypes
         public void removeFileMetadata(string filename)
         {
             int position = getPositionOf(filename);
-            if (position > -1 && position < capacity) {
-                Metadata[position] = null ;
+            if (position > -1 && position < capacity)
+            {
+                Metadata[position] = null;
             }
         }
 
-        public int getPositionOf(string filename) {
-            for (int i = 0; i < capacity && i < Metadata.Count ; ++i) {
-                if (Metadata[i] != null && Metadata[i].FileName!=null && Metadata[i].FileName.Equals(filename))
+        public int getPositionOf(string filename)
+        {
+            for (int i = 0; i < capacity && i < Metadata.Count; ++i)
+            {
+                if (Metadata[i] != null && Metadata[i].FileName != null && Metadata[i].FileName.Equals(filename))
                 {
                     return i;
                 }
@@ -87,12 +95,13 @@ namespace CommonTypes
             return -1;
         }
 
-        public bool hasNullContent(int position) 
+        public bool hasNullContent(int position)
         {
             return position < 0 || position > capacity || Metadata[position] == null;
         }
 
-        public List<string> getAllFileNames() {
+        public List<string> getAllFileNames()
+        {
             List<string> result = new List<string>();
             foreach (FileMetadata fileMetadata in Metadata)
             {
@@ -106,7 +115,6 @@ namespace CommonTypes
 
         public void printMetaDataContainer()
         {
-            Console.WriteLine("printing metaDataContainer info:");
             foreach (FileMetadata file in Metadata)
             {
                 Console.WriteLine(file);
@@ -115,7 +123,7 @@ namespace CommonTypes
 
         public void markOpenFile(String filename)
         {
-            if (containsFileMetadata(filename)) 
+            if (containsFileMetadata(filename))
             {
                 getFileMetadata(filename).IsOpen = true;
             }

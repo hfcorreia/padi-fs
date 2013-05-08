@@ -27,7 +27,7 @@ namespace Client.services
         {
             if (NewFile == null || NewFile.Content == null || NewFile.FileName == null)
             {
-                throw new WriteFileException("Client - trying to write null file " + NewFile);
+                throw new WriteFileException("Client: trying to write null file " + NewFile);
             }
 
             if (!State.FileMetadataContainer.containsFileMetadata(NewFile.FileName))
@@ -42,7 +42,6 @@ namespace Client.services
             }
             if (fileMetadata.FileServers.Count < fileMetadata.NumServers)
             {
-                Console.WriteLine("Client - trying to write in a quorum of " + fileMetadata.WriteQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                 updateWriteFileMetadata(NewFile.FileName);
                 fileMetadata = State.FileMetadataContainer.getFileMetadata(NewFile.FileName);
             }
@@ -55,7 +54,7 @@ namespace Client.services
 
             waitWriteQuorum(tasks, fileMetadata.WriteQuorum);
 
-            Console.WriteLine("#Client: writed the file '" + NewFile.FileName + "' with content: '" + NewFile.Content + "', as string: " + System.Text.Encoding.UTF8.GetString(NewFile.Content));
+            Console.WriteLine("#Client: Written File:" + NewFile.FileName + " Content: " + System.Text.Encoding.UTF8.GetString(NewFile.Content));
         }
 
         private void updateWriteFileMetadata(String filename)
@@ -65,17 +64,13 @@ namespace Client.services
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                Console.WriteLine("updateReadFileMetadata [filename: " + filename + ", metadataServer: " + md);
                 tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.updateWriteMetadata(State.Id, filename); });
             }
 
-            Console.WriteLine("updateWriteFileMetadata - waitingQuorum");
             FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
-            Console.WriteLine("updateWriteFileMetadata - quorum achieved. Result: " + fileMetadata.FileServers.Count);
             closeUncompletedTasks(tasks);
             int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
             Console.WriteLine("#Client: metadata saved in position " + position);
-
         }
 
         public void waitWriteQuorum(Task[] tasks, int quorum)
@@ -86,7 +81,8 @@ namespace Client.services
                 responsesCounter = 0;
                 for (int i = 0; i < tasks.Length; ++i)
                 {
-                    if(tasks[i].IsCompleted){
+                    if (tasks[i].IsCompleted)
+                    {
 
                         if (tasks[i].Exception != null)
                         {
@@ -94,7 +90,8 @@ namespace Client.services
                             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(NewFile.FileName);
                             tasks[i] = createAsyncWriteTask(fileMetadata, i);
                         }
-                        else {
+                        else
+                        {
                             responsesCounter++;
                         }
                     }
@@ -111,15 +108,10 @@ namespace Client.services
             IDataServer dataServer = fileMetadata.FileServers[ds].getObject<IDataServer>();
             return Task.Factory.StartNew(() =>
             {
-                /*try
-                {
-                    dataServer.write(NewFile);
-                }
-                catch (Exception) { }*/
                 dataServer.write(NewFile);
             });
-        
+
         }
-        
+
     }
 }

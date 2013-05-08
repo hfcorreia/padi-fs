@@ -313,7 +313,6 @@ namespace DataServer
         void sendHeartbeat(object source, ElapsedEventArgs e)
         {
 
-            Console.WriteLine("#DS: heartbeating at each " + HEARTBEAT_INTERVAL + " ms");
             HeartbeatMessage heartbeat = new HeartbeatMessage(Id, Files.Count, ReadCounter, ReadVersionCounter, WriteCounter, AccessCounter);
 
             Task[] tasks = new Task[MetaInformationReader.Instance.MetaDataServers.Count];
@@ -328,9 +327,6 @@ namespace DataServer
             ReadCounter = 0;
             ReadVersionCounter = 0;
             WriteCounter = 0;
-
-            Console.WriteLine("#DS: heartbeat sent :" + heartbeat.ToString());
-
         }
 
     }

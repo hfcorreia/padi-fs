@@ -41,10 +41,13 @@ namespace MetaDataServer
 
         [NonSerialized]
         private PassiveReplicationHandler replicationHandler;
+
+        //maps a given file-name to the servers in wich the file is being migrates - Has a tuple of old ds and new ds
+        private SerializableDictionary<String, List<Tuple<String, String>>> migratingFiles;
         public int CheckpointCounter { get; set; }
 
-
         private Dictionary<string, Dictionary<string, FileAccessCounter>> FileAccesses { get; set; }
+
 
 
         /**
@@ -59,7 +62,7 @@ namespace MetaDataServer
             Console.SetWindowSize(80, 15);
             if (args.Length < 2)
             {
-                Console.WriteLine("Usage: port metadataServerId");
+                Console.WriteLine("Usage: <port> <metadataServerId>");
                 Console.ReadLine();
             }
             else
@@ -101,6 +104,7 @@ namespace MetaDataServer
             isRecovering = false;
             requestsQueue = new Queue<MetaDataOperation>();
             CheckpointCounter = 0;
+            migratingFiles = new SerializableDictionary<string, List<Tuple<string, string>>>();
 
             Console.Title = "MDS " + Id;
             this.replicationHandler = new PassiveReplicationHandler(IdAsNumber);
@@ -128,8 +132,10 @@ namespace MetaDataServer
 
         public FileMetadata open(String clientID, string filename)
         {
+            Console.WriteLine("#MDS: OPENING FILES");
             MetaDataOpenOperation openOperation = new MetaDataOpenOperation(clientID, filename);
             executeOperation(openOperation);
+
             return openOperation.Result;
         }
 
@@ -176,7 +182,7 @@ namespace MetaDataServer
             }
             else
             {
-                Console.WriteLine("#MDS " + Id + " [SLAVE] - " + " executeOperation " + operation);
+                Console.WriteLine("#MDS " + Id + " [SLAVE] - " + operation);
                 int masterId = replicationHandler.MasterNodeId;
                 throw new NotMasterException("please execute the operation on the master: " + masterId, masterId);
             }
@@ -186,13 +192,13 @@ namespace MetaDataServer
         {
             if (isFailing)
             {
-                throw new Exception("the mds " + Id + " is failing");
+                throw new Exception("MDS " + Id + " is failing");
             }
             if (isRecovering)
             {
                 requestsQueue.Enqueue(operation);
             }
-            Console.WriteLine("#MDS " + Id + (replicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + " executeOperation " + operation);
+            Console.WriteLine("#MDS " + Id + (replicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + operation);
             Log.registerOperation(this, operation);
             operation.execute(this);
             Log.incrementStatus();
@@ -210,7 +216,7 @@ namespace MetaDataServer
         {
             if (isFailing)
             {
-                throw new Exception("the mds " + Id + " is failing");
+                throw new Exception("MDS " + Id + " is failing");
             }
             return replicationHandler.MetadataServerId;
         }
@@ -219,7 +225,7 @@ namespace MetaDataServer
         {
             if (isFailing || isRecovering)
             {
-                throw new Exception("the mds " + Id + " is failing");
+                throw new Exception("MDS " + Id + " is failing");
             }
             while (FileMetadata[filename].FileServers.Count < FileMetadata[filename].ReadQuorum)
             {
@@ -235,7 +241,7 @@ namespace MetaDataServer
             {
                 if (isFailing || isRecovering)
                 {
-                    throw new Exception("the mds " + Id + " is failing");
+                    throw new Exception("MDS " + Id + " is failing");
                 }
                 getMetdataLock(filename).WaitOne();
             }
@@ -247,7 +253,7 @@ namespace MetaDataServer
         {
             if (isFailing)
             {
-                throw new Exception("the mds " + Id + " is failing");
+                throw new Exception("MDS " + Id + " is failing");
             }
             if (isRecovering)
             {
@@ -295,13 +301,12 @@ namespace MetaDataServer
         {
             if (isFailing)
             {
-                Console.WriteLine("Recovering...");
+                Console.WriteLine("#MDS: Recovering...");
                 isRecovering = true;
                 isFailing = false;
 
                 replicationHandler.init();
                 List<MetaDataOperation> operations = replicationHandler.synchOperations(Log.Status);
-                Console.WriteLine("MDS recover - the server has " + operations.Count + " operations in fault ");
                 Log.registerOperations(this, operations);
                 while (Log.Status < Log.NextId)
                 {
@@ -322,11 +327,11 @@ namespace MetaDataServer
 
                 isRecovering = false;
 
-                Console.WriteLine("Recover - good morning =D");
+                Console.WriteLine("#MDS: Recovered");
             }
             else
             {
-                Console.WriteLine("MDS is already alive");
+                Console.WriteLine("#MDS: is already alive");
             }
         }
 
@@ -377,7 +382,7 @@ namespace MetaDataServer
         {
             try
             {
-                Console.WriteLine("#MDS Recovering Checkpoint!");
+                Console.WriteLine("#MDS: Recovering Checkpoint!");
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer), new Type[]{ typeof(MetaDataCloseOperation), typeof(MetaDataCreateOperation), typeof(MetaDataDeleteOperation),
                         typeof(MetaDataRegisterServerOperation), typeof(MetaDataOpenOperation)});
 
@@ -492,8 +497,6 @@ namespace MetaDataServer
 
         public void receiveHeartbeat(HeartbeatMessage heartbeat)
         {
-            Console.WriteLine("#MDS: Heartbeat received: " + heartbeat.ToString());
-
             string serverID = heartbeat.ServerId;
 
             if (!Heartbeats.ContainsKey(serverID))
@@ -508,52 +511,47 @@ namespace MetaDataServer
 
             Heartbeats[serverID].Enqueue(heartbeat);
 
-            Console.WriteLine("actual file access at " + serverID + " w/ size: " + heartbeat.AccessCounter.Count);
-            foreach (KeyValuePair<String, FileAccessCounter> entry in heartbeat.AccessCounter)
-            {
-                Console.WriteLine("AcessCounter: " + entry.Value.ToString());
-            }
-
             Dictionary<string, FileAccessCounter> heartbeatAccesses = heartbeat.AccessCounter;
+
             foreach (KeyValuePair<string, FileAccessCounter> entry in heartbeatAccesses)
             {
                 addAccesses(serverID, entry.Key, entry.Value);
+                if (entry.Value.WriteCounter > 0)
+                {
+                    unregisterMigratingFile(entry.Value.FileName, serverID);
+                }
             }
 
 
 
-            double avg = calculateAverageWeight();
-            if (calculateServerWeight(serverID) > (avg * OVERLOAD_MULTIPLIER))
+            double avg = calculateAverageLoad();
+            if (calculateServerLoad(serverID) > (avg * OVERLOAD_MULTIPLIER))
             {
                 //migration:
 
-                Console.WriteLine("Server within overload: " + serverID);
+                Console.WriteLine("#MDS: Server " + serverID + " in overloaded state!");
 
                 List<FileMetadata> closedFiles = getClosedFiles(serverID);
-                Console.WriteLine("files to move: " + closedFiles.Count);
+                Console.WriteLine("\tFiles to move: " + closedFiles.Count);
 
                 List<ServerObjectWrapper> servers = getSortedServers(DataServers.Count);
                 string filename = getMostAccessedFile(closedFiles).FileName;
-                List<ServerObjectWrapper> cleanServers = getUnderweightServersWithoutFile(servers, avg, filename);
+                List<ServerObjectWrapper> cleanServers = getUnderLoadServersWithoutFile(servers, avg, filename);
 
-                Console.WriteLine("servers available: " + cleanServers.Count);
+                Console.Write("\tServers available: " + cleanServers.Count + "\r\n\t[ ");
                 foreach (ServerObjectWrapper srv in cleanServers)
                 {
-                    Console.WriteLine("server avail: " + srv.Id);
+                    Console.WriteLine(srv.Id + " ");
                 }
-
-                //verificar listas vazias
-
-                //read from serverID
-
-                //write to choosen server
-
-                //update MD's
+                Console.WriteLine("]");
+                if (cleanServers.Count != 0)
+                {
+                    executeOperation(new MetaDataMigrateOperation(serverID, cleanServers[0].Id, filename));
+                }
             }
         }
 
-
-        public double calculateServerWeight(String id)
+        public double calculateServerLoad(String id)
         {
             double result = 0;
             Queue<HeartbeatMessage> heartbeats = Heartbeats[id];
@@ -574,7 +572,7 @@ namespace MetaDataServer
 
             foreach (ServerObjectWrapper dataserverWrapper in DataServers.Values)
             {
-                serversWeight.Add(new ListElem(new ServerObjectWrapper(dataserverWrapper), calculateServerWeight(dataserverWrapper.Id)));
+                serversWeight.Add(new ListElem(new ServerObjectWrapper(dataserverWrapper), calculateServerLoad(dataserverWrapper.Id)));
             }
 
             serversWeight = serversWeight.OrderBy(q => q.Weight).ToList();
@@ -619,14 +617,14 @@ namespace MetaDataServer
          */
 
 
-        public double calculateAverageWeight()
+        public double calculateAverageLoad()
         {
             double total = 0;
             int nServers = Heartbeats.Count();
 
             foreach (KeyValuePair<string, Queue<HeartbeatMessage>> entry in Heartbeats)
             {
-                total += calculateServerWeight(entry.Key);
+                total += calculateServerLoad(entry.Key);
             }
 
             return total / nServers;
@@ -638,7 +636,7 @@ namespace MetaDataServer
             List<FileMetadata> closedFiles = new List<FileMetadata>();
             foreach (KeyValuePair<String, FileMetadata> entry in FileMetadata)
             {
-                if (!entry.Value.IsOpen && fileInDS(entry.Value, dsID))
+                if (!entry.Value.IsOpen && dataServerContainsFile(entry.Value, dsID))
                 {
                     closedFiles.Add(entry.Value);
                 }
@@ -647,7 +645,7 @@ namespace MetaDataServer
             return closedFiles;
         }
 
-        public bool fileInDS(FileMetadata fileMetaData, string dsID)
+        public bool dataServerContainsFile(FileMetadata fileMetaData, string dsID)
         {
             foreach (ServerObjectWrapper server in fileMetaData.FileServers)
             {
@@ -660,7 +658,7 @@ namespace MetaDataServer
             return false;
         }
 
-        public List<ServerObjectWrapper> getUnderweightServersWithoutFile(List<ServerObjectWrapper> servers, double avg, string filename)
+        public List<ServerObjectWrapper> getUnderLoadServersWithoutFile(List<ServerObjectWrapper> servers, double avg, string filename)
         {
             List<ServerObjectWrapper> result = new List<ServerObjectWrapper>();
 
@@ -675,7 +673,7 @@ namespace MetaDataServer
                     }
                 }
 
-                if (add && (calculateServerWeight(s.Id) < avg))
+                if (add && (calculateServerLoad(s.Id) < avg))
                 {
                     result.Add(s);
                 }
@@ -684,6 +682,14 @@ namespace MetaDataServer
             return result;
         }
 
+        public SerializableDictionary<String, List<Tuple<String, String>>> getMigratingFiles()
+        {
+            return migratingFiles;
+        }
+        public void setMigratingFiles(SerializableDictionary<String, List<Tuple<String, String>>> migratingFiles)
+        {
+            this.migratingFiles = migratingFiles;
+        }
 
         public void addAccesses(string server, string filename, FileAccessCounter accessCounter)
         {
@@ -724,7 +730,6 @@ namespace MetaDataServer
             foreach (FileMetadata file in files)
             {
                 double fileAccesses = getFileAccesses(file);
-                Console.WriteLine("File and weight: " + file.FileName + " " + fileAccesses);
                 if (fileAccesses >= weight)
                 {
                     result = file;
@@ -736,6 +741,48 @@ namespace MetaDataServer
         }
 
         #endregion migration
+
+        public void registerMigratingFile(string filename, String sourceId, String receiverId)
+        {
+            Tuple<String, String> migratingTuple = new Tuple<string, string>(sourceId, receiverId);
+            if (migratingFiles.ContainsKey(filename))
+            {
+                if (!migratingFiles[filename].Contains(migratingTuple))
+                {
+                    migratingFiles[filename].Add(migratingTuple);
+                }
+            }
+            else
+            {
+                List<Tuple<String, String>> listOfServers = new List<Tuple<String, String>>();
+                listOfServers.Add(migratingTuple);
+                migratingFiles.Add(filename, listOfServers);
+            }
+        }
+
+        public void unregisterMigratingFile(string filename, String receiverId)
+        {
+            if (migratingFiles.ContainsKey(filename))
+            {
+                foreach (Tuple<string, string> migratingTupple in migratingFiles[filename])
+                {
+                    if (migratingTupple.Item2.Equals(receiverId))
+                    {
+                        migratingFiles[filename].Remove(migratingTupple);
+                        foreach (ServerObjectWrapper server in FileMetadata[filename].FileServers)
+                        {
+                            if (server.Id.Equals(migratingTupple.Item1))
+                            {
+                                FileMetadata[filename].FileServers.Remove(server);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 
 }

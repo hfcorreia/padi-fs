@@ -18,14 +18,15 @@ namespace Client
 
         public void saveMostRecentVersion(string filename, int version)
         {
-            if(FileMostRecentVersion.ContainsKey(filename))
+            if (FileMostRecentVersion.ContainsKey(filename))
             {
-                if(FileMostRecentVersion[filename] >= version){
-                   return;
+                if (FileMostRecentVersion[filename] >= version)
+                {
+                    return;
                 }
                 else
                 {
-                     FileMostRecentVersion.Remove(filename);
+                    FileMostRecentVersion.Remove(filename);
                 }
             }
             FileMostRecentVersion.Add(filename, version);
@@ -36,7 +37,7 @@ namespace Client
             return (FileMostRecentVersion.ContainsKey(filename)) ? FileMostRecentVersion[filename] : -1;
         }
 
-        public ClientState(int port, String id) 
+        public ClientState(int port, String id)
         {
             Port = port;
             Id = id;

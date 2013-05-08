@@ -34,14 +34,15 @@ namespace Client.services
 
         override public void execute()
         {
-            Console.WriteLine("#Client: creating file '" + FileName + "' in " + NumberOfDataServers + " servers. ReadQ: " + ReadQuorum + ", WriteQ:" + WriteQuorum);
+            Console.WriteLine("#Client: creating " + FileName + "\r\n\tNº DS: " + NumberOfDataServers + " ReadQ: " + ReadQuorum + " WriteQ: " + WriteQuorum);
 
-            Func<IMetaDataServer, FileMetadata> createFileFunc = (IMetaDataServer metadataServer) => {
+            Func<IMetaDataServer, FileMetadata> createFileFunc = (IMetaDataServer metadataServer) =>
+            {
                 return metadataServer.create(State.Id, FileName, NumberOfDataServers, ReadQuorum, WriteQuorum);
             };
 
             Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(createFileFunc) };
-            
+
             CreatedFileMetadata = waitQuorum<FileMetadata>(tasks, 1);
 
             FileRegisterId = State.FileMetadataContainer.addFileMetadata(CreatedFileMetadata);

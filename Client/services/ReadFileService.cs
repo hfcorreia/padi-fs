@@ -15,7 +15,8 @@ namespace Client.services
         private int StringRegisterId { get; set; }
         public File ReadedFile { get; set; }
 
-        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId) : base(clientState)
+        public ReadFileService(ClientState clientState, string semantics, int fileRegisterId)
+            : base(clientState)
         {
             FileRegisterId = fileRegisterId;
             Semantics = semantics;
@@ -25,24 +26,22 @@ namespace Client.services
         override public void execute()
         {
 
-            Console.WriteLine("#Client: reading file. fileRegister: " + FileRegisterId + ", sringRegister: " + StringRegisterId + ", semantics: " + Semantics);
+            Console.WriteLine("#Client: reading file.\r\n\tFileRegister: " + FileRegisterId + " StringRegister: " + StringRegisterId + " Semantics: " + Semantics);
             File file = null;
 
             FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
 
             if (fileMetadata != null && fileMetadata.FileServers != null)
             {
-                if (!fileMetadata.IsOpen) 
+                if (!fileMetadata.IsOpen)
                 {
                     throw new ReadFileException("Client - The file " + fileMetadata.FileName + " is closed. Please open the file before reading.");
                 }
 
                 if (fileMetadata.FileServers.Count < fileMetadata.NumServers)
                 {
-                    Console.WriteLine("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                     updateReadFileMetadata(fileMetadata.FileName);
                     fileMetadata = State.FileMetadataContainer.getFileMetadata(fileMetadata.FileName);
-                    //throw new WriteFileException("Client - trying to read in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                 }
 
                 Task<File>[] tasks = new Task<File>[fileMetadata.FileServers.Count];
@@ -52,16 +51,12 @@ namespace Client.services
                 }
 
                 int readQuorum = fileMetadata.ReadQuorum;
-                Console.WriteLine("#Client: waiting read quorum...");
                 file = waitReadQuorum(tasks, readQuorum);
-
             }
             else
             {
                 throw new ReadFileException("Client - Trying to read with a file-register that does not exist " + FileRegisterId);
             }
-
-            Console.WriteLine("#Client: reading file - end - fileContentContainer: " + State.FileContentContainer.getAllFileContentAsString());
 
             ReadedFile = file;
         }
@@ -73,17 +68,13 @@ namespace Client.services
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
-                Console.WriteLine("updateReadFileMetadata [filename: " + filename + ", metadataServer: " + md);
+                Console.WriteLine("#Client: Updating metadata - filename: " + filename + " metadataServer: " + md);
                 tasks[md] = Task<FileMetadata>.Factory.StartNew(() => { return metadataServer.updateReadMetadata(State.Id, filename); });
             }
 
-            Console.WriteLine("updateReadFileMetadata - waitingQuorum");
             FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
-            Console.WriteLine("updateReadFileMetadata - quorum achieved. Result: " + fileMetadata.FileServers.Count);
             closeUncompletedTasks(tasks);
             int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
-            Console.WriteLine("#Client: metadata saved in position " + position);
-        
         }
 
 
@@ -102,7 +93,6 @@ namespace Client.services
                             File file = (File)tasks[i].Result;
                             if (Semantics.ToLower().Equals(Util.DEFAULT_READ_SEMANTICS))
                             {
-                                Console.WriteLine("#Client read - found a valid response for semantics " + Semantics);
                                 responses.Add(file);
                             }
                             else if (Semantics.ToLower().Equals(Util.MONOTONIC_READ_SEMANTICS))
@@ -110,12 +100,10 @@ namespace Client.services
                                 if (file.Version >= State.findMostRecentVersion(file.FileName) ||
                                     responses.Count > 0)
                                 {
-                                    Console.WriteLine("#Client read - found a valid response for semantics " + Semantics);
                                     responses.Add(file);
                                 }
                                 else
                                 {
-                                    Console.WriteLine("#Client read - Invalid response -> starting new task...");
                                     FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
                                     tasks[i] = createAsyncTask(fileMetadata, i);
                                 }
@@ -130,7 +118,6 @@ namespace Client.services
                             }
                             else
                             {
-                                Console.WriteLine("#Client read - received an invalid execption[" + exception.Message + "]. Starting a new task... ");
                                 FileMetadata fileMetadata = State.FileMetadataContainer.getFileMetadata(FileRegisterId);
                                 tasks[i] = createAsyncTask(fileMetadata, i);
                             }
@@ -139,7 +126,6 @@ namespace Client.services
                 }
             }
 
-            Console.WriteLine("#Client - Received enough valid responses -> canceling the remaining tasks... \n " + responses.Count);
             closeUncompletedTasks(tasks);
 
             //choose the better option
@@ -177,9 +163,6 @@ namespace Client.services
             }
             return result;
         }
-
-
-
 
         private Task<File> createAsyncTask(FileMetadata fileMetadata, int ds)
         {

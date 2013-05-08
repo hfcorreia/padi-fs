@@ -52,6 +52,7 @@
     <Compile Include="OperationComparer.cs" />
     <Compile Include="MetaDataServerAliveMessage.cs" />
     <Compile Include="MetaDataOperation.cs" />
+    <Compile Include="operation\MetaDataMigrateOperation.cs" />
     <Compile Include="operation\MetaDataRegisterServerOperation.cs" />
     <Compile Include="operation\MetaDataCloseOperation.cs" />
     <Compile Include="operation\MetaDataDeleteOperation.cs" />
@@ -66,7 +67,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SoapFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonTypes\CommonTypes.csproj">

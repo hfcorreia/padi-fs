@@ -19,7 +19,7 @@ namespace Client.services
         private String FileName { get; set; }
 
         public DeleteFileService(ClientState clientState, String fileName)
-            : base(clientState) 
+            : base(clientState)
         {
             FileName = fileName;
         }
@@ -28,50 +28,17 @@ namespace Client.services
         {
             Console.WriteLine("#Client: Deleting file " + FileName);
 
-            //Task[] tasks = new Task[] { deleteFileTask() };
-
-
             Func<IMetaDataServer, Object> deleteFileFunc = (IMetaDataServer metadataServer) =>
             {
                 metadataServer.delete(State.Id, FileName);
                 return null;
             };
 
-            //Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(deleteFileFunc) };
-
-            Task[] tasks = new Task[] { createExecuteOnMDSTask(deleteFileFunc)};
+            Task[] tasks = new Task[] { createExecuteOnMDSTask(deleteFileFunc) };
 
             waitVoidQuorum(tasks, 1);
 
             State.FileMetadataContainer.removeFileMetadata(FileName);
         }
-        /*
-        private Task deleteFileTask()
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[0].getObject<IMetaDataServer>();
-                bool found = false;
-                int masterId = 0;
-                while (!found)
-                {
-                    try
-                    {
-                        metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<IMetaDataServer>();
-                        metadataServer.delete(State.Id, FileName);
-                        found = true;
-                    }
-                    catch (NotMasterException exception)
-                    {
-                        masterId = exception.MasterId;
-                    }
-                    catch (Exception exception)
-                    {
-                        //consider as the server being down - try another server
-                        masterId = (masterId + 1) % 3;
-                    }
-                }
-            });
-        }*/
     }
 }

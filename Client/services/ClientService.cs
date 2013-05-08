@@ -22,19 +22,24 @@ namespace Client.services
                 responsesCounter = 0;
                 for (int i = 0; i < tasks.Length; ++i)
                 {
-                    try {
+                    try
+                    {
                         responsesCounter += tasks[i].IsCompleted ? 1 : 0;
-                        if (tasks[i].Exception!=null) {
+                        if (tasks[i].Exception != null)
+                        {
                             errorResponses.Add(tasks[i].Exception.Flatten().InnerException);
                         }
-                    } catch(AggregateException aggregateException){
+                    }
+                    catch (AggregateException aggregateException)
+                    {
                         errorResponses.Add(aggregateException.Flatten().InnerException);
                     }
                 }
             }
 
-            if (errorResponses.Count > 0) {
-                Console.WriteLine("#Client - waitVoidQuorum - Error: " + errorResponses[0].Message + ".\n" + errorResponses[0].StackTrace);
+            if (errorResponses.Count > 0)
+            {
+                Console.WriteLine("#Client: Error waiting for quorum " + errorResponses[0].Message + ".\n" + errorResponses[0].StackTrace);
                 throw errorResponses[0];
             }
         }
@@ -119,7 +124,8 @@ namespace Client.services
             });
         }
 
-        public ClientService(ClientState clientState){
+        public ClientService(ClientState clientState)
+        {
             State = clientState;
         }
 
