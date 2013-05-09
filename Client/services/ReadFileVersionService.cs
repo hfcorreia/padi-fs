@@ -19,8 +19,7 @@ namespace Client.services
         private String FileName { get; set; }
         public int FileVersion { get; set; }
 
-        public ReadFileVersionService(ClientState clientState, String fileName)
-            : base(clientState)
+        public ReadFileVersionService(ClientState clientState, String fileName) : base(clientState)
         {
             FileName = fileName;
             FileVersion = -1;
@@ -37,7 +36,7 @@ namespace Client.services
             }
             if (fileMetadata.FileServers.Count < fileMetadata.NumServers)
             {
-                Console.WriteLine("#Client: read file verison in a quorum of " + fileMetadata.ReadQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
+                Console.WriteLine("#Client: read file verison in a quorum of " + fileMetadata.WriteQuorum + ", but we only have " + fileMetadata.FileServers.Count + " in the local metadata ");
                 updateWriteFileMetadata(FileName);
                 fileMetadata = State.FileMetadataContainer.getFileMetadata(FileName);
             }
@@ -54,7 +53,7 @@ namespace Client.services
         private void updateWriteFileMetadata(String filename)
         {
 
-            Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
+            /*Task<FileMetadata>[] tasks = new Task<FileMetadata>[MetaInformationReader.Instance.MetaDataServers.Count];
             for (int md = 0; md < MetaInformationReader.Instance.MetaDataServers.Count; md++)
             {
                 IMetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[md].getObject<IMetaDataServer>();
@@ -63,10 +62,21 @@ namespace Client.services
 
             FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
             closeUncompletedTasks(tasks);
+             * */
+            
+            Func<IMetaDataServer, FileMetadata> updateFileVersionFunc = (IMetaDataServer metadataServer) => { return metadataServer.updateWriteMetadata(State.Id, FileName); };
+
+            Task<FileMetadata>[] tasks = new Task<FileMetadata>[] { createExecuteOnMDSTask<FileMetadata>(updateFileVersionFunc) };
+
+            FileMetadata fileMetadata = waitQuorum<FileMetadata>(tasks, 1);
+
             int position = State.FileMetadataContainer.addFileMetadata(fileMetadata);
             Console.WriteLine("#Client: metadata saved in position " + position);
 
         }
+
+
+
 
         public int waitReadQuorum(Task<int>[] tasks, int quorum)
         {
