@@ -40,7 +40,7 @@ namespace Client
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("#ClientScriptExecutor: " + e.Message + "\n\n" + e.StackTrace);
+                        Console.WriteLine("#ClientScriptExecutor: " + e.Message);
                     }
 
                     line = fileReader.ReadLine();
@@ -90,7 +90,7 @@ namespace Client
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error on ClientScriptExecutor: " + e.Message + e.StackTrace);
+                Console.WriteLine("Error on ClientScriptExecutor: " + e.Message);
             }
 
         }
@@ -98,7 +98,7 @@ namespace Client
         private String[] parseLine(string line)
         {
             Match mp = Regex.Match(line, "\"(.*)\"");
-            String newLine = line.Replace(",", "");
+            String newLine = line.Replace(",", " ");
             String[] newInput;
             if (mp.Success)
             {

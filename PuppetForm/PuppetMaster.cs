@@ -21,6 +21,7 @@ namespace PuppetForm
     {
         public Dictionary<String, ServerObjectWrapper> clients = new Dictionary<String, ServerObjectWrapper>();      //<clientId, clientWrapper>
         public Dictionary<String, ServerObjectWrapper> dataServers = new Dictionary<String, ServerObjectWrapper>();  //<dataServerId, dataServerWrapper>
+        public List<String> metadataServers = new List<String>();  //<metadataServerId, dataServerWrapper>
         public PuppetScriptExecutor ScriptExecutor { get; set; }
         public ControlBoard ControlBoard { get; set; }
 
@@ -54,17 +55,16 @@ namespace PuppetForm
 
         public void createDataServer(String id)
         {
-            if (dataServers.ContainsKey(id))
+            if (!dataServers.ContainsKey(id))
             {
-                dataServers.Remove(id);
-            }
-            int port = Util.getNewPort();
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-            Process.Start(path + "\\DataServer.exe", port + " " + id);
-            ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
+                int port = Util.getNewPort();
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+                Process.Start(path + "\\DataServer.exe", port + " " + id);
+                ServerObjectWrapper dataServerWrapper = new ServerObjectWrapper(port, id, "localhost");
 
-            dataServers.Add(id, dataServerWrapper);
-            ControlBoard.printCommand("CREATE " + id);
+                dataServers.Add(id, dataServerWrapper);
+                ControlBoard.printCommand("CREATE " + id);
+            }
         }
 
         public void startMetaDataServers(int numServers)
@@ -79,27 +79,30 @@ namespace PuppetForm
 
         public void createMetadataServer(string mdsId)
         {
-            int port;
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-
-            switch (mdsId)
+            if (!metadataServers.Contains(mdsId))
             {
-                case "m-0":
-                    port = Int32.Parse(CommonTypes.Properties.Resources.MDS0_PORT);
-                    break;
-                case "m-1":
-                    port = Int32.Parse(CommonTypes.Properties.Resources.MDS1_PORT);
-                    break;
-                case "m-2":
-                    port = Int32.Parse(CommonTypes.Properties.Resources.MDS2_PORT);
-                    break;
-                default:
-                    throw new PadiFsException("No such MetaData Server: " + mdsId);
 
+                int port;
+                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+
+                switch (mdsId)
+                {
+                    case "m-0":
+                        port = Int32.Parse(CommonTypes.Properties.Resources.MDS0_PORT);
+                        break;
+                    case "m-1":
+                        port = Int32.Parse(CommonTypes.Properties.Resources.MDS1_PORT);
+                        break;
+                    case "m-2":
+                        port = Int32.Parse(CommonTypes.Properties.Resources.MDS2_PORT);
+                        break;
+                    default:
+                        throw new PadiFsException("No such MetaData Server: " + mdsId);
+
+                }
+                Process.Start(path + "\\MetaDataServer.exe", port + " " + mdsId);
+                metadataServers.Add(mdsId);
             }
-
-
-            Process.Start(path + "\\MetaDataServer.exe", port + " " + mdsId);
         }
 
         public void open(String clientId, string filename)
@@ -445,7 +448,7 @@ namespace PuppetForm
             }
             else if (process.StartsWith("m-"))
             {
-                /** not implemented only need when mds fail **/
+                createMetadataServer(process);
             }
         }
 

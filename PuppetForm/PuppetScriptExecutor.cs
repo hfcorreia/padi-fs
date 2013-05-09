@@ -38,9 +38,7 @@ namespace PuppetForm
                 }
             }
             ScriptReader.Close();
-            //PuppetMasterEntity.ScriptExecutor = null;
             System.Windows.Forms.MessageBox.Show("End Of File");
-            //throw new PadiFsException("End of file");
         }
 
         private void runCommand(String line)
@@ -101,7 +99,7 @@ namespace PuppetForm
         private String[] parseLine(string line)
         {
             Match mp = Regex.Match(line, "\"(.*)\"");
-            String newLine = line.Replace(",", "");
+            String newLine = line.Replace(",", " ");
             String[] newInput;
             if (mp.Success)
             {

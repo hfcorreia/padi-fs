@@ -308,12 +308,12 @@ namespace MetaDataServer
                 replicationHandler.init();
                 List<MetaDataOperation> operations = replicationHandler.synchOperations(Log.Status);
                 Log.registerOperations(this, operations);
+
                 while (Log.Status < Log.NextId)
                 {
                     Log.getOperation(Log.Status).execute(this);
                     Log.incrementStatus();
                 }
-
 
                 while (requestsQueue.Count != 0)
                 {
@@ -322,7 +322,6 @@ namespace MetaDataServer
                     operation.execute(this);
                     Log.incrementStatus();
                 }
-
 
 
                 isRecovering = false;
@@ -360,7 +359,7 @@ namespace MetaDataServer
 
                 System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer),
                     new Type[]{ typeof(MetaDataCloseOperation), typeof(MetaDataCreateOperation), typeof(MetaDataDeleteOperation),
-                        typeof(MetaDataRegisterServerOperation), typeof(MetaDataOpenOperation)});
+                        typeof(MetaDataRegisterServerOperation), typeof(MetaDataMigrateOperation), typeof(MetaDataOpenOperation)});
                 System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(@dirName + "\\checkpoint.xml");
 
                 writer.Serialize(fileWriter, this);
@@ -373,7 +372,10 @@ namespace MetaDataServer
             {
 
                 Console.WriteLine("#MDS: Checkpoint Failed: " + e.Message);
-
+                //Console.WriteLine("################# INNER ###################");
+                //Console.WriteLine("#MDS: Checkpoint Failed: " + e.InnerException);
+                //Console.WriteLine("################# STACK ###################");
+                //Console.WriteLine("#MDS: Checkpoint Failed: " + e.StackTrace);
             }
 
         }
@@ -384,7 +386,7 @@ namespace MetaDataServer
             {
                 Console.WriteLine("#MDS: Recovering Checkpoint!");
                 System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(MetaDataServer), new Type[]{ typeof(MetaDataCloseOperation), typeof(MetaDataCreateOperation), typeof(MetaDataDeleteOperation),
-                        typeof(MetaDataRegisterServerOperation), typeof(MetaDataOpenOperation)});
+                        typeof(MetaDataRegisterServerOperation), typeof(MetaDataMigrateOperation), typeof(MetaDataOpenOperation)});
 
                 string dirName = CommonTypes.Properties.Resources.TEMP_DIR + "\\" + metadataServerId + "\\checkpoint.xml";
                 System.IO.StreamReader fileReader = new System.IO.StreamReader(dirName);
@@ -406,6 +408,10 @@ namespace MetaDataServer
             catch (Exception e)
             {
                 Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.Message);
+                //Console.WriteLine("################# INNER ###################");
+                //Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.InnerException);
+                //Console.WriteLine("################# STACK ###################");
+                //Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.StackTrace);
             }
         }
 

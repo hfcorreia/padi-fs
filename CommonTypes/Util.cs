@@ -66,7 +66,7 @@ namespace CommonTypes
 
         public static int getNewPort()
         {
-            const int PortStartIndex = 1000;
+            const int PortStartIndex = 1100;
             const int PortEndIndex = 10000;
             IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
             IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
