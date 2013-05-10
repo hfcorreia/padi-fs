@@ -43,9 +43,9 @@ namespace DataServer
 
         private System.Timers.Timer Timer { get; set; }
 
-        private int ReadCounter { get; set; }
-        private int ReadVersionCounter { get; set; }
-        private int WriteCounter { get; set; }
+        public int ReadCounter { get; set; }
+        public int ReadVersionCounter { get; set; }
+        public int WriteCounter { get; set; }
 
         static void Main(string[] args)
         {
@@ -113,7 +113,6 @@ namespace DataServer
 
         public void write(File file)
         {
-            WriteCounter++;
 
             if (AccessCounter.ContainsKey(file.FileName))
             {
@@ -128,11 +127,13 @@ namespace DataServer
             }
 
             State.write(file);
+
+            //WriteCounter++;
         }
 
         public File read(string filename)
         {
-            ReadCounter++;
+            
 
             if (AccessCounter.ContainsKey(filename))
             {
@@ -145,6 +146,8 @@ namespace DataServer
                 fileCounter.ReadCounter++;
                 AccessCounter[filename] = fileCounter;
             }
+
+            //ReadCounter++;
 
             return State.read(filename);
         }
@@ -184,7 +187,7 @@ namespace DataServer
                     catch (Exception exception)
                     {
                         //consider as the server being down - try another server
-                        Console.WriteLine("Error registering :\n" + exception.Message + "\n" + exception.StackTrace);
+                        Console.WriteLine("Error registering :\n" + exception.Message);
                         masterId = (masterId + 1) % 3;
                     }
                 }
@@ -193,7 +196,7 @@ namespace DataServer
 
         public int readFileVersion(string filename)
         {
-            ReadVersionCounter++;
+           
 
             if (AccessCounter.ContainsKey(filename))
             {
@@ -206,6 +209,8 @@ namespace DataServer
                 fileCounter.ReadVersionCounter++;
                 AccessCounter[filename] = fileCounter;
             }
+
+            //ReadVersionCounter++;
 
             return State.readFileVersion(filename);
         }

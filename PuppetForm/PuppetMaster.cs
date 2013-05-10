@@ -44,7 +44,7 @@ namespace PuppetForm
                 }
                 catch (Exception e)
                 {
-                    System.Windows.Forms.MessageBox.Show("Error creating client:" + e.Message + " :\n" + e.StackTrace);
+                    System.Windows.Forms.MessageBox.Show("Error creating client:" + e.Message);
                 }
                 ServerObjectWrapper clientWrapper = new ServerObjectWrapper(clientPort, clientId, "localhost");
                 clients.Add(clientId, clientWrapper);
@@ -119,7 +119,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error opening file " + filename + " : " + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error opening file " + filename + " : " + e.Message);
             }
 
             ControlBoard.printCommand("OPEN " + clientId + " " + filename);
@@ -138,7 +138,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error closing file " + filename + " : " + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error closing file " + filename + " : " + e.Message);
             }
 
             ControlBoard.printCommand("CLOSE " + clientId + " " + filename);
@@ -155,7 +155,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error creating file " + filename + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error creating file " + filename + ":" + e.Message);
             }
 
             ControlBoard.printCommand("CREATE " + clientId + " " + filename + " " + numberDataServers + " " + readQuorum + " " + writeQuorum);
@@ -175,7 +175,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error deleting file " + filename + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error deleting file " + filename + ":" + e.Message);
             }
 
             ControlBoard.printCommand("DELETE " + clientId + " " + filename);
@@ -195,7 +195,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing DS" + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error failing DS" + process + ":" + e.Message);
             }
             ControlBoard.printCommand("FAIL " + process);
 
@@ -215,7 +215,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error failing MD" + process + ":" + e.Message);
             }
             ControlBoard.printCommand("FAIL " + process);
 
@@ -235,7 +235,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error failing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error failing MD" + process + ":" + e.Message);
             }
             ControlBoard.printCommand("RECOVER " + process);
         }
@@ -255,7 +255,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error recovering MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error recovering MD" + process + ":" + e.Message);
             }
             ControlBoard.printCommand("RECOVER " + process);
         }
@@ -274,7 +274,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error freezing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error freezing MD" + process + ":" + e.Message);
             }
             ControlBoard.printCommand("FREEZE " + process);
         }
@@ -293,7 +293,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error unfreezing MD" + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error unfreezing MD" + process + ":" + e.Message);
             }
             ControlBoard.printCommand("UNFREEZE " + process);
         }
@@ -312,7 +312,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error read file" + fileRegisterId + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error read file" + fileRegisterId + ":" + e.Message);
             }
 
             ControlBoard.printCommand("READ " + process + " " + fileRegisterId + " " + semantics + " " + stringRegisterId);
@@ -354,7 +354,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error write file" + fileRegisterId + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error write file" + fileRegisterId + ":" + e.Message);
             }
 
             ControlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + contents);
@@ -374,7 +374,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error write file" + fileRegisterId + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error write file" + fileRegisterId + ":" + e.Message);
             }
 
             ControlBoard.printCommand("WRITE " + process + " " + fileRegisterId + " " + stringRegisterId);
@@ -395,7 +395,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error copying file" + fileRegister1 + " to " + fileRegister2 + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error copying file" + fileRegister1 + " to " + fileRegister2 + ":" + e.Message);
             }
             ControlBoard.printCommand("COPY " + process + " " + fileRegister1 + " " + semantics + " " + fileRegister2 + " " + salt);
         }
@@ -413,7 +413,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error dumping process " + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error dumping process " + process + ":" + e.Message);
             }
             ControlBoard.printCommand("DUMP " + process);
         }
@@ -465,7 +465,7 @@ namespace PuppetForm
             catch (AggregateException aggregateException)
             {
                 Exception e = aggregateException.Flatten().InnerException;
-                System.Windows.Forms.MessageBox.Show("Error executing client script for client " + process + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error executing client script for client " + process + ":" + e.Message);
             }
 
             ControlBoard.printCommand("EXESCRIPT " + process + " " + filename);
@@ -545,7 +545,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error getting string Registers For Client " + clientId + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error getting string Registers For Client " + clientId + ":" + e.Message);
             }
 
             return new List<string>();
@@ -565,7 +565,7 @@ namespace PuppetForm
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Error getting file Registers For Client " + clientId + ":" + e.Message + " :\n" + e.StackTrace);
+                System.Windows.Forms.MessageBox.Show("Error getting file Registers For Client " + clientId + ":" + e.Message);
             }
 
             return new List<string>();

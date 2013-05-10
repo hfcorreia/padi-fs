@@ -35,7 +35,6 @@ namespace MetaDataServer
         {
 
             Console.WriteLine("registerOperation: " + operation + (operation == null ? "NULL" : "" + operation.OperationId));
-            dump();
             if (md == null || operation == null)
             {
                 throw new ArgumentNullException("RegisterOperation - Expected a MDS and an operation [ MDS:" + md + ", Operation: " + operation + " ]");

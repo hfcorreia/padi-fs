@@ -68,8 +68,9 @@ namespace CommonTypes
         {
             lock (typeof(Util))
             {
-                System.Threading.Thread.Sleep(500);
-                const int PortStartIndex = 1100;
+                Random random = new Random();
+                int randomNumber = random.Next(1100, 5000);
+                int PortStartIndex = randomNumber;
                 const int PortEndIndex = 10000;
                 IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
                 IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();

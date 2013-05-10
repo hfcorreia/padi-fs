@@ -8,7 +8,7 @@ UNFREEZE d-1
 CREATE c-1,f1,2,1,1
 OPEN c-1,f1
 FREEZE d-1
-EXESCRIPT c-1 ps-exe1.txt
+EXESCRIPT c-1 exe1.txt
 # for some groups DUMP d-1 here could show that the write in the exescript has not happened
 UNFREEZE d-1
 DUMP c-1

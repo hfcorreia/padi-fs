@@ -39,7 +39,7 @@ namespace Client.services
 
             if (errorResponses.Count > 0)
             {
-                Console.WriteLine("#Client: Error waiting for quorum " + errorResponses[0].Message + ".\n" + errorResponses[0].StackTrace);
+                Console.WriteLine("#Client: Error waiting for quorum " + errorResponses[0].Message);
                 throw errorResponses[0];
             }
         }

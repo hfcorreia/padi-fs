@@ -28,7 +28,7 @@ FAIL m-2
 FREEZE d-2
 # The next write writes the contents of byte-array register 0
 WRITE c-1,0,0
-COPY c-1,0,default,1," salt example"
+COPY c-1,0,default,1, " salt example"
 UNFREEZE d-2
 DUMP d-2
 CLOSE c-1,f1

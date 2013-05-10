@@ -111,7 +111,7 @@ namespace MetaDataServer
             Console.Title = "MDS " + Id;
             this.replicationHandler = new PassiveReplicationHandler(IdAsNumber);
             getCheckpoint(Id);
-            
+
 
             //atach a debugger - we should add some parameter to enable/disable this!
             if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
@@ -337,7 +337,6 @@ namespace MetaDataServer
 
             while (Log.Status < Log.NextId)
             {
-                Console.WriteLine("MDS " + Id + " - [ Status: " + Log.Status + ", NextId: " + Log.NextId + ", Operation:" + Log.getOperation(Log.Status) + "]");
                 Log.getOperation(Log.Status).execute(this);
                 Log.incrementStatus();
             }
@@ -390,10 +389,6 @@ namespace MetaDataServer
             {
 
                 Console.WriteLine("#MDS: Checkpoint Failed: " + e.Message);
-                //Console.WriteLine("################# INNER ###################");
-                //Console.WriteLine("#MDS: Checkpoint Failed: " + e.InnerException);
-                //Console.WriteLine("################# STACK ###################");
-                //Console.WriteLine("#MDS: Checkpoint Failed: " + e.StackTrace);
             }
 
         }
@@ -426,10 +421,6 @@ namespace MetaDataServer
             catch (Exception e)
             {
                 Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.Message);
-                //Console.WriteLine("################# INNER ###################");
-                //Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.InnerException);
-                //Console.WriteLine("################# STACK ###################");
-                //Console.WriteLine("#MDS: GetCheckpoint Failed: " + e.StackTrace);
             }
         }
 
@@ -459,16 +450,14 @@ namespace MetaDataServer
                     foreach (String name in files.Value.Clients)
                     {
                         Console.WriteLine("\t" + name + " ");
-
                     }
                     Console.WriteLine("\t\tNumber of ds: " + files.Value.NumServers);
                     Console.WriteLine("\t\tRead Quorum: " + files.Value.ReadQuorum);
                     Console.WriteLine("\t\tWrite Quorum: " + files.Value.WriteQuorum);
                 }
             }
-            Console.WriteLine("######################### LOG ###########################");
+            Console.WriteLine("###### LOG DUMP ######");
             Log.dump();
-            Console.WriteLine("######################### LOG ###########################");
             Console.WriteLine();
 
         }
@@ -551,7 +540,9 @@ namespace MetaDataServer
 
 
             double avg = calculateAverageLoad();
-            if (calculateServerLoad(serverID) > (avg * OVERLOAD_MULTIPLIER))
+            double serverLoad = calculateServerLoad(serverID);
+
+            if ((serverLoad > 1) && (serverLoad > (avg * OVERLOAD_MULTIPLIER)))
             {
                 //migration:
 

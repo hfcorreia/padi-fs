@@ -32,6 +32,9 @@ namespace DataServer
             {
                 Ds.FileLocks[filename].ExitWriteLock();
             }
+
+            Ds.ReadCounter++;
+
             return file;
         }
 
@@ -95,7 +98,9 @@ namespace DataServer
             {
                 Ds.FileLocks[file.FileName].ExitWriteLock();
             }
-            
+
+            Ds.WriteCounter++;
+
         }
 
         private int getClientId(string userString)
@@ -110,6 +115,9 @@ namespace DataServer
         {
             int fileVersion = Ds.Files.ContainsKey(filename) ? Ds.Files[filename].Version : -1;
             Console.WriteLine("#DS: readFileVersion " + filename + " has version " + fileVersion);
+
+            Ds.ReadVersionCounter++;
+
             return fileVersion; 
         }
     }
