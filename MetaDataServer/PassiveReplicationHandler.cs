@@ -26,7 +26,7 @@ namespace MetaDataServer
         public PassiveReplicationHandler() { }
         public void init()
         {
-
+            aliveServers = new HashSet<int>();
             MasterNodeId = 0;
 
             NodeAliveTimers = new Timer[NUMBER_OF_METADATA_SERVERS];
@@ -47,7 +47,7 @@ namespace MetaDataServer
         public PassiveReplicationHandler(int metadataServerId)
         {
             MetadataServerId = metadataServerId;
-            init();
+            
         }
 
         /**
@@ -56,13 +56,19 @@ namespace MetaDataServer
          **/
         public List<MetaDataOperation> synchOperations(int fromOperation)
         {
-            List<MetaDataOperation> result = null;
+            List<MetaDataOperation> result = new List<MetaDataOperation>();
             bool found = false;
             int masterId = (MasterNodeId + 1) % 3;
+            int atemptsCounter = 0;
             while (!found)
             { // we assume that at least one MDS is allways available
                 try
                 {
+                    if (atemptsCounter == 3)
+                    {
+                        break;
+                    }
+                    
                     if (masterId != MetadataServerId)
                     {
                         MetaDataServer metadataServer = MetaInformationReader.Instance.MetaDataServers[masterId].getObject<MetaDataServer>();
@@ -87,7 +93,7 @@ namespace MetaDataServer
                     //consider as the server being down - try another server
                     masterId = (masterId + 1) % 3;
                 }
-
+                atemptsCounter++;
             }
             return result;
         }

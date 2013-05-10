@@ -184,6 +184,7 @@ namespace DataServer
                     catch (Exception exception)
                     {
                         //consider as the server being down - try another server
+                        Console.WriteLine("Error registering :\n" + exception.Message + "\n" + exception.StackTrace);
                         masterId = (masterId + 1) % 3;
                     }
                 }

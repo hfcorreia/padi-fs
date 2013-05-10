@@ -65,7 +65,7 @@ namespace Client.services
                     }
                 }
             }
-            //choose the bettew option
+            //choose the best option
             int betterOptionId = 0;
 
             if (responses[betterOptionId] is Exception)

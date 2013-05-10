@@ -19,7 +19,7 @@ namespace MetaDataServer
     public class MetaDataServer : MarshalByRefObject, IMetaDataServer
     {
         private static int MAX_HEARTBEATS = Int32.Parse(Properties.Resources.MAX_HEARTBEATS);
-        private static double OVERLOAD_MULTIPLIER = 1.3;
+        private static double OVERLOAD_MULTIPLIER = 1.7;
 
         public int Port { get; set; }
         public String Id { get; set; }
@@ -71,7 +71,9 @@ namespace MetaDataServer
                 metadataServer.initialize(Int32.Parse(args[0]), args[1]);
                 Util.createDir(CommonTypes.Properties.Resources.TEMP_DIR);
                 metadataServer.startConnection(metadataServer);
-
+                Console.ReadLine();
+                metadataServer.fail();
+                metadataServer.recover();
                 Console.WriteLine("#MDS: Registered " + metadataServer.Id + " at " + metadataServer.Url);
                 Console.ReadLine();
             }
@@ -87,6 +89,7 @@ namespace MetaDataServer
             ChannelServices.RegisterChannel(channel, true);
 
             RemotingServices.Marshal(metadataServer, Id, typeof(MetaDataServer));
+
         }
 
         public void initialize(int port, String id)
@@ -109,6 +112,7 @@ namespace MetaDataServer
             Console.Title = "MDS " + Id;
             this.replicationHandler = new PassiveReplicationHandler(IdAsNumber);
             getCheckpoint(Id);
+            
 
             //atach a debugger - we should add some parameter to enable/disable this!
             if (Boolean.Parse(Properties.Resources.RUN_IN_DEBUG_MODE) && !Debugger.IsAttached)
@@ -194,14 +198,17 @@ namespace MetaDataServer
             {
                 throw new Exception("MDS " + Id + " is failing");
             }
-            if (isRecovering)
+            else if (isRecovering)
             {
                 requestsQueue.Enqueue(operation);
             }
-            Console.WriteLine("#MDS " + Id + (replicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + operation);
-            Log.registerOperation(this, operation);
-            operation.execute(this);
-            Log.incrementStatus();
+            else
+            {
+                Console.WriteLine("#MDS " + Id + (replicationHandler.IsMaster ? " [MASTER] - " : " [SLAVE] ") + operation);
+                Log.registerOperation(this, operation);
+                operation.execute(this);
+                Log.incrementStatus();
+            }
         }
 
         #endregion OperationsThatChangeTheState
@@ -299,39 +306,51 @@ namespace MetaDataServer
 
         public void recover()
         {
-            if (isFailing)
+            lock (typeof(MetaDataServer))
             {
-                Console.WriteLine("#MDS: Recovering...");
-                isRecovering = true;
-                isFailing = false;
-
-                replicationHandler.init();
-                List<MetaDataOperation> operations = replicationHandler.synchOperations(Log.Status);
-                Log.registerOperations(this, operations);
-
-                while (Log.Status < Log.NextId)
+                if (isFailing)
                 {
-                    Log.getOperation(Log.Status).execute(this);
-                    Log.incrementStatus();
-                }
+                    Console.WriteLine("#MDS: Recovering...");
 
-                while (requestsQueue.Count != 0)
+                    isFailing = false;
+                    synchronizationProcess();
+
+                    Console.WriteLine("#MDS: Recovered");
+                }
+                else
                 {
-                    MetaDataOperation operation = requestsQueue.Dequeue();
-                    Log.registerOperation(this, operation);
-                    operation.execute(this);
-                    Log.incrementStatus();
+                    Console.WriteLine("#MDS: is already alive");
                 }
-
-
-                isRecovering = false;
-
-                Console.WriteLine("#MDS: Recovered");
             }
-            else
+        }
+
+        public void synchronizationProcess()
+        {
+            isRecovering = true;
+            replicationHandler.init();
+            List<MetaDataOperation> operations = replicationHandler.synchOperations(Log.Status);
+
+            foreach (MetaDataOperation op in operations)
             {
-                Console.WriteLine("#MDS: is already alive");
+                Console.WriteLine(" - " + op + ((op == null) ? "NULL" : "" + op.OperationId));
             }
+            Log.registerOperations(this, operations);
+
+            while (Log.Status < Log.NextId)
+            {
+                Console.WriteLine("MDS " + Id + " - [ Status: " + Log.Status + ", NextId: " + Log.NextId + ", Operation:" + Log.getOperation(Log.Status) + "]");
+                Log.getOperation(Log.Status).execute(this);
+                Log.incrementStatus();
+            }
+
+            while (requestsQueue.Count != 0)
+            {
+                MetaDataOperation operation = requestsQueue.Dequeue();
+                Log.registerOperation(this, operation);
+                operation.execute(this);
+                Log.incrementStatus();
+            }
+            isRecovering = false;
         }
 
         public List<MetaDataOperation> getOperationsFrom(int status)
@@ -448,7 +467,9 @@ namespace MetaDataServer
                     Console.WriteLine("\t\tWrite Quorum: " + files.Value.WriteQuorum);
                 }
             }
-
+            Console.WriteLine("######################### LOG ###########################");
+            Log.dump();
+            Console.WriteLine("######################### LOG ###########################");
             Console.WriteLine();
 
         }
@@ -560,7 +581,7 @@ namespace MetaDataServer
         public double calculateServerLoad(String id)
         {
             double result = 0;
-            Queue<HeartbeatMessage> heartbeats = Heartbeats[id];
+            Queue<HeartbeatMessage> heartbeats = new Queue<HeartbeatMessage>(Heartbeats[id]);
 
             foreach (HeartbeatMessage heartbeat in heartbeats)
             {

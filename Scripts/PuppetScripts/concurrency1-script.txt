@@ -9,11 +9,11 @@ UNFREEZE d-5
 CREATE c-1,f551,5,5,1
 CREATE c-2,f515,5,1,5
 CREATE c-3,f555,5,5,5
-EXESCRIPT c-1 exe1.txt
-EXESCRIPT c-2 exe2.txt
-EXESCRIPT c-3 exe3.txt
-EXESCRIPT c-4 exe4.txt
-EXESCRIPT c-5 exe5.txt
+EXESCRIPT c-5 concurrency1-exe5.txt
+EXESCRIPT c-1 concurrency1-exe1.txt
+EXESCRIPT c-2 concurrency1-exe2.txt
+EXESCRIPT c-3 concurrency1-exe3.txt
+EXESCRIPT c-4 concurrency1-exe4.txt
 DUMP c-1
 DUMP c-2
 DUMP c-3

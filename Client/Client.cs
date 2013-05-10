@@ -205,7 +205,7 @@ namespace Client
             readFileService.execute();
 
             byte[] newBytes = appendBytes(readFileService.ReadedFile.Content, salt);
-            
+
             write(targetFileRegisterId, newBytes);
         }
 

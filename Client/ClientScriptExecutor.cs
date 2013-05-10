@@ -80,6 +80,9 @@ namespace Client
                     case "READ":
                         read(newInput);
                         break;
+                    case "COPY":
+                        copy(newInput);
+                        break;
                     case "DUMP":
                         dump(newInput);
                         break;
@@ -157,6 +160,11 @@ namespace Client
         private void open(string[] input)
         {
             ClientEntity.open(input[0]);
+        }
+
+        private void copy(string[] input)
+        {
+            ClientEntity.copy(Int32.Parse(input[0]), input[1], Int32.Parse(input[2]), input[3]);
         }
     }
 }
