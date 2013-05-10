@@ -71,7 +71,6 @@ namespace MetaDataServer
                 metadataServer.initialize(Int32.Parse(args[0]), args[1]);
                 Util.createDir(CommonTypes.Properties.Resources.TEMP_DIR);
                 metadataServer.startConnection(metadataServer);
-                Console.ReadLine();
                 metadataServer.fail();
                 metadataServer.recover();
                 Console.WriteLine("#MDS: Registered " + metadataServer.Id + " at " + metadataServer.Url);

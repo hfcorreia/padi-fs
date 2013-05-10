@@ -26,6 +26,7 @@ namespace Client.services
             provider.TypeFilterLevel = TypeFilterLevel.Full;
             IDictionary props = new Hashtable();
             props["port"] = State.Port;
+            Console.WriteLine("port: " + State.Port);
             TcpChannel channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, true);
             RemotingServices.Marshal(Client, State.Id, typeof(Client));

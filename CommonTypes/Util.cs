@@ -66,25 +66,30 @@ namespace CommonTypes
 
         public static int getNewPort()
         {
-            const int PortStartIndex = 1100;
-            const int PortEndIndex = 10000;
-            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-            IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
-            IEnumerable<int> query =
-                  (from n in tcpEndPoints.OrderBy(n => n.Port)
-                   where (n.Port >= PortStartIndex) && (n.Port <= PortEndIndex)
-                   select n.Port).ToArray().Distinct();
-
-            int i = PortStartIndex;
-            foreach (int p in query)
+            lock (typeof(Util))
             {
-                if (p != i)
+                System.Threading.Thread.Sleep(500);
+                const int PortStartIndex = 1100;
+                const int PortEndIndex = 10000;
+                IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+                IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
+                IEnumerable<int> query =
+                      (from n in tcpEndPoints.OrderBy(n => n.Port)
+                       where (n.Port >= PortStartIndex) && (n.Port <= PortEndIndex)
+                       select n.Port).ToArray().Distinct();
+
+                int i = PortStartIndex;
+                foreach (int p in query)
                 {
-                    break;
+                    if (p != i)
+                    {
+                        break;
+                    }
+                    i++;
                 }
-                i++;
+                return i;
             }
-            return i;
+
         }
 
         public static void IgnoreExceptions(this Task task)
